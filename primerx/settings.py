@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import jinja2
-import django_heroku
 from dotenv import load_dotenv
 
 
@@ -136,4 +135,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())
+if bool(os.environ['ON_HEROKU']):
+    import django_heroku
+    django_heroku.settings(locals())
