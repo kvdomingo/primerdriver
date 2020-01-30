@@ -1,6 +1,43 @@
 from argparse import ArgumentParser
 
 
+class PrimerDesign:
+    def __init__(self, sequence, mutation_type, destination, position, target=None):
+        self.sequence = sequence
+        self.mutation_type = mutation_type.lower()
+        self.target = target
+        self.destination = destination
+        self.position = position
+
+        if self.mutation_type in ['s', 'sub']:
+            self.substitution()
+        elif self.mutation_type in ['i', 'ins']:
+            self.insertion()
+        elif self.mutation_type in ['d', 'deletion']:
+            self.deletion()
+        else:
+            raise NotImplementedError
+
+    def substitution(self):
+        seq = list(self.sequence)
+        if self.target != seq[self.position-1]:
+            raise ValueError('Sequence position does not match target base')
+        seq[self.position-1] = self.destination
+        self.out = ''.join(seq)
+
+    def insertion(self):
+        if not self.destination:
+            raise RuntimeError('Insertion mutation requires destination')
+        seq = list(self.sequence)
+        seq[self.position-1:self.position-1] = self.destination
+        self.out = ''.join(seq)
+
+    def deletion(self):
+        seq = list(self.sequence)
+        del seq[self.position-1]
+        self.out = ''.join(seq)
+
+
 def main():
     parser = ArgumentParser()
     parser.add_argument('-s', '--sequence', help='Template DNA sequence', type=str)
@@ -10,54 +47,36 @@ def main():
     parser.add_argument('-p', '--position', help='Target base position', type=int)
     parser.add_argument('-i', '--interactive', help='Interactive mode', action='store_true')
     args = parser.parse_args()
+    args_dict = dict()
 
     if args.interactive:
         print('')
         print('===================================')
         print('====                           ====')
-        print('====      PrimerX v0.1.0       ====')
+        print('====      PrimerX v0.1.1       ====')
         print('====                           ====')
         print('===================================\n')
-        sequence = input('Enter DNA sequence: ')
-        mutation_type = input('Enter mutation type [s/i/d]: ')
-        if mutation_type.lower() == 's':
-            target = input('Enter target base: ')
-        destination = input('Enter replacement for target base: ')
-        position = int(input('Enter position of target: '))
-
-        if mutation_type.lower() == 's':
-            out = list(sequence)
-            if target != out[position-1]:
-                raise ValueError('Sequence position does not match target base')
-            out[position-1] = destination
-            print(f"\nResult: {''.join(out)}")
-            return 0
-
-        return 0
-
-    if args.mutation_type.lower() in ['sub', 's']:
-        if not (args.target and args.destination):
-            raise RuntimeError('Substitution mutation requires target and destination')
-        out = list(args.sequence)
-        if args.target != args.sequence[args.position-1]:
-            raise ValueError('Sequence position does not match target base')
-        out[args.position-1] = args.destination
-        print(''.join(out))
-        return 0
-    elif args.mutation_type.lower() in ['ins', 'i']:
-        if not args.destination:
-            raise RuntimeError('Insertion mutation requires destination')
-        out = list(args.sequence)
-        out[args.position-1:args.position-1] = args.destination
-        print(''.join(out))
-        return 0
-    elif args.mutation_type.lower() in ['del', 'd']:
-        out = list(args.sequence)
-        del out[args.position-1]
-        print(''.join(out))
-        return 0
+        args_dict['sequence'] = input('Enter DNA sequence: ')
+        args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
+        if args_dict['mutation_type'].lower() == 's':
+            args_dict['target'] = input('Enter target base: ')
+        else:
+            args_dict['target'] = None
+        args_dict['destination'] = input('Enter replacement for target base: ')
+        args_dict['position'] = int(input('Enter position of target: '))
     else:
-        raise NotImplementedError
+        args_dict['sequence'] = args.sequence
+        args_dict['mutation_type'] = args.mutation_type
+        if args_dict['mutation_type'].lower() == 's':
+            args_dict['target'] = args.target
+        else:
+            args_dict['target'] = None
+        args_dict['destination'] = args.destination
+        args_dict['position'] = args.position
+
+    res = PrimerDesign(**args_dict)
+    print(f'Result: {res.out}')
+    return 0
 
 
 if __name__ == '__main__':
