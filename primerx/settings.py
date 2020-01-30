@@ -29,7 +29,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ['DEBUG'])
+DEBUG = bool(int(os.environ['DEBUG']))
 
 ALLOWED_HOSTS = []
 
@@ -135,6 +135,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-if bool(os.environ['ON_HEROKU']):
+if bool(int(os.environ['ON_HEROKU'])):
     import django_heroku
     django_heroku.settings(locals())
