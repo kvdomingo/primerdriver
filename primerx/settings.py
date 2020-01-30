@@ -11,19 +11,25 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import jinja2
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'z&ok!$c)a)%53az=)mb-)t=*r9ok$*3&6)#1ue*hczcar7*ap_'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ['DEBUG'])
 
 ALLOWED_HOSTS = []
 
@@ -53,8 +59,18 @@ ROOT_URLCONF = 'primerx.urls'
 
 TEMPLATES = [
     {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR)],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'primerx.jinja2.environment',
+            'autoescape': False,
+            'undefined': jinja2.DebugUndefined if DEBUG else jinja2.Undefined,
+        },
+    },
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['sdm.admin'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
