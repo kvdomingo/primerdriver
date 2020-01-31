@@ -1,4 +1,20 @@
 from argparse import ArgumentParser
+from pandas import DataFrame
+
+
+bases_dict = {
+    'T': 'Thymine',
+    'A': 'Adenina',
+    'G': 'Guanine',
+    'C': 'Cytosine',
+}
+
+complement_dict = {
+    'T': 'A',
+    'A': 'T',
+    'G': 'C',
+    'C': 'G',
+}
 
 
 class PrimerDesign:
@@ -75,7 +91,16 @@ def main():
         args_dict['position'] = args.position
 
     res = PrimerDesign(**args_dict)
-    print(f'Result: {res.out}')
+    gccont = (res.out.count('G') + res.out.count('C'))/len(res.out)
+    idx = ['Forward', 'Reverse', 'GC content', 'Length']
+    revcomp = ''.join([complement_dict[b] for b in list(res.out[::-1])])
+    dat = [res.out, revcomp, f'{gccont*100}%', f'{len(res.out)} bp']
+    df = DataFrame(
+        data=dat,
+        index=idx,
+        dtype=str,
+    )
+    print(df)
     return 0
 
 
