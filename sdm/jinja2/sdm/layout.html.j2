@@ -2,19 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <!-- Font Awesome -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="PrimerX: Automated design of mutagenic primers for site-directed mutagenesis" />
+    <meta name="author" content="Kenneth V. Domingo">
+    <meta name="keywords" content="PrimerX, site-directed mutagenesis, PCR, primer design, mutagenic" />
+    <meta property="og:title" content="PrimerX" />
+    <meta property="og:url" content="https://primerx.herokuapp.com" />
+    <meta property="og:description" content="PrimerX: Automated design of mutagenic primers for site-directed mutagenesis" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="twitter:card" content="summary" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-    <!-- Bootstrap core CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/css/mdb.min.css" rel="stylesheet">
-    <!-- JQuery -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <!-- Bootstrap tooltips -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-    <!-- Bootstrap core JavaScript -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <!-- MDB core JavaScript -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/js/mdb.min.js"></script>
     <title>{% block title %}{% endblock %} | PrimerX</title>
 </head>
@@ -51,8 +54,10 @@
 
     {% block body %}{% endblock %}
 
-    <footer class="container-fluid" style="padding-bottom: 0; margin: 20px auto;">
-        <p>&copy; {{ now.year }} Kenneth Domingo &amp; Nomer Gutierrez</p>
+    <footer class="page-footer font-small mdb-color lighten-2">
+        <div class="footer-copyright py-3 px-3">
+            &copy; {{ now.year }} <a href="mailto:kvdomingo@up.edu.ph">Kenneth Domingo</a> &amp; <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>
+        </div>
     </footer>
 </body>
 </html>
