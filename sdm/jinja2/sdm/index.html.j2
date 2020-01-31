@@ -5,7 +5,27 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        Hello!
+    <div class="jumbotron text-center mdb-color lighten-2 white-text mx-2 mb-5">
+        <h2 class="card-title h2">PrimerX</h2>
+        <p class="my-4 h6">Automated design of mutagenic primers for site-directed mutagenesis</p>
+        <div class="row d-flex justify-content-center">
+            <div class="col-xl-7 pb-2">
+                <p class="card-text">
+                    PrimerX is a web-based program written to automate the design of mutagenic PCR primers for site-directed mutagenesis. Based on your input, PrimerX compares a template DNA sequence with a DNA or protein sequence that already incorporates the desired mutation. It then generates forward primer sequences by computing for all possible oligonucleotide sequences of appropriate length that encode this mutation and follow your specified constraints. Finally, PrimerX generates corresponding reverse primer sequences, and computes for other necessary information such as melting temperature and GC content for each primer pair.
+                    <br /><br />
+                    PrimerX can design mutagenic primers pairs based on two different kinds of sequence data. One option is for you to enter a mutation in your template DNA sequence, so that the desired base pair insertions, deletions, or substitutions are incorporated. This is recommended for generating specific SNPs and indels. The other is to enter a mutation within the protein sequence encoded by your template DNA, in which case PrimerX generates mutagenic primers based on all possible DNA sequences that can encode the desired mutation, taking into account codon degeneracy. This is recommended for changing a specific amino acid residue into another.
+                    <br /><br />
+                    In addition to this, PrimerX can characterize primers that you have designed. Here, you only need to enter a mutagenic primer sequence and the number of mismatched bases, and PrimerX will compute and report back its reverse complement, GC content, melting temperature, etc.
+                    <br /><br />
+                    Click on one of the tasks below to get started:
+                </p>
+            </div>
+        </div>
+        <hr class="my-4 rgba-white-light" />
+        <div class="pt-2">
+            <button type="button" class="btn btn-outline-white">DNA-based</button>
+            <button type="button" class="btn btn-outline-white">Protein-based</button>
+            <button type="button" class="btn btn-outline-white">Characterization</button>
+        </div>
     </div>
 {% endblock %}

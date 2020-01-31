@@ -49,8 +49,6 @@ class PrimerDesign:
         self.destination = destination
         self.position = position
 
-        self.checks()
-
         if self.mutation_type in ['s', 'sub']:
             self.substitution()
         elif self.mutation_type in ['i', 'ins']:
@@ -59,13 +57,6 @@ class PrimerDesign:
             self.deletion()
         else:
             raise NotImplementedError
-
-    def checks(self):
-        if self.mode.lower() == 'dna':
-            unique_bases = set(list(self.sequence))
-            true_bases = {'A', 'C', 'T', 'G'}
-            if len(unique_bases.union(true_bases)) != 4:
-                raise ValueError('DNA sequence contains invalid bases.')
 
     def substitution(self):
         seq = list(self.sequence)
@@ -87,6 +78,41 @@ class PrimerDesign:
         self.out = ''.join(seq)
 
 
+class PrimerChecks:
+    def __init__(self, sequence):
+        self.sequence = sequence
+
+        self.check_sequence_length()
+        self.check_valid_base()
+        self.check_gc_content()
+
+    def check_valid_base(self):
+        unique_bases = set(list(self.sequence))
+        true_bases = {'A', 'C', 'T', 'G'}
+        if len(unique_bases.union(true_bases)) != 4:
+            raise ValueError('DNA sequence contains invalid bases')
+        else:
+            return 0
+
+    def check_sequence_length(self):
+        if len(self.sequence) < 40:
+            raise ValueError('DNA sequence is too short')
+        elif len(self.sequence) > 8000:
+            raise ValueError('DNA sequence is too long')
+        else:
+            return 0
+
+    def check_gc_content(self):
+        seq = list(self.sequence)
+        gc = (seq.count('C') + seq.count('G'))/len(seq)
+        if gc < 0.40:
+            raise ValueError('GC content is less than 40%')
+        elif gc > 0.60:
+            raise ValueError('GC content is greater than 60%')
+        else:
+            return 0
+
+
 def main():
     parser = ArgumentParser()
     parser.add_argument('-s', '--sequence', help='Template DNA sequence', type=str)
@@ -102,12 +128,14 @@ def main():
     if args.interactive:
         print('')
         print('===================================')
-        print('====                           ====')
-        print('====      PrimerX v0.1.1       ====')
-        print('====                           ====')
+        print('======                       =====')
+        print('======    PrimerX v0.1.1     ======')
+        print('======                       ======')
         print('===================================\n')
         args_dict['mode'] = input('Enter primer mode [dna/protein]: ')
         args_dict['sequence'] = input('Enter DNA sequence: ')
+        if args_dict['mode'].lower() == 'dna':
+            PrimerChecks(args_dict['sequence'])
         args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
         if args_dict['mutation_type'].lower() in ['s', 'sub']:
             args_dict['target'] = input('Enter target base: ')
@@ -118,6 +146,8 @@ def main():
     else:
         args_dict['mode'] = args.mode
         args_dict['sequence'] = args.sequence
+        if args_dict['mode'].lower() == 'dna':
+            PrimerChecks(args_dict['sequence'])
         args_dict['mutation_type'] = args.mutation_type
         if args_dict['mutation_type'].lower() in ['s', 'sub']:
             args_dict['target'] = args.target
