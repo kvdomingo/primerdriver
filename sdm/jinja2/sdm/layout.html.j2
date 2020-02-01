@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="PrimerX: Automated design of mutagenic primers for site-directed mutagenesis" />
+    <meta name="description" content="PrimerDriver: Automated design of mutagenic primers for site-directed mutagenesis" />
     <meta name="author" content="Kenneth V. Domingo">
-    <meta name="keywords" content="PrimerX, site-directed mutagenesis, PCR, primer design, mutagenic" />
-    <meta property="og:title" content="PrimerX" />
-    <meta property="og:url" content="https://primerx.herokuapp.com" />
-    <meta property="og:description" content="PrimerX: Automated design of mutagenic primers for site-directed mutagenesis" />
+    <meta name="keywords" content="PrimerDriver, site-directed mutagenesis, PCR, primer design, mutagenic" />
+    <meta property="og:title" content="PrimerDriver" />
+    <meta property="og:url" content="https://primerdriver.herokuapp.com" />
+    <meta property="og:description" content="PrimerDriver: Automated design of mutagenic primers for site-directed mutagenesis" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="en_US" />
     <meta property="twitter:card" content="summary" />
@@ -19,11 +19,13 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/js/mdb.min.js"></script>
-    <title>{% block title %}{% endblock %} | PrimerX</title>
+    <title>{% block title %}{% endblock %} | PrimerDriver</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ url('index') }}"><h3 class="h3-responsive my-0 text-center">PrimerX</h3></a>
+        <a class="navbar-brand" href="{{ url('index') }}">
+            <img src="{{ static('sdm/media/private/PrimerDriver_logo.png') }}" height=50 />
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false", aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
