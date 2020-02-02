@@ -35,14 +35,17 @@
                     <a class="nav-link" href="{{ url('index') }}">Home</a>
                 </li>
                 <li class="nav-item dropdown {{ 'active' if active_page == 'design' }}">
-                    <a class="nav-link" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">Primer Design</a>
+                    <a class="nav-link" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">Design</a>
                     <div class="dropdown-menu dropdown-default dropdown-menu-right float-right" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="#">DNA-based</a>
                         <a class="dropdown-item" href="#">Protein-based</a>
                     </div>
                 </li>
                 <li class="nav-item {{ 'active' if active_page == 'character' }}">
-                    <a class="nav-link" href="#">Primer Characterization</a>
+                    <a class="nav-link" href="#">Characterization</a>
+                </li>
+                <li class="nav-item {{ 'active' if active_page == 'download' }}">
+                    <a class="nav-link" href="#">Download</a>
                 </li>
                 <li class="nav-item {{ 'active' if active_page == 'docu' }}">
                     <a class="nav-link" href="#">Documentation</a>

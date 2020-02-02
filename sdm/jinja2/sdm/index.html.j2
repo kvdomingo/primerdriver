@@ -6,17 +6,18 @@
 
 {% block body %}
     <div class="jumbotron text-center blue-grey lighten-5 mb-5">
-        <h2 class="card-title display-4">PrimerDriver</h2>
-        <p class="indigo-text my-4 font-weight-bold">Automated design of mutagenic primers for site-directed mutagenesis</p>
+        <h1 class="card-title h1-responsive">PrimerDriver</h1>
+        <p class="indigo-text my-4 font-weight-bold">{{ lipsum(1, False, 10, 11) }}</p>
         <div class="row d-flex justify-content-center">
             <div class="col-xl-7 pb-2">
                 <p class="card-text">
-                    <b>PrimerDriver</b> is a web-based program written to automate the design of mutagenic PCR primers for site-directed mutagenesis. Based on your input, PrimerDriver compares a template DNA sequence with a DNA or protein sequence that already incorporates the desired mutation. It then generates forward primer sequences by computing for all possible oligonucleotide sequences of appropriate length that encode this mutation and follow your specified constraints. Finally, PrimerDriver generates corresponding reverse primer sequences, and computes for other necessary information such as melting temperature and GC content for each primer pair.
+                    {{ lipsum(1, False, 75, 76) }}
                     <br /><br />
                     Click on one of the tasks below to get started:
                 </p>
             </div>
         </div>
+        <hr />
         <div class="pt-2">
             <button type="button" class="btn btn-indigo btn-rounded">DNA-based</button>
             <button type="button" class="btn btn-indigo btn-rounded">Protein-based</button>
