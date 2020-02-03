@@ -6,4 +6,4 @@ def index(request):
         "html_title": "Home",
         "active_page": "index"
     }
-    return render(request, "sdm/index.html.j2", context)
+    return render(request, "sdm/landing.html.j2", context)

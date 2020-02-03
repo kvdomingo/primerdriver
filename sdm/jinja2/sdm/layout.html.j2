@@ -19,12 +19,14 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/js/mdb.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     <title>{% block title %}{% endblock %} | PrimerDriver</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark">
+
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark fixed-top" style="transition: background-color 0.5s ease 0s;">
         <a class="navbar-brand" href="{{ url('index') }}">
-            <img src="{{ static('sdm/media/private/PrimerDriver_logo.png') }}" height=50 />
+            <img src="{{ static('sdm/media/private/PrimerDriver_logo.png') }}" height=50 class="pb-1" />
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false", aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -64,5 +66,8 @@
             &copy; {{ now.year }} <a href="mailto:kvdomingo@up.edu.ph">Kenneth Domingo</a> &amp; <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>
         </div>
     </footer>
+
+<script src="{{ static('sdm/js/nav.js') }}"></script>
+
 </body>
 </html>
