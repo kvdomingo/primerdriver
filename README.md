@@ -4,7 +4,7 @@
 - Python 3.6
 
 ## Command line tool
-You can access and download the command line code [here](sdm/primerdriver.py).
+You can access and download the command line code [here](sdm/static/sdm/scripts/pdcli.py).
 
 ## Web application
 The updated website can be accessed via https://primerdriver.herokuapp.com/.
