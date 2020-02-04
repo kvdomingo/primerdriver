@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 from pandas import DataFrame
+from warnings import warn
 
 
 bases_dict = {
@@ -42,52 +43,69 @@ protein_dict = {
 
 class PrimerDesign:
     def __init__(self, mode, sequence, mutation_type, destination, position, target=None):
-        self.mode = mode
-        self.sequence = sequence
-        self.mutation_type = mutation_type.lower()
-        self.target = target
-        self.destination = destination
+        self.mode = mode.upper()
+        self.sequence = sequence.upper()
+        self.mutation_type = mutation_type.upper()
+        self.target = target.upper()
+        self.destination = destination.upper()
         self.position = position
 
-        if self.mutation_type in ['s', 'sub']:
-            self.substitution()
-        elif self.mutation_type in ['i', 'ins']:
-            self.insertion()
-        elif self.mutation_type in ['d', 'deletion']:
-            self.deletion()
-        else:
-            raise NotImplementedError
+    def __len__(self):
+        return len(self.forward)
 
     def substitution(self):
         seq = list(self.sequence)
         if self.target != seq[self.position-1]:
             raise ValueError('Sequence position does not match target base')
         seq[self.position-1] = self.destination
-        self.out = ''.join(seq)
+        self.forward = ''.join(seq)
 
     def insertion(self):
         if not self.destination:
             raise RuntimeError('Insertion mutation requires destination')
         seq = list(self.sequence)
         seq[self.position-1:self.position-1] = self.destination
-        self.out = ''.join(seq)
+        self.forward = ''.join(seq)
 
     def deletion(self):
         seq = list(self.sequence)
         del seq[self.position-1]
-        self.out = ''.join(seq)
+        self.forward = ''.join(seq)
+
+    def Tm_subsitution(self):
+        Tm = 81.5 + 0.41*int(self.gc_content*100) - 675/len(self.forward) - int(self.mismatch*100)
+        self.melt_temp = Tm
+
+    def Tm_insdel(self):
+        Tm = 81.5 + 0.41*int(self.gc_content*100) - 675/len(self.forward)
+        self.melt_temp = Tm
+
+    def main(self):
+        if self.mutation_type in ['S', 'SUB']:
+            self.substitution()
+        elif self.mutation_type in ['I', 'INS']:
+            self.insertion()
+        elif self.mutation_type in ['D', 'DEL']:
+            self.deletion()
+        else:
+            raise NotImplementedError
+
+        self.rev_compl = ''.join([complement_dict[b] for b in list(self.forward[::-1])])
+        self.gc_content = (self.forward.count('G') + self.forward.count('C'))/len(self.forward)
+        self.mismatch = len(self.destination)/len(self.forward)
+
+        if self.mutation_type in ['S', 'SUB']:
+            self.Tm_subsitution()
+        else:
+            self.Tm_insdel()
 
 
 class PrimerChecks:
     def __init__(self, sequence):
         self.sequence = sequence
 
-        self.check_sequence_length()
-        self.check_valid_base()
-        self.check_gc_content()
-
     def check_valid_base(self):
-        unique_bases = set(list(self.sequence))
+        unique_bases = set(list(self.sequence.upper()))
         true_bases = {'A', 'C', 'T', 'G'}
         if len(unique_bases.union(true_bases)) != 4:
             raise ValueError('DNA sequence contains invalid bases')
@@ -106,11 +124,16 @@ class PrimerChecks:
         seq = list(self.sequence)
         gc = (seq.count('C') + seq.count('G'))/len(seq)
         if gc < 0.40:
-            raise ValueError('GC content is less than 40%')
+            warn("GC content is less than 40%", Warning)
         elif gc > 0.60:
-            raise ValueError('GC content is greater than 60%')
+            warn('GC content is greater than 60%', Warning)
         else:
             return 0
+
+    def main(self):
+        self.check_sequence_length()
+        self.check_valid_base()
+        self.check_gc_content()
 
 
 def main():
@@ -127,17 +150,17 @@ def main():
 
     if args.interactive:
         print('')
-        print('===================================')
-        print('======                       =====')
-        print('======    PrimerX v0.1.1     ======')
-        print('======                       ======')
-        print('===================================\n')
+        print('====================================')
+        print('======                        ======')
+        print('===     PrimerDriver v0.1.1      ===')
+        print('======                        ======')
+        print('====================================\n')
         args_dict['mode'] = input('Enter primer mode [dna/protein]: ')
         args_dict['sequence'] = input('Enter DNA sequence: ')
-        if args_dict['mode'].lower() == 'dna':
+        if args_dict['mode'].upper() == 'DNA':
             PrimerChecks(args_dict['sequence'])
         args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
-        if args_dict['mutation_type'].lower() in ['s', 'sub']:
+        if args_dict['mutation_type'].upper() in ['S', 'SUB']:
             args_dict['target'] = input('Enter target base: ')
         else:
             args_dict['target'] = None
@@ -146,10 +169,10 @@ def main():
     else:
         args_dict['mode'] = args.mode
         args_dict['sequence'] = args.sequence
-        if args_dict['mode'].lower() == 'dna':
+        if args_dict['mode'].upper() == 'DNA':
             PrimerChecks(args_dict['sequence'])
         args_dict['mutation_type'] = args.mutation_type
-        if args_dict['mutation_type'].lower() in ['s', 'sub']:
+        if args_dict['mutation_type'].upper() in ['S', 'SUB']:
             args_dict['target'] = args.target
         else:
             args_dict['target'] = None
@@ -157,10 +180,8 @@ def main():
         args_dict['position'] = args.position
 
     res = PrimerDesign(**args_dict)
-    gccont = (res.out.count('G') + res.out.count('C'))/len(res.out)
-    idx = ['Forward', 'Reverse', 'GC content', 'Length']
-    revcomp = ''.join([complement_dict[b] for b in list(res.out[::-1])])
-    dat = [res.out, revcomp, f'{gccont*100:.2f}%', f'{len(res.out)} bp']
+    idx = ['Forward', 'Reverse', 'GC content', 'Melting temp', 'Length']
+    dat = [res.forward, res.rev_compl, f'{res.gc_content*100:.2f}%', res.melt_temp, f'{len(res)} bp']
     df = DataFrame(
         data=dat,
         index=idx,

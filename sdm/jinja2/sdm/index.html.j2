@@ -1,27 +1,45 @@
-{% extends "sdm/layout.html.j2" %}
+{% extends 'sdm/layout.html.j2' %}
 
 {% block title %}
-    {{ html_title }}
+    Home
 {% endblock %}
 
+
 {% block body %}
-    <div class="jumbotron text-center blue-grey lighten-5 mb-5">
-        <h1 class="card-title h1-responsive">PrimerDriver</h1>
-        <p class="indigo-text my-4 font-weight-bold">{{ lipsum(1, False, 10, 11) }}</p>
-        <div class="row d-flex justify-content-center">
-            <div class="col-xl-7 pb-2">
-                <p class="card-text">
-                    {{ lipsum(1, False, 75, 76) }}
-                    <br /><br />
-                    Click on one of the tasks below to get started:
-                </p>
-            </div>
+
+<!-- Landing -->
+<div class="jumbotron text-center blue-grey lighten-5">
+    <div class="row d-flex justify-content-center">
+        <div class="col-xl-7 mb-4">
+            <img src="{{ static('sdm/media/private/PrimerDriver_logo.png') }}" class="img-fluid" style="margin-top: -40px" />
         </div>
-        <hr />
-        <div class="pt-2">
-            <button type="button" class="btn btn-indigo btn-rounded">DNA-based</button>
-            <button type="button" class="btn btn-indigo btn-rounded">Protein-based</button>
-            <button type="button" class="btn btn-indigo btn-rounded">Characterization</button>
+        <div class="col-xl-7 pb-2">
+            <p class="card-text">
+                <b>PrimerDriver</b> ties together key primer design tools and protocols to automate the design of mutagenic PCR primers. This allows input of sequences from different origins (i.e., FASTA, FASTQ, and manual input). The tool can accommodate both DNA & protein sequences to incorporate base pair insertions, deletions, and substitutions as specified by the user.
+            </p>
+            <p>
+                <b>PrimerDriver</b> can design primer pairs and compute for all oligonucleotide sequences that incorporate the desired mutations. This can cater to an array of primer designs from random mutations, site-directed single mutagenesis, batch design site-directed mutagenesis, to multiple-site mutagenesis. Also, it can characterize and report user-designed primers for their reverse complement, GC content, melting temperature, molecular weights, etc. Lastly, you can choose to download the results in different file formats - HTML, fasta, and pdf.
+            </p>
         </div>
     </div>
+    <hr />
+    <div class="pt-2">
+        <p class="indigo-text font-weight-bold">GET STARTED</p>
+        <button type="button" class="btn btn-indigo btn-rounded">DNA-based</button>
+        <button type="button" class="btn btn-indigo btn-rounded">Protein-based</button>
+    </div>
+</div>
+
+<!-- LRT Station -->
+<div class="container-fluid text-center py-5">
+    <!-- set colors = ["#9933CC", "#0d47a1", "#00695c", "#f57f17", "#cc0000"] -->
+    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(45deg)"></img><br />
+    <img src="{{ static('sdm/media/private/gps.png') }}" height="100"></img><br />
+    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(-90deg)"></img><br />
+    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(-160deg) saturate(200%)"></img><br />
+    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(140deg) saturate(200%)"></img><br />
+</div>
+
+<script src="{{ static('sdm/js/train.js') }}"></script>
+
 {% endblock %}
