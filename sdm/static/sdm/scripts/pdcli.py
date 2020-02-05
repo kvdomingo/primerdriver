@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 from argparse import ArgumentParser
-from pandas import DataFrame
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
@@ -47,6 +46,10 @@ def main():
                 args_dict['destination'] = input('Enter starting position to delete: ')
             else:
                 raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
+        elif args_dict['mode'].upper() == 'CHAR':
+            args_dict['sequence'] = input('Enter primer sequence: ')
+            args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
+            args_dict['mismatched_bases'] = input('Enter number of mismatched bases: ')
         else:
             raise NotImplementedError(f"{args_dict['mode']} mode not implemented (yet).")
 
@@ -57,7 +60,7 @@ def main():
             PrimerChecks(args.sequence).check_sequence_length()
             PrimerChecks(args.sequence).check_valid_base()
             args_dict['mutation_type'] = args.mutation_type
-            if args.mutation_type.upper() in ['S', 'SUB']
+            if args.mutation_type.upper() in ['S', 'SUB']:
                 args_dict['target'] = args.target
                 args_dict['position'] = args.position
             elif args.mutation_type.upper() in ['I', 'INS']:
@@ -72,9 +75,25 @@ def main():
             raise NotImplementedError(f"{args_dict['mode']} mode not implemented (yet).")
 
     res = PrimerDesign(**args_dict)
+    if args_dict['mode'].upper() == 'CHAR':
+        res.characterize_primer()
+        return 0
     res.main()
-    idx = ['Forward', 'Reverse', 'GC content', 'Melting temp', 'Length']
-    dat = [res.forward, res.rev_compl, f'{res.gc_content*100:.2f}%', f'{res.melt_temp:.2f} C', f'{len(res)} bp']
+    idx = [
+        'Forward',
+        'Reverse',
+        'GC content',
+        'Melting temp',
+        'Annealing temp',
+        'Length'
+    ]
+    dat = [
+        res.forward, res.rev_compl,
+        f'{res.gc_content*100:.2f}%',
+        f'{res.melt_temp:.2f} C',
+        f'{res.anneal_temp:.2f} C',
+        f'{len(res)} bp'
+    ]
     df = DataFrame(
         data=dat,
         index=idx,

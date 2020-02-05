@@ -1,19 +1,58 @@
 from warnings import warn
 from json import load
+from pandas import DataFrame
 
 
 class PrimerDesign:
-    def __init__(self, mode, sequence, mutation_type, destination, position, target=None):
+    def __init__(
+        self,
+        mode,
+        sequence,
+        mutation_type,
+        mismatched_bases=None,
+        target=None,
+        destination=None,
+        position=None,
+        Tm_range=(75, 85),
+        length_range=(25, 45),
+        gc_range=(40, 60),
+        flank5_range=(11, 21),
+        flank3_range=(11, 21),
+        terminate_gc=True,
+        center_mutation=True,
+        complementary_primers=True
+    ):
         self.mode = mode.upper()
         self.sequence = sequence.upper()
-        self.mutation_type = mutation_type.upper()
-        self.destination = destination.upper()
-        self.position = int(position)
-        if target is not None:
-            self.target = target.upper()
+        self.mutation_type = mutation_type[0].upper()
+        self.mismatched_bases = int(mismatched_bases) if mismatched_bases is not None else None
+        self.destination = destination.upper() if destination is not None else None
+        self.position = int(position) if position is not None else None
+        self.target = target.upper() if target is not None else None
+        self.Tm_range = Tm_range
+        self.length_range = length_range
+        self.gc_range = gc_range
+        self.flank5_range = flank5_range
+        self.flank3_range = flank3_range
+        self.terminate_gc = terminate_gc
+        self.center_mutation = center_mutation
+        self.complementary_primers = complementary_primers
 
     def __len__(self):
         return len(self.forward)
+
+    def calculate_Tm(self):
+        gc_content = int(self.gc_content*100)
+        if self.mutation_type == 'S':
+            N = len(self.sequence)
+            pc_mismatch = int(self.mismatch * 100)
+            self.melt_temp = 81.5 + 0.41*gc_content - 675/N - pc_mismatch
+        else:
+            if self.mutation_type == 'I':
+                N = len(self.sequence)
+            else:
+                N = len(self.sequence) - len(self.destination)
+            self.melt_temp = 81.5 + 0.41*gc_content - 675/N
 
     def substitution(self):
         seq = list(self.sequence)
@@ -34,23 +73,53 @@ class PrimerDesign:
         del seq[self.position-1]
         self.forward = ''.join(seq)
 
-    def Tm_subsitution(self):
-        Tm = 81.5 + 0.41*int(self.gc_content*100) - 675/len(self.forward) - int(self.mismatch*100)
-        self.melt_temp = Tm
-
-    def Tm_insdel(self):
-        Tm = 81.5 + 0.41*int(self.gc_content*100) - 675/len(self.forward)
-        self.melt_temp = Tm
+    def characterize_primer(self):
+        with open("lut.json", "r", encoding="utf-8") as f:
+            lut = load(f)
+        mol_weight = lut["mol_weight"]
+        complement_dict = lut["complement"]
+        seq = list(self.sequence)
+        rev = [complement_dict[b] for b in seq][::-1]
+        primer_length = len(seq)
+        self.gc_content = (seq.count('G') + seq.count('C'))/len(seq)
+        self.mismatch = self.mismatched_bases/len(seq)
+        self.calculate_Tm()
+        gc_end = (self.sequence.startswith('G') or self.sequence.startswith('C')) and (self.sequence.endswith('G') or self.sequence.endswith('C'))
+        molweight_fwd = sum(float(mol_weight[b]) for b in seq)
+        molweight_rev = sum(float(mol_weight[b]) for b in rev)
+        idx = [
+            'Length',
+            'GC content',
+            'Melting temp',
+            'Mol. weight (fwd)',
+            'Mol. weight (rev)',
+            'Mismatch',
+            'Ends in G/C'
+        ]
+        dat = [
+            primer_length,
+            f'{self.gc_content*100:.2f}%',
+            f'{self.melt_temp:.2f} C',
+            f'{molweight_fwd:.2f} Da',
+            f'{molweight_rev:.2f} Da',
+            f'{self.mismatch*100:.2f}%',
+            gc_end
+        ]
+        df = DataFrame(
+            data=dat,
+            index=idx,
+        )
+        print(df)
 
     def main(self):
-        if self.mutation_type in ['S', 'SUB']:
+        if self.mutation_type == 'S':
             self.substitution()
-        elif self.mutation_type in ['I', 'INS']:
+        elif self.mutation_type == 'I':
             self.insertion()
-        elif self.mutation_type in ['D', 'DEL']:
+        elif self.mutation_type == 'D':
             self.deletion()
         else:
-            raise NotImplementedError
+            raise NotImplementedError('Invalid mutation type')
 
         with open("lut.json", "r", encoding="utf-8") as f:
             complement_dict = load(f)["complement"]
