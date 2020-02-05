@@ -1,4 +1,4 @@
-![PrimerDriver](sdm/static/media/private/PrimerDriver_logo.png)
+![PrimerDriver](https://raw.githubusercontent.com/kvdomingo/primerdriver/master/sdm/static/sdm/media/private/PrimerDriver_logo.png)
 ## Automated design of mutagenic PCR primers
 [![Build Status](https://travis-ci.com/kvdomingo/primerdriver.svg?branch=master)](https://travis-ci.com/kvdomingo/primerdriver)
 
