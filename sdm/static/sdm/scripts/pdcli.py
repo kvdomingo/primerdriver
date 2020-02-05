@@ -27,6 +27,7 @@ def main():
         print('===     PrimerDriver v0.1.2      ===')
         print('======                        ======')
         print('====================================\n')
+        print('(c) 2020 Kenneth Domingo & Nomer Gutierrez\n')
         args_dict['mode'] = input('Enter primer mode [dna/pro/char]: ')
         if args_dict['mode'].upper() == 'DNA':
             args_dict['sequence'] = input('Enter DNA sequence: ')
@@ -48,7 +49,6 @@ def main():
                 raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
         elif args_dict['mode'].upper() == 'CHAR':
             args_dict['sequence'] = input('Enter primer sequence: ')
-            PrimerChecks(args_dict["sequence"]).check_primer_length()
             args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
             args_dict['mismatched_bases'] = input('Enter number of mismatched bases: ')
         else:
@@ -61,46 +61,39 @@ def main():
             PrimerChecks(args.sequence).check_sequence_length()
             PrimerChecks(args.sequence).check_valid_base()
             args_dict['mutation_type'] = args.mutation_type
+            args_dict['position'] = args.position
+            args_dict['destination'] = args.destination
             if args.mutation_type.upper() in ['S', 'SUB']:
                 args_dict['target'] = args.target
-                args_dict['position'] = args.position
-            elif args.mutation_type.upper() in ['I', 'INS']:
-                args_dict['target'] = None
-                args_dict['position'] = args.position
-            elif args_dict['mutation_type'].upper() in ['I', 'INS']:
-                args_dict['target'] = None
             else:
                 raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
-            args_dict['destination'] = args.destination
         else:
             raise NotImplementedError(f"{args_dict['mode']} mode not implemented (yet).")
 
     res = PrimerDesign(**args_dict)
     if args_dict['mode'].upper() == 'CHAR':
         res.characterize_primer()
-        return 0
-    res.main()
-    idx = [
-        'Forward',
-        'Reverse',
-        'GC content',
-        'Melting temp',
-        'Annealing temp',
-        'Length'
-    ]
-    dat = [
-        res.forward, res.rev_compl,
-        f'{res.gc_content*100:.2f}%',
-        f'{res.melt_temp:.2f} C',
-        f'{res.anneal_temp:.2f} C',
-        f'{len(res)} bp'
-    ]
-    df = DataFrame(
-        data=dat,
-        index=idx,
-        dtype=str,
-    )
-    print(df)
+        df = res.df
+    else:
+        res.main()
+        idx = [
+            'Forward',
+            'Reverse',
+            'GC content',
+            'Melting temp',
+            'Length'
+        ]
+        dat = [
+            res.forward, res.rev_compl,
+            f'{res.gc_content*100:.2f}%',
+            f'{res.melt_temp:.2f} C',
+            f'{len(res)} bp'
+        ]
+        df = DataFrame(
+            data=dat,
+            index=idx,
+            dtype=str,
+        )
     save = input("Save? [y/n] ")
     if save.upper() == "Y":
         while True:

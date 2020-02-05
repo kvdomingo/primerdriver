@@ -1,6 +1,8 @@
 from warnings import warn
 from json import load
 from pandas import DataFrame
+from tabulate import tabulate
+from numpy import array
 
 
 class PrimerDesign:
@@ -20,7 +22,8 @@ class PrimerDesign:
         flank3_range=(11, 21),
         terminate_gc=True,
         center_mutation=True,
-        complementary_primers=True
+        primer_mode=0,
+        savename=None
     ):
         self.mode = mode.upper()
         self.sequence = sequence.upper()
@@ -36,16 +39,18 @@ class PrimerDesign:
         self.flank3_range = flank3_range
         self.terminate_gc = terminate_gc
         self.center_mutation = center_mutation
-        self.complementary_primers = complementary_primers
+        self.primer_mode = primer_mode
+        self.savename = savename
 
     def __len__(self):
         return len(self.forward)
 
     def calculate_Tm(self):
         gc_content = int(self.gc_content*100)
+        mismatch = int(self.mismatch*100)
         if self.mutation_type == 'S':
             N = len(self.sequence)
-            self.melt_temp = 81.5 + 0.41*gc_content - 675/N - self.mismatch
+            self.melt_temp = 81.5 + 0.41*gc_content - 675/N - mismatch
         else:
             if self.mutation_type == 'I':
                 N = len(self.sequence)
@@ -84,9 +89,9 @@ class PrimerDesign:
         self.mismatch = self.mismatched_bases/len(seq)
         self.calculate_Tm()
         gc_end = (self.sequence.startswith('G') or self.sequence.startswith('C')) and (self.sequence.endswith('G') or self.sequence.endswith('C'))
-        molweight_fwd = sum(float(mol_weight[b]) for b in seq)
-        molweight_rev = sum(float(mol_weight[b]) for b in rev)
-        idx = [
+        molweight_fwd = sum(float(mol_weight[b])*2 for b in seq)
+        molweight_rev = sum(float(mol_weight[b])*2 for b in rev)
+        col = [
             'Length',
             'GC content',
             'Melting temp',
@@ -96,7 +101,7 @@ class PrimerDesign:
             'Ends in G/C'
         ]
         dat = [
-            primer_length,
+            f'{primer_length} bp',
             f'{self.gc_content*100:.2f}%',
             f'{self.melt_temp:.2f} C',
             f'{molweight_fwd:.2f} Da',
@@ -104,11 +109,16 @@ class PrimerDesign:
             f'{self.mismatch*100:.2f}%',
             gc_end
         ]
-        df = DataFrame(
+        print(tabulate(
+            array([col, dat]).T,
+            headers=['Primer 1'],
+            tablefmt='orgtbl'
+        ))
+        self.df = DataFrame(
             data=dat,
-            index=idx,
+            columns=['Primer 1'],
+            index=col
         )
-        print(df)
 
     def main(self):
         if self.mutation_type == 'S':
@@ -139,24 +149,19 @@ class PrimerChecks:
     def check_valid_base(self):
         unique_bases = set(list(self.sequence.upper()))
         true_bases = {'A', 'C', 'T', 'G'}
-        if len(unique_bases.union(true_bases)) != 4:
-            raise ValueError('DNA sequence contains invalid bases')
+        invalid_bases = unique_bases.symmetric_difference(true_bases)
+        if len(invalid_bases) != 0:
+            warn("Sequence contains invalid bases. Automatically removing...", Warning)
+            for b in invalid_bases:
+                self.sequence = self.sequence.upper().replace(b, "")
         else:
             return 0
 
     def check_sequence_length(self):
         if len(self.sequence) < 40:
-            raise ValueError('DNA sequence is too short')
+            warn('DNA sequence is too short', Warning)
         elif len(self.sequence) > 8000:
-            raise ValueError('DNA sequence is too long')
-        else:
-            return 0
-
-    def check_primer_length(self):
-        if len(self.sequence) < 25:
-            raise ValueError('Primer sequence is too short')
-        elif len(self.sequence) > 45:
-            raise ValueError('Primer sequence is too long')
+            warn('DNA sequence is too long', Warning)
         else:
             return 0
 
