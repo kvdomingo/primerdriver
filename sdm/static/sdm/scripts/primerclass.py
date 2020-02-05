@@ -45,8 +45,7 @@ class PrimerDesign:
         gc_content = int(self.gc_content*100)
         if self.mutation_type == 'S':
             N = len(self.sequence)
-            pc_mismatch = int(self.mismatch * 100)
-            self.melt_temp = 81.5 + 0.41*gc_content - 675/N - pc_mismatch
+            self.melt_temp = 81.5 + 0.41*gc_content - 675/N - self.mismatch
         else:
             if self.mutation_type == 'I':
                 N = len(self.sequence)
@@ -150,6 +149,14 @@ class PrimerChecks:
             raise ValueError('DNA sequence is too short')
         elif len(self.sequence) > 8000:
             raise ValueError('DNA sequence is too long')
+        else:
+            return 0
+
+    def check_primer_length(self):
+        if len(self.sequence) < 25:
+            raise ValueError('Primer sequence is too short')
+        elif len(self.sequence) > 45:
+            raise ValueError('Primer sequence is too long')
         else:
             return 0
 

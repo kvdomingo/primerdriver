@@ -48,6 +48,7 @@ def main():
                 raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
         elif args_dict['mode'].upper() == 'CHAR':
             args_dict['sequence'] = input('Enter primer sequence: ')
+            PrimerChecks(args_dict["sequence"]).check_primer_length()
             args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
             args_dict['mismatched_bases'] = input('Enter number of mismatched bases: ')
         else:
