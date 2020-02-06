@@ -78,7 +78,7 @@ class PrimerDesign:
         self.forward = ''.join(seq)
 
     def characterize_primer(self):
-        with open("lut.json", "r", encoding="utf-8") as f:
+        with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             lut = load(f)
         mol_weight = lut["mol_weight"]
         complement_dict = lut["complement"]
@@ -109,11 +109,11 @@ class PrimerDesign:
             f'{self.mismatch*100:.2f}%',
             gc_end
         ]
-        print(tabulate(
+        print('\n', tabulate(
             array([col, dat]).T,
             headers=['Primer 1'],
             tablefmt='orgtbl'
-        ))
+        ), sep="")
         self.df = DataFrame(
             data=dat,
             columns=['Primer 1'],
@@ -130,7 +130,7 @@ class PrimerDesign:
         else:
             raise NotImplementedError('Invalid mutation type')
 
-        with open("lut.json", "r", encoding="utf-8") as f:
+        with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             complement_dict = load(f)["complement"]
         self.rev_compl = ''.join([complement_dict[b] for b in list(self.forward[::-1])])
         self.gc_content = (self.forward.count('G') + self.forward.count('C'))/len(self.forward)
