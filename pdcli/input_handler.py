@@ -1,3 +1,9 @@
+from .primerclass import *
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.Alphabet import IUPAC
+from Bio.SeqRecord import SeqRecord
+
 def singleCommand_handler(args):
     args_dict = dict()
     args_dict['mode'] = args.mode
@@ -12,6 +18,18 @@ def singleCommand_handler(args):
             args_dict['target'] = args.target
         else:
             raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
+    elif args.mode.upper() == 'CHAR':
+        if args.sequence.endswith('.txt'):
+            with open(args.sequence, 'r', encoding='utf-8') as f:
+                args_dict['sequence'] = f.read().strip()
+        elif args.sequence.endswith('.fasta'):
+            with open(args.sequence, 'r', encoding='utf-8') as f:
+                args_dict['sequence'] = list(SeqIO.parse(f, 'fasta'))[0].seq.strip()
+        else:
+            args_dict['sequence'] = args.sequence
+        PrimerChecks(args.sequence).check_valid_base()
+        args_dict['mutation_type'] = args.mutation_type
+        args_dict['mismatched_bases'] = args.position
     else:
         raise NotImplementedError(f"{args_dict['mode']} mode not implemented (yet).")
     return args_dict

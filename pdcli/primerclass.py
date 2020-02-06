@@ -13,7 +13,7 @@ class PrimerDesign:
         mutation_type,
         mismatched_bases=None,
         target=None,
-        destination=None,
+        replacement=None,
         position=None,
         Tm_range=(75, 85),
         length_range=(25, 45),
@@ -29,7 +29,7 @@ class PrimerDesign:
         self.sequence = sequence.upper()
         self.mutation_type = mutation_type[0].upper()
         self.mismatched_bases = int(mismatched_bases) if mismatched_bases is not None else None
-        self.destination = destination.upper() if destination is not None else None
+        self.replacement = replacement.upper() if replacement is not None else None
         self.position = int(position) if position is not None else None
         self.target = target.upper() if target is not None else None
         self.Tm_range = Tm_range
@@ -55,21 +55,21 @@ class PrimerDesign:
             if self.mutation_type == 'I':
                 N = len(self.sequence)
             else:
-                N = len(self.sequence) - len(self.destination)
+                N = len(self.sequence) - len(self.replacement)
             self.melt_temp = 81.5 + 0.41*gc_content - 675/N
 
     def substitution(self):
         seq = list(self.sequence)
         if self.target != seq[self.position-1]:
             raise ValueError('Sequence position does not match target base')
-        seq[self.position-1] = self.destination
+        seq[self.position-1] = self.replacement
         self.forward = ''.join(seq)
 
     def insertion(self):
-        if not self.destination:
-            raise RuntimeError('Insertion mutation requires destination')
+        if not self.replacement:
+            raise RuntimeError('Insertion mutation requires replacement')
         seq = list(self.sequence)
-        seq[self.position-1:self.position-1] = self.destination
+        seq[self.position-1:self.position-1] = self.replacement
         self.forward = ''.join(seq)
 
     def deletion(self):
@@ -104,8 +104,8 @@ class PrimerDesign:
             f'{primer_length} bp',
             f'{self.gc_content*100:.2f}%',
             f'{self.melt_temp:.2f} C',
-            f'{molweight_fwd:.2f} Da',
-            f'{molweight_rev:.2f} Da',
+            f'{molweight_fwd:.2f} g/mol',
+            f'{molweight_rev:.2f} g/mol',
             f'{self.mismatch*100:.2f}%',
             gc_end
         ]
@@ -134,7 +134,7 @@ class PrimerDesign:
             complement_dict = load(f)["complement"]
         self.rev_compl = ''.join([complement_dict[b] for b in list(self.forward[::-1])])
         self.gc_content = (self.forward.count('G') + self.forward.count('C'))/len(self.forward)
-        self.mismatch = len(self.destination)/len(self.forward)
+        self.mismatch = len(self.replacement)/len(self.forward)
 
         if self.mutation_type in ['S', 'SUB']:
             self.Tm_subsitution()
@@ -150,6 +150,7 @@ class PrimerChecks:
         unique_bases = set(list(self.sequence.upper()))
         true_bases = {'A', 'C', 'T', 'G'}
         invalid_bases = unique_bases.symmetric_difference(true_bases)
+        print(invalid_bases)
         if len(invalid_bases) != 0:
             warn("Sequence contains invalid bases. Automatically removing...", Warning)
             for b in invalid_bases:

@@ -10,7 +10,6 @@
 
 ## Command line interface
 You can access and download all the CLI releases [here](https://github.com/kvdomingo/primerdriver/releases).
-The latest scripts can be accessed directly [here](sdm/static/sdm/scripts).
 
 ## Web application
 The updated website can be accessed via https://primerdriver.herokuapp.com/.

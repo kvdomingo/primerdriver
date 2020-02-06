@@ -1,11 +1,6 @@
 import os
 from datetime import datetime
 from argparse import ArgumentParser
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
-from Bio.SeqRecord import SeqRecord
-from pdcli.primerclass import *
 from pdcli.input_handler import *
 
 
@@ -15,7 +10,7 @@ def main():
     parser.add_argument('-s', '--sequence', help='Template DNA sequence', type=str)
     parser.add_argument('-m', '--mutation-type', help='Mutation type', type=str)
     parser.add_argument('-t', '--target', help='Target base', type=str)
-    parser.add_argument('-d', '--destination', help='Replacement for target base', type=str)
+    parser.add_argument('-r', '--replacement', help='Replacement for target base', type=str)
     parser.add_argument('-p', '--position', help='Target base position', type=int)
     parser.add_argument('-i', '--interactive', help='Interactive mode', action='store_true')
     args = parser.parse_args()
