@@ -11,7 +11,11 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.19.2",
+    "js-yaml": "^3.13.1",
     "mdbvue": "^6.4.0",
+    "mem": "^6.0.1",
+    "serialize-javascript": "^2.1.2",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
@@ -58,8 +62,8 @@
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
     "webpack": "^3.6.0",
-    "webpack-bundle-analyzer": "^2.9.0",
-    "webpack-dev-server": "^2.9.1",
+    "webpack-bundle-analyzer": "^2.13.1",
+    "webpack-dev-server": "^2.11.5",
     "webpack-merge": "^4.1.0"
   },
   "engines": {
