@@ -30,7 +30,11 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ['DEBUG']))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'primerx-dev.herokuapp.com',
+    'primerdriver.herokuapp.com',
+    'localhost',
+]
 
 
 # Application definition
@@ -43,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework_jwt',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +66,7 @@ ROOT_URLCONF = 'primerx.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR)],
+        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR), os.path.join(BASE_DIR, 'pdforms/dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'primerx.jinja2.environment',
@@ -85,6 +91,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'primerx.wsgi.application'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'pdforms/dist/static')
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

@@ -8,7 +8,7 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
 
 ## Requirements
-- Python 3.6
+- Python 3.6+
 - BioPython
 - Numpy
 - Pandas
