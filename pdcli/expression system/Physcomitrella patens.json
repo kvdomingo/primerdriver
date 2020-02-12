@@ -1,0 +1,23 @@
+{
+    "*": "UAG",
+    "A": "GCU",
+    "C": "UGC",
+    "D": "GAU",
+    "E": "GAG",
+    "F": "UUC",
+    "G": "GGA",
+    "H": "CAC",
+    "I": "AUC",
+    "K": "AAG",
+    "L": "UUG",
+    "M": "AUG",
+    "N": "AAC",
+    "P": "CCU",
+    "Q": "CAG",
+    "R": "AGG",
+    "S": "UCU",
+    "T": "ACU",
+    "V": "GUG",
+    "W": "UGG",
+    "Y": "UAC"
+}
