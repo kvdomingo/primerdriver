@@ -22,6 +22,11 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/js/mdb.min.js"></script>
+    {% if settings.DEBUG %}
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    {% else %}
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    {% endif %}
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <title>{% block title %}{% endblock %} | PrimerDriver</title>
     <style>
@@ -44,16 +49,6 @@
                 <li class="nav-item {{ 'active' if active_page == 'index' }}">
                     <a class="nav-link" href="{{ url('index') }}">Home</a>
                 </li>
-                <li class="nav-item dropdown {{ 'active' if active_page == 'design' }}">
-                    <a class="nav-link" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="#">Design</a>
-                    <div class="dropdown-menu dropdown-default dropdown-menu-right float-right" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">DNA-based</a>
-                        <a class="dropdown-item" href="#">Protein-based</a>
-                    </div>
-                </li>
-                <li class="nav-item {{ 'active' if active_page == 'character' }}">
-                    <a class="nav-link" href="#">Characterization</a>
-                </li>
                 <li class="nav-item {{ 'active' if active_page == 'download' }}">
                     <a class="nav-link" href="https://github.com/kvdomingo/primerdriver/releases" target="_blank">Download</a>
                 </li>
@@ -69,8 +64,8 @@
 
     {% block body %}{% endblock %}
 
-    <footer class="page-footer font-small blue-grey lighten-5">
-        <div class="footer-copyright py-3 px-3">
+    <footer class="page-footer font-small bg-dark">
+        <div class="footer-copyright text-center py-3 px-3">
             &copy; {{ now.year }} <a href="mailto:kvdomingo@up.edu.ph">Kenneth Domingo</a> &amp; <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>
         </div>
     </footer>

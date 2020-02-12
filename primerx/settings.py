@@ -68,7 +68,7 @@ ROOT_URLCONF = 'primerx.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR), os.path.join(BASE_DIR, 'lrtstation/dist')],
+        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR)],
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'primerx.jinja2.environment',
@@ -92,10 +92,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'primerx.wsgi.application'
-
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'lrtstation/dist/static')
-# ]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
