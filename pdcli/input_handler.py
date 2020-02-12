@@ -7,6 +7,8 @@ from Bio.SeqRecord import SeqRecord
 def singleCommand_handler(args):
     args_dict = dict()
     args_dict['mode'] = args.mode
+    if args.save:
+        args_dict['savename'] = args.save
     if args.mode.upper() =='DNA':
         args_dict['sequence'] = args.sequence
         PrimerChecks(args.sequence).check_sequence_length()

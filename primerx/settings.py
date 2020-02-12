@@ -48,12 +48,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_jwt',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -61,12 +62,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
 ROOT_URLCONF = 'primerx.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR), os.path.join(BASE_DIR, 'pdforms/dist')],
+        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR), os.path.join(BASE_DIR, 'lrtstation/dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'primerx.jinja2.environment',
@@ -91,9 +93,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'primerx.wsgi.application'
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'pdforms/dist/static')
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'lrtstation/dist/static')
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
