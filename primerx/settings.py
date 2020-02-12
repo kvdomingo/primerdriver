@@ -93,9 +93,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'primerx.wsgi.application'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'lrtstation/dist/static')
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'lrtstation/dist/static')
+# ]
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
