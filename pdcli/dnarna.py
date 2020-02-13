@@ -104,26 +104,3 @@ convert = {
         }
     }
 }
-
-dna = input("Enter DNA sequence: ")
-dna = dna.upper()
-rna = []
-for p in range(0,len(dna)):
-	if dna[p] == 'A':
-			rna.append('A')
-	if dna[p] == 'T':
-		rna.append('U')
-	if dna[p] == 'G':
-		rna.append('G')
-	if dna[p] == 'C':
-		rna.append('C')
-else:
-	print("The RNA sequence is: ", "".join(rna))
-
-n = 3
-out = [(rna[i:i+n]) for i in range(0, len(rna), n) if len(rna[i:i+n])==3] 
-
-protein = []
-for i in out:
-	protein.append(convert[i[0]][i[1]][i[2]])
-print("The protein sequence is: ", "".join(protein))
