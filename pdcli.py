@@ -49,8 +49,10 @@ def main():
     else:
         raise NotImplementedError
 
-    if args_dict['savename']:
+    if 'savename' in args_dict.keys():
         savename = args_dict['savename']
+
+    print(df)
 
     if args.interactive:
         interactive_saver(res, df)

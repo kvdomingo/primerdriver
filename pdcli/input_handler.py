@@ -15,7 +15,7 @@ def singleCommand_handler(args):
         PrimerChecks(args.sequence).check_valid_base()
         args_dict['mutation_type'] = args.mutation_type
         args_dict['position'] = args.position
-        args_dict['destination'] = args.destination
+        args_dict['replacement'] = args.replacement
         if args.mutation_type.upper() in ['S', 'SUB']:
             args_dict['target'] = args.target
         else:
@@ -53,15 +53,15 @@ def interactive_handler():
         args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
         if args_dict['mutation_type'].upper() in ['S', 'SUB']:
             args_dict['target'] = input('Enter target base: ')
-            args_dict['destination'] = input('Enter replacement for target base: ')
+            args_dict['replacement'] = input('Enter replacement for target base: ')
             args_dict['position'] = int(input('Enter position of target: '))
         elif args_dict['mutation_type'].upper() in ['I', 'INS']:
             args_dict['target'] = None
-            args_dict['destination'] = input('Enter insertion sequence: ')
+            args_dict['replacement'] = input('Enter insertion sequence: ')
             args_dict['position'] = int(input('Enter insertion position: '))
         elif args_dict['mutation_type'].upper() in ['I', 'INS']:
             args_dict['target'] = None
-            args_dict['destination'] = input('Enter starting position to delete: ')
+            args_dict['replacement'] = input('Enter starting position to delete: ')
         else:
             raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
     elif args_dict['mode'].upper() == 'CHAR':

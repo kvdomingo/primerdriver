@@ -42,6 +42,11 @@ class PrimerDesign:
         self.primer_mode = primer_mode
         self.savename = savename
 
+        with open("pdcli/lut.json", "r", encoding="utf-8") as f:
+            lut = load(f)
+        self.mol_weight = lut["mol_weight"]
+        self.complement_dict = lut["complement"]
+
     def __len__(self):
         return len(self.forward)
 
@@ -78,10 +83,8 @@ class PrimerDesign:
         self.forward = ''.join(seq)
 
     def characterize_primer(self):
-        with open("pdcli/lut.json", "r", encoding="utf-8") as f:
-            lut = load(f)
-        mol_weight = lut["mol_weight"]
-        complement_dict = lut["complement"]
+        mol_weight = self.lut["mol_weight"]
+        complement_dict = self.lut["complement"]
         seq = list(self.sequence)
         rev = [complement_dict[b] for b in seq][::-1]
         primer_length = len(seq)
@@ -137,9 +140,41 @@ class PrimerDesign:
         self.mismatch = len(self.replacement)/len(self.forward)
 
         if self.mutation_type in ['S', 'SUB']:
-            self.Tm_subsitution()
+            self.calculate_Tm()
         else:
             self.Tm_insdel()
+
+        molweight_fwd = sum(float(self.mol_weight[b])*2 for b in self.forward)
+        molweight_rev = sum(float(self.mol_weight[b])*2 for b in self.rev_compl)
+        if self.mode not in ['C', 'CHAR']:
+            col = [
+                'Forward',
+                'Reverse',
+                'GC content',
+                'Mol. weight (fwd)',
+                'Mol. weight (rev)',
+                'Melting temp.',
+                'Length'
+            ]
+            dat = [
+                f'{self.forward}',
+                f'{self.rev_compl}',
+                f'{self.gc_content*100:.2f}%',
+                f'{molweight_fwd:.2f} g/mol',
+                f'{molweight_rev:.2f} g/mol',
+                f'{self.melt_temp:.2f} C',
+                f'{len(self.forward)} bp'
+            ]
+            print('\n', tabulate(
+                array([col, dat]).T,
+                headers=['Primer 1'],
+                tablefmt='orgtbl'
+            ), sep="")
+            self.df = DataFrame(
+                data=dat,
+                columns=['Primer 1'],
+                index=col
+            )
 
 
 class PrimerChecks:
@@ -163,8 +198,6 @@ class PrimerChecks:
             warn('DNA sequence is too short', Warning)
         elif len(self.sequence) > 8000:
             warn('DNA sequence is too long', Warning)
-        else:
-            return 0
 
     def check_gc_content(self):
         seq = list(self.sequence)
@@ -173,5 +206,3 @@ class PrimerChecks:
             warn("GC content is less than 40%", Warning)
         elif gc > 0.60:
             warn('GC content is greater than 60%', Warning)
-        else:
-            return 0
