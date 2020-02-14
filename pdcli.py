@@ -51,13 +51,14 @@ def main():
 
     if 'savename' in args_dict.keys():
         savename = args_dict['savename']
-
-    print(df)
+    else:
+        savename = None
 
     if args.interactive:
         interactive_saver(res, df)
     else:
-        singleCommand_saver(res, df, savename)
+        if savename is not None:
+            singleCommand_saver(res, df, savename)
 
     return 0
 

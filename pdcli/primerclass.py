@@ -41,57 +41,46 @@ class PrimerDesign:
         self.center_mutation = center_mutation
         self.primer_mode = primer_mode
         self.savename = savename
-
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             lut = load(f)
-        self.mol_weight = lut["mol_weight"]
-        self.complement_dict = lut["complement"]
+        self.lut = lut
 
-    def __len__(self):
-        return len(self.forward)
+    def calculate_gc_content(self, seq):
+        return (seq.count('G') + seq.count('C'))/len(seq)
 
-    def calculate_Tm(self):
-        gc_content = int(self.gc_content*100)
-        mismatch = int(self.mismatch*100)
+    def calculate_mismatch(self, seq):
+        return self.mismatched_bases/len(seq)
+
+    def get_reverse_complement(self, seq):
+        seq = list(seq)
+        return [self.lut["complement"][b] for b in seq][::-1]
+
+    def is_gc_end(self, seq):
+        return (self.sequence.startswith('G') or self.sequence.startswith('C')) and (self.sequence.endswith('G') or self.sequence.endswith('C'))
+
+    def calculate_Tm(self, seq):
+        gc_content = int(self.calculate_gc_content(seq)*100)
+        mismatch = int(self.calculate_mismatch(seq)*100)
         if self.mutation_type == 'S':
             N = len(self.sequence)
-            self.melt_temp = 81.5 + 0.41*gc_content - 675/N - mismatch
+            return 81.5 + 0.41*gc_content - 675/N - mismatch
         else:
             if self.mutation_type == 'I':
                 N = len(self.sequence)
             else:
                 N = len(self.sequence) - len(self.replacement)
-            self.melt_temp = 81.5 + 0.41*gc_content - 675/N
-
-    def substitution(self):
-        seq = list(self.sequence)
-        if self.target != seq[self.position-1]:
-            raise ValueError('Sequence position does not match target base')
-        seq[self.position-1] = self.replacement
-        self.forward = ''.join(seq)
-
-    def insertion(self):
-        if not self.replacement:
-            raise RuntimeError('Insertion mutation requires replacement')
-        seq = list(self.sequence)
-        seq[self.position-1:self.position-1] = self.replacement
-        self.forward = ''.join(seq)
-
-    def deletion(self):
-        seq = list(self.sequence)
-        del seq[self.position-1]
-        self.forward = ''.join(seq)
+            return 81.5 + 0.41*gc_content - 675/N
 
     def characterize_primer(self):
         mol_weight = self.lut["mol_weight"]
         complement_dict = self.lut["complement"]
         seq = list(self.sequence)
-        rev = [complement_dict[b] for b in seq][::-1]
+        rev = self.get_reverse_complement(self.sequence)
         primer_length = len(seq)
-        self.gc_content = (seq.count('G') + seq.count('C'))/len(seq)
-        self.mismatch = self.mismatched_bases/len(seq)
-        self.calculate_Tm()
-        gc_end = (self.sequence.startswith('G') or self.sequence.startswith('C')) and (self.sequence.endswith('G') or self.sequence.endswith('C'))
+        gc_content = self.calculate_gc_content(seq)
+        mismatch = self.calculate_mismatch(seq)
+        melt_temp = self.calculate_Tm(seq)
+        gc_end = self.is_gc_end(seq)
         molweight_fwd = sum(float(mol_weight[b])*2 for b in seq)
         molweight_rev = sum(float(mol_weight[b])*2 for b in rev)
         col = [
@@ -105,11 +94,11 @@ class PrimerDesign:
         ]
         dat = [
             f'{primer_length} bp',
-            f'{self.gc_content*100:.2f}%',
-            f'{self.melt_temp:.2f} C',
+            f'{gc_content*100:.2f}%',
+            f'{melt_temp:.2f} C',
             f'{molweight_fwd:.2f} g/mol',
             f'{molweight_rev:.2f} g/mol',
-            f'{self.mismatch*100:.2f}%',
+            f'{mismatch*100:.2f}%',
             gc_end
         ]
         print('\n', tabulate(
@@ -123,8 +112,14 @@ class PrimerDesign:
             index=col
         )
 
+    def dna_based(self):
+        pass
+
+    def protein_based(self):
+        pass
+
     def cut(self):
-        #sequence 
+        #sequence
         for f in range(*self.flank5_range):
             self.cut = self.sequence[self.position-1-f: self.position-1+f]
             SequenceChecks(self.cut)
@@ -133,63 +128,13 @@ class PrimerDesign:
         #forward sequence with mutation at the middle
         #return value
 
-
-
     def main(self):
-        self.original = self.sequence
-        self.sequence = cut()
-
-        if self.mutation_type == 'S':
-            self.substitution()
-        elif self.mutation_type == 'I':
-            self.insertion()
-        elif self.mutation_type == 'D':
-            self.deletion()
-        else:
-            raise NotImplementedError('Invalid mutation type')
-
-        with open("pdcli/lut.json", "r", encoding="utf-8") as f:
-            complement_dict = load(f)["complement"]
-        self.rev_compl = ''.join([complement_dict[b] for b in list(self.forward[::-1])])
-        self.gc_content = (self.forward.count('G') + self.forward.count('C'))/len(self.forward)
-        self.mismatch = len(self.replacement)/len(self.forward)
-
-        if self.mutation_type in ['S', 'SUB']:
-            self.calculate_Tm()
-        else:
-            self.Tm_insdel()
-
-        molweight_fwd = sum(float(self.mol_weight[b])*2 for b in self.forward)
-        molweight_rev = sum(float(self.mol_weight[b])*2 for b in self.rev_compl)
-        if self.mode not in ['C', 'CHAR']:
-            col = [
-                'Forward',
-                'Reverse',
-                'GC content',
-                'Mol. weight (fwd)',
-                'Mol. weight (rev)',
-                'Melting temp.',
-                'Length'
-            ]
-            dat = [
-                f'{self.forward}',
-                f'{self.rev_compl}',
-                f'{self.gc_content*100:.2f}%',
-                f'{molweight_fwd:.2f} g/mol',
-                f'{molweight_rev:.2f} g/mol',
-                f'{self.melt_temp:.2f} C',
-                f'{len(self.forward)} bp'
-            ]
-            print('\n', tabulate(
-                array([col, dat]).T,
-                headers=['Primer 1'],
-                tablefmt='orgtbl'
-            ), sep="")
-            self.df = DataFrame(
-                data=dat,
-                columns=['Primer 1'],
-                index=col
-            )
+        if self.mode == 'CHAR':
+            self.characterize_primer()
+        elif self.mode == 'DNA':
+            self.dna_based()
+        elif self.mode == 'PRO':
+            self.protein_based()
 
 
 class PrimerChecks:
@@ -231,7 +176,7 @@ class SequenceChecks:
             return False
         else:
             return True
-        
+
     def check_gc_content(self,gc_range):
         seq = list(self.sequence)
         gc = (seq.count('C') + seq.count('G'))/len(seq)
@@ -242,8 +187,8 @@ class SequenceChecks:
 
     def check_Tm(self,Tm_range):
         seq = list(self.sequence)
-        gc = (seq.count('C') + seq.count('G'))/len(seq)
-        if gc < gc_range[0] and gc > gc_range[1]:
+        Tm = (seq.count('C') + seq.count('G'))/len(seq)
+        if Tm < Tm_range[0] and Tm > Tm_range[1]:
             return False
         else:
             return True
