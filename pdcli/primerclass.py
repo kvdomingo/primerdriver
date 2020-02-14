@@ -123,7 +123,22 @@ class PrimerDesign:
             index=col
         )
 
+    def cut(self):
+        #sequence 
+        for f in range(*self.flank5_range):
+            self.cut = self.sequence[self.position-1-f: self.position-1+f]
+            SequenceChecks(self.cut)
+            calculate_Tm()
+        #find primer sequences with mutation w/ min max primer length
+        #forward sequence with mutation at the middle
+        #return value
+
+
+
     def main(self):
+        self.original = self.sequence
+        self.sequence = cut()
+
         if self.mutation_type == 'S':
             self.substitution()
         elif self.mutation_type == 'I':
@@ -206,3 +221,29 @@ class PrimerChecks:
             warn("GC content is less than 40%", Warning)
         elif gc > 0.60:
             warn('GC content is greater than 60%', Warning)
+
+class SequenceChecks:
+    def __init__(self, sequence):
+        self.sequence = sequence
+
+    def check_sequence_length(self,length_range):
+        if len(self.sequence) < length_range[0] and len(self.sequence) > length_range[1]:
+            return False
+        else:
+            return True
+        
+    def check_gc_content(self,gc_range):
+        seq = list(self.sequence)
+        gc = (seq.count('C') + seq.count('G'))/len(seq)
+        if gc < gc_range[0] and gc > gc_range[1]:
+            return False
+        else:
+            return True
+
+    def check_Tm(self,Tm_range):
+        seq = list(self.sequence)
+        gc = (seq.count('C') + seq.count('G'))/len(seq)
+        if gc < gc_range[0] and gc > gc_range[1]:
+            return False
+        else:
+            return True
