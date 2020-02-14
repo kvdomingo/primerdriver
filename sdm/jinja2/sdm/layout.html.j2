@@ -2,7 +2,7 @@
 <html lang="en" style="scroll-behavior: smooth">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
     <meta name="description" content="PrimerDriver: Automated design of mutagenic primers for site-directed mutagenesis" />
     <meta name="author" content="Kenneth V. Domingo, Nomer Gutierrez">
     <meta name="keywords" content="PrimerDriver, site-directed mutagenesis, PCR, primer design, mutagenic" />
@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" />
     <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"> -->
     <link href="https://fonts.googleapis.com/css?family=Oxygen&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/css/mdb.min.css" rel="stylesheet" />
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -27,6 +28,10 @@
     {% else %}
         <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     {% endif %}
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js" rel="stylesheet">
+    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <title>{% block title %}{% endblock %} | PrimerDriver</title>
     <style>
@@ -54,9 +59,6 @@
                 </li>
                 <li class="nav-item {{ 'active' if active_page == 'docu' }}">
                     <a class="nav-link" href="#">Documentation</a>
-                </li>
-                <li class="nav-item {{ 'active' if active_page == 'links' }}">
-                    <a class="nav-link" href="#">Links</a>
                 </li>
             </ul>
         </div>

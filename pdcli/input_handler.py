@@ -4,6 +4,9 @@ from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
 from Bio.SeqRecord import SeqRecord
 
+
+__version__ = '0.1.2'
+
 def singleCommand_handler(args):
     args_dict = dict()
     args_dict['mode'] = args.mode
@@ -41,7 +44,7 @@ def interactive_handler():
     print('')
     print('====================================')
     print('======                        ======')
-    print('===     PrimerDriver v0.1.2      ===')
+    print(f'===     PrimerDriver v{__version__}      ===')
     print('======                        ======')
     print('====================================\n')
     print('(c) 2020 Kenneth Domingo & Nomer Gutierrez\n')

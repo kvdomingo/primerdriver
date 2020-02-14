@@ -30,14 +30,46 @@
 
 
 <!-- LRT Station -->
-<div class="container text-left py-5" id="LRTstation">
-    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(45deg)"></img><br />
-    <img src="{{ static('sdm/media/private/gps.png') }}" height="100"></img><br />
-    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(-90deg)"></img><br />
-    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(-160deg) saturate(200%)"></img><br />
-    <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(140deg) saturate(200%)"></img><br />
+<div id="LRTstation" class="container text-left py-5" style="height: 800px">
+    <form class="text-center border border-light p-5" method="post" action="#!">
+        <div v-if="step === 0">
+            <h2 class="h2-responsive">Choose your path</h2><br /><br />
+            <a @click.prevent="next()">
+                <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(45deg)" alt="Primer characterization"></img>
+            </a><br />
+            <img src="{{ static('sdm/media/private/gps.png') }}" height="100"></img><br />
+            <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(-90deg)"></img><br />
+            <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(-160deg) saturate(200%)"></img><br />
+            <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(140deg) saturate(200%)"></img><br />
+        </div>
+        <div v-if="step === 1">
+            <h2 class="h2-responsive">Primer Characterization</h2><br />
+            <div class="md-form">
+                <v-textarea counter label="Primer sequence"></v-textarea>
+                <!-- <textarea id="sequence" class="md-textarea form-control" rows="1"></textarea>
+                <label for="sequence">Primer sequence</label> -->
+            </div>
+            <div class="md-form text-left">
+                <!-- <input id="mismatched_bases" class="form-control" type="number" />
+                <label for="mismatched_bases">Mismatched bases</label> -->
+                <v-text-field type="number" value="0" label="Mismatched bases"></v-text-field>
+            </div>
+            <div class="md-form text-left">
+                <select class="browser-default custom-select" id="mutation_type">
+                    <option selected>Mutation type</option>
+                    <option value="sub">Substitution</option>
+                    <option value="int">Insertion</option>
+                    <option value="del">Deletion</option>
+                </select>
+                <!-- <v-select v-model="select" :items="items" label="Mutation type" required></v-select> -->
+            </div>
+            <button @click.prevent="prev()" type="button" class="btn btn-indigo btn-rounded">Previous</button>
+            <button type="button" class="btn btn-indigo btn-rounded">Next</button>
+        </div>
+    </form>
 </div>
 
 <script src="{{ static('sdm/js/train.js') }}"></script>
+<script src="{{ static('sdm/js/main.js') }}"></script>
 
 {% endblock %}
