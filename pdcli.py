@@ -24,41 +24,45 @@ def main():
 
     res = PrimerDesign(**args_dict)
     if args_dict['mode'].upper() == 'CHAR':
-        res.characterize_primer()
+        res.characterize_primer(
+            args_dict['sequence'],
+            args_dict['mutation_type'],
+            args_dict['mismatched_bases']
+        )
         df = res.df
     elif args_dict['mode'].upper() == 'DNA':
         res.main()
-        idx = [
-            'Forward',
-            'Reverse',
-            'GC content',
-            'Melting temp',
-            'Length'
-        ]
-        dat = [
-            res.forward, res.rev_compl,
-            f'{res.gc_content*100:.2f}%',
-            f'{res.melt_temp:.2f} C',
-            f'{len(res)} bp'
-        ]
-        df = DataFrame(
-            data=dat,
-            index=idx,
-            dtype=str,
-        )
+        # idx = [
+        #     'Forward',
+        #     'Reverse',
+        #     'GC content',
+        #     'Melting temp',
+        #     'Length'
+        # ]
+        # dat = [
+        #     res.forward, res.rev_compl,
+        #     f'{res.gc_content*100:.2f}%',
+        #     f'{res.melt_temp:.2f} C',
+        #     f'{len(res)} bp'
+        # ]
+        # df = DataFrame(
+        #     data=dat,
+        #     index=idx,
+        #     dtype=str,
+        # )
     else:
         raise NotImplementedError
 
-    if 'savename' in args_dict.keys():
-        savename = args_dict['savename']
-    else:
-        savename = None
-
-    if args.interactive:
-        interactive_saver(res, df)
-    else:
-        if savename is not None:
-            singleCommand_saver(res, df, savename)
+    # if 'savename' in args_dict.keys():
+    #     savename = args_dict['savename']
+    # else:
+    #     savename = None
+    #
+    # if args.interactive:
+    #     interactive_saver(res, df)
+    # else:
+    #     if savename is not None:
+    #         singleCommand_saver(res, df, savename)
 
     return 0
 

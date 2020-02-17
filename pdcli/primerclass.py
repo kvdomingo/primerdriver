@@ -48,8 +48,8 @@ class PrimerDesign:
     def calculate_gc_content(self, seq):
         return (seq.count('G') + seq.count('C'))/len(seq)
 
-    def calculate_mismatch(self, seq):
-        return self.mismatched_bases/len(seq)
+    def calculate_mismatch(self, seq, mismatched_bases):
+        return mismatched_bases/len(seq)
 
     def get_reverse_complement(self, seq):
         seq = list(seq)
@@ -58,32 +58,34 @@ class PrimerDesign:
     def is_gc_end(self, seq):
         return (self.sequence.startswith('G') or self.sequence.startswith('C')) and (self.sequence.endswith('G') or self.sequence.endswith('C'))
 
-    def calculate_Tm(self, seq):
-        gc_content = int(self.calculate_gc_content(seq)*100)
-        mismatch = int(self.calculate_mismatch(seq)*100)
-        if self.mutation_type == 'S':
-            N = len(self.sequence)
+    def calculate_Tm(self, seq, mutation_type, replacement, gc_content, mismatch):
+        gc_content = int(gc_content*100)
+        mismatch = int(mismatch*100)
+        if mutation_type == 'S':
+            N = len(seq)
             return 81.5 + 0.41*gc_content - 675/N - mismatch
         else:
-            if self.mutation_type == 'I':
-                N = len(self.sequence)
+            if mutation_type == 'I':
+                N = len(seq)
             else:
-                N = len(self.sequence) - len(self.replacement)
+                N = len(seq) - len(replacement)
             return 81.5 + 0.41*gc_content - 675/N
 
-    def characterize_primer(self):
+    def characterize_primer(self, sequence, mutation_type, replacement, mismatched_bases, index=None):
         mol_weight = self.lut["mol_weight"]
         complement_dict = self.lut["complement"]
-        seq = list(self.sequence)
-        rev = self.get_reverse_complement(self.sequence)
+        seq = list(sequence)
+        rev = self.get_reverse_complement(sequence)
         primer_length = len(seq)
         gc_content = self.calculate_gc_content(seq)
-        mismatch = self.calculate_mismatch(seq)
-        melt_temp = self.calculate_Tm(seq)
+        mismatch = self.calculate_mismatch(seq, mismatched_bases)
+        melt_temp = self.calculate_Tm(seq, mutation_type, replacement, gc_content, mismatch)
         gc_end = self.is_gc_end(seq)
         molweight_fwd = sum(float(mol_weight[b])*2 for b in seq)
         molweight_rev = sum(float(mol_weight[b])*2 for b in rev)
         col = [
+            'Forward',
+            'Reverse',
             'Length',
             'GC content',
             'Melting temp',
@@ -93,6 +95,8 @@ class PrimerDesign:
             'Ends in G/C'
         ]
         dat = [
+            f'{sequence}',
+            f'{"".join(rev)}',
             f'{primer_length} bp',
             f'{gc_content*100:.2f}%',
             f'{melt_temp:.2f} C',
@@ -101,9 +105,11 @@ class PrimerDesign:
             f'{mismatch*100:.2f}%',
             gc_end
         ]
+        if index == None:
+            index = 1
         print('\n', tabulate(
             array([col, dat]).T,
-            headers=['Primer 1'],
+            headers=[f'Primer {index}'],
             tablefmt='orgtbl'
         ), sep="")
         self.df = DataFrame(
@@ -112,25 +118,45 @@ class PrimerDesign:
             index=col
         )
 
+
+    def substitution(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
+        valid_primers = []
+        seq = list(sequence)
+        seq[start_position-1] = replacement
+        for f5 in range(*self.flank5_range):
+            for f3 in range(*self.flank3_range):
+                if abs(f5 - f3) > 1:
+                    continue
+                candidate = seq[start_position-1-f5 : start_position+f3]
+                candidate = ''.join(candidate)
+                if len(candidate) == 0:
+                    continue
+                sc = SequenceChecks(candidate)
+                valid_gc = sc.check_gc_content(self.gc_range)
+                valid_temp = sc.check_Tm(self.Tm_range)
+                valid_ends = sc.check_ends_gc(self.terminate_gc)
+                valid_length = sc.check_sequence_length(self.length_range)
+                if valid_gc and valid_temp and valid_ends and valid_length:
+                    valid_primers.append(candidate)
+        if len(valid_primers) > 0:
+            print(f"\nGenerated primers: {len(valid_primers)}")
+            for i, p in enumerate(valid_primers):
+                self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1)
+        else:
+            print("No valid primers found")
+
     def dna_based(self):
-        pass
+        if self.mutation_type in ['S', 'SUB']:
+            if self.mismatched_bases is None:
+                self.mismatched_bases = len(self.replacement)
+            result = self.substitution(self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases)
 
     def protein_based(self):
         pass
 
-    def cut(self):
-        #sequence
-        for f in range(*self.flank5_range):
-            self.cut = self.sequence[self.position-1-f: self.position-1+f]
-            SequenceChecks(self.cut)
-            calculate_Tm()
-        #find primer sequences with mutation w/ min max primer length
-        #forward sequence with mutation at the middle
-        #return value
-
     def main(self):
         if self.mode == 'CHAR':
-            self.characterize_primer()
+            self.characterize_primer(self.sequence, self.mutation_type, self.replacement, self.mismatched_bases)
         elif self.mode == 'DNA':
             self.dna_based()
         elif self.mode == 'PRO':
@@ -169,15 +195,15 @@ class PrimerChecks:
 
 class SequenceChecks:
     def __init__(self, sequence):
-        self.sequence = sequence
+        self.sequence = sequence.upper()
 
-    def check_sequence_length(self,length_range):
-        if len(self.sequence) < length_range[0] and len(self.sequence) > length_range[1]:
-            return False
-        else:
+    def check_sequence_length(self, length_range):
+        if len(self.sequence) >= length_range[0] and len(self.sequence) <= length_range[1]:
             return True
+        else:
+            return False
 
-    def check_gc_content(self,gc_range):
+    def check_gc_content(self, gc_range):
         seq = list(self.sequence)
         gc = (seq.count('C') + seq.count('G'))/len(seq)
         if gc < gc_range[0] and gc > gc_range[1]:
@@ -185,10 +211,16 @@ class SequenceChecks:
         else:
             return True
 
-    def check_Tm(self,Tm_range):
+    def check_Tm(self, Tm_range):
         seq = list(self.sequence)
         Tm = (seq.count('C') + seq.count('G'))/len(seq)
         if Tm < Tm_range[0] and Tm > Tm_range[1]:
             return False
         else:
             return True
+
+    def check_ends_gc(self, terminate_gc):
+        if not terminate_gc or (self.sequence[0] in ['C', 'G'] and self.sequence[-1] in ['C', 'G']):
+            return True
+        else:
+            return False
