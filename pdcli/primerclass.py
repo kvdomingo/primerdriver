@@ -34,7 +34,7 @@ class PrimerDesign:
         self.flank3_range = (settings["flank3_range_min"], settings["flank3_range_max"])
         self.terminate_gc = bool(settings["terminate_gc"])
         self.center_mutation = bool(settings["center_mutation"])
-        self.primer_mode = bool(settings["primer_mode"])
+        self.primer_mode = settings["primer_mode"]
         self.savename = savename
         self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
@@ -123,28 +123,31 @@ class PrimerDesign:
         return df
 
     def substitution(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
-        valid_primers = []
-        seq = list(sequence)
-        seqlen = len(replacement)
-        seq[start_position-1] = replacement
-        for f5 in range(*self.flank5_range):
-            for f3 in range(*self.flank3_range):
-                if abs(f5 - f3) > 1:
-                    continue
-                candidate1 = seq[start_position-1-f5 : start_position-1]
-                candidate3 = list(replacement)
-                candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
-                candidate = candidate1 + candidate3 + candidate2
-                candidate = ''.join(candidate)
-                if len(candidate) == 0:
-                    continue
-                sc = SequenceChecks(candidate)
-                valid_gc = sc.check_gc_content(self.gc_range)
-                valid_temp = sc.check_Tm(self.Tm_range)
-                valid_ends = sc.check_ends_gc(self.terminate_gc)
-                valid_length = sc.check_sequence_length(self.length_range)
-                if valid_gc and valid_temp and valid_ends and valid_length:
-                    valid_primers.append(candidate)
+        if self.primer_mode == 'complementary':
+            valid_primers = []
+            seq = list(sequence)
+            seqlen = len(replacement)
+            seq[start_position-1] = replacement
+            for f5 in range(*self.flank5_range):
+                for f3 in range(*self.flank3_range):
+                    if abs(f5 - f3) > 1 and self.center_mutation:
+                        continue
+                    candidate1 = seq[start_position-1-f5 : start_position-1]
+                    candidate3 = list(replacement)
+                    candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    candidate = candidate1 + candidate3 + candidate2
+                    candidate = ''.join(candidate)
+                    if len(candidate) == 0:
+                        continue
+                    sc = SequenceChecks(candidate)
+                    valid_gc = sc.check_gc_content(self.gc_range)
+                    valid_temp = sc.check_Tm(self.Tm_range)
+                    valid_ends = sc.check_ends_gc(self.terminate_gc)
+                    valid_length = sc.check_sequence_length(self.length_range)
+                    if valid_gc and valid_temp and valid_ends and valid_length:
+                        valid_primers.append(candidate)
+        else:
+            pass
         if len(valid_primers) > 0:
             df = []
             print(f"\nGenerated primers: {len(valid_primers)}")
