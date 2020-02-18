@@ -1,0 +1,14 @@
+{
+    "Primer_settings": {
+        "Tm_range_min": "75",
+        "Tm_range_max": "85",
+        "gc_range_min": "40",
+        "gc_range_max": "60",
+        "flank5_range_min": "11",
+        "flank5_range_max": "21",
+        "flank3_range_min": "11",
+        "flank3_range_max": "21",
+        "terminate_gc" : "True",
+        "center_mutation": "True"
+    }
+}

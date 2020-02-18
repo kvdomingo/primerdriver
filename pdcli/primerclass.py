@@ -43,6 +43,8 @@ class PrimerDesign:
         self.savename = savename
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             lut = load(f)
+        with open("pdcli/settings.json", "r") as f:
+            settings = load(f)
         self.lut = lut
 
     def calculate_gc_content(self, seq):
@@ -66,6 +68,8 @@ class PrimerDesign:
             return 81.5 + 0.41*gc_content - 675/N - mismatch
         else:
             if mutation_type == 'I':
+                N = len(seq)
+            elif mutation_type == 'D':
                 N = len(seq)
             else:
                 N = len(seq) - len(replacement)
@@ -118,16 +122,77 @@ class PrimerDesign:
             index=col
         )
 
-
     def substitution(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
         valid_primers = []
         seq = list(sequence)
+        seqlen = len(replacement)
         seq[start_position-1] = replacement
         for f5 in range(*self.flank5_range):
             for f3 in range(*self.flank3_range):
                 if abs(f5 - f3) > 1:
                     continue
-                candidate = seq[start_position-1-f5 : start_position+f3]
+                candidate1 = seq[start_position-1-f5 : start_position-1]
+                candidate3 = list(replacement)
+                candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                candidate = candidate1 + candidate3 + candidate2
+                candidate = ''.join(candidate)
+                if len(candidate) == 0:
+                    continue
+                sc = SequenceChecks(candidate)
+                valid_gc = sc.check_gc_content(self.gc_range)
+                valid_temp = sc.check_Tm(self.Tm_range)
+                valid_ends = sc.check_ends_gc(self.terminate_gc)
+                valid_length = sc.check_sequence_length(self.length_range)
+                if valid_gc and valid_temp and valid_ends and valid_length:
+                    valid_primers.append(candidate)
+        if len(valid_primers) > 0:
+            print(f"\nGenerated primers: {len(valid_primers)}")
+            for i, p in enumerate(valid_primers):
+                self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1)
+        else:
+            print("No valid primers found")
+
+    def deletion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
+        valid_primers = []
+        seqlen = len(self.target)
+        seq = list(sequence)
+        for f5 in range(*self.flank5_range):
+            for f3 in range(*self.flank3_range):
+                if abs(f5 - f3) > 1:
+                    continue
+                candidate1 = seq[start_position-1-f5 : start_position-1]
+                candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                candidate = candidate1 + candidate2
+                candidate = ''.join(candidate)
+                if len(candidate) == 0:
+                    continue
+                sc = SequenceChecks(candidate)
+                valid_gc = sc.check_gc_content(self.gc_range)
+                valid_temp = sc.check_Tm(self.Tm_range)
+                valid_ends = sc.check_ends_gc(self.terminate_gc)
+                valid_length = sc.check_sequence_length(self.length_range)
+                if valid_gc and valid_temp and valid_ends and valid_length:
+                    valid_primers.append(candidate)
+        if len(valid_primers) > 0:
+            print(f"\nGenerated primers: {len(valid_primers)}")
+            for i, p in enumerate(valid_primers):
+                self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1)
+        else:
+            print("No valid primers found")
+
+    def insertion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
+        valid_primers = []
+        seq = list(sequence)
+        seqlen = len(replacement)
+        seq[start_position-1] = replacement
+        for f5 in range(*self.flank5_range):
+            for f3 in range(*self.flank3_range):
+                if abs(f5 - f3) > 1:
+                    continue
+                candidate1 = seq[start_position-1-f5 : start_position-1]
+                candidate3 = list(replacement)
+                candidate2 = seq[start_position-1 : start_position+seqlen+f3]
+                candidate = candidate1 + candidate3 + candidate2
                 candidate = ''.join(candidate)
                 if len(candidate) == 0:
                     continue
@@ -150,6 +215,14 @@ class PrimerDesign:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.replacement)
             result = self.substitution(self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases)
+        elif self.mutation_type in ['D', 'DEL']:
+            if self.mismatched_bases is None:
+                self.mismatched_bases = len(self.target)
+            result = self.deletion(self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases)
+        elif self.mutation_type in ['I', 'INS']:
+            if self.mismatched_bases is None:
+                self.mismatched_bases = len(self.replacement)
+            result = self.insertion(self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases)
 
     def protein_based(self):
         pass

@@ -62,9 +62,10 @@ def interactive_handler():
             args_dict['target'] = None
             args_dict['replacement'] = input('Enter insertion sequence: ')
             args_dict['position'] = int(input('Enter insertion position: '))
-        elif args_dict['mutation_type'].upper() in ['I', 'INS']:
-            args_dict['target'] = None
-            args_dict['replacement'] = input('Enter starting position to delete: ')
+        elif args_dict['mutation_type'].upper() in ['D', 'DEL']:
+            args_dict['target'] = input('Enter target base: ')
+            args_dict['replacement'] = None
+            args_dict['position'] = int(input('Enter position of target: '))
         else:
             raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
     elif args_dict['mode'].upper() == 'CHAR':
