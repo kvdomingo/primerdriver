@@ -148,6 +148,43 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
+        elif self.primer_mode == 'overlapping':
+            valid_primers = []
+            forseq = list(sequence)
+            revseq = list(sequence)[::-1]
+            seqlen = len(replacement)
+            forseq[start_position-1] = replacement
+            for f5 in range(8,self.flank5_range[1]):
+                for f3 in range(*self.flank3_range):
+                    if abs(f5 - f3) > 1 and self.center_mutation:
+                        continue
+                    candidate1 = forseq[start_position-1-f5 : start_position-1]
+                    candidate3 = list(replacement)
+                    candidate2 = forseq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    candidate = candidate1 + candidate3 + candidate2
+                    candidate = ''.join(candidate)
+                    if len(candidate) == 0:
+                        continue
+                    sc = SequenceChecks(candidate)
+                    valid_gc = sc.check_gc_content(self.gc_range)
+                    valid_temp = sc.check_Tm(self.Tm_range)
+                    valid_ends = sc.check_ends_gc(self.terminate_gc)
+                    valid_length = sc.check_sequence_length(self.length_range)
+                    if valid_gc and valid_temp and valid_ends and valid_length:
+                        valid_primers.append(candidate)
+            valid_reverse = []
+            for primers in valid_primers:
+                start = sequence.find(primers)
+                end = start + len(primers)
+                primer_length = revseq[start:end]
+                sc = SequenceChecks(primers)
+                valid_gc = sc.check_gc_content(self.gc_range)
+                valid_temp = sc.check_Tm(self.Tm_range)
+                valid_ends = sc.check_ends_gc(self.terminate_gc)
+                valid_length = sc.check_sequence_length(self.length_range)
+                if valid_gc and valid_temp and valid_ends and valid_length:
+                    valid_reverse.append(primers)
+
         else:
             pass
         if len(valid_primers) > 0:
@@ -166,7 +203,7 @@ class PrimerDesign:
         seq = list(sequence)
         for f5 in range(*self.flank5_range):
             for f3 in range(*self.flank3_range):
-                if abs(f5 - f3) > 1:
+                if abs(f5 - f3) > 1 and self.center_mutation:
                     continue
                 candidate1 = seq[start_position-1-f5 : start_position-1]
                 candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
@@ -197,7 +234,7 @@ class PrimerDesign:
         seq[start_position-1] = replacement
         for f5 in range(*self.flank5_range):
             for f3 in range(*self.flank3_range):
-                if abs(f5 - f3) > 1:
+                if abs(f5 - f3) > 1 and self.center_mutation:
                     continue
                 candidate1 = seq[start_position-1-f5 : start_position-1]
                 candidate3 = list(replacement)
