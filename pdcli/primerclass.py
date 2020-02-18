@@ -163,7 +163,7 @@ class PrimerDesign:
         seq = list(sequence)
         for f5 in range(*self.flank5_range):
             for f3 in range(*self.flank3_range):
-                if abs(f5 - f3) > 1:
+                if abs(f5 - f3) > 1 and self.center_mutation:
                     continue
                 candidate1 = seq[start_position-1-f5 : start_position-1]
                 candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
@@ -194,7 +194,7 @@ class PrimerDesign:
         seq[start_position-1] = replacement
         for f5 in range(*self.flank5_range):
             for f3 in range(*self.flank3_range):
-                if abs(f5 - f3) > 1:
+                if abs(f5 - f3) > 1 and self.center_mutation:
                     continue
                 candidate1 = seq[start_position-1-f5 : start_position-1]
                 candidate3 = list(replacement)
