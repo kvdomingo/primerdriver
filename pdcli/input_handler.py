@@ -73,6 +73,22 @@ def interactive_handler():
         args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
         args_dict['mismatched_bases'] = input('Enter number of mismatched bases: ')
     else:
-        raise NotImplementedError(f"{args_dict['mode']} mode not implemented (yet).")
+        args_dict['sequence'] = input('Enter protein sequence: ')
+        PrimerChecks(args_dict['sequence']).check_valid_protein()
+        args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
+        if args_dict['mutation_type'].upper() in ['S', 'SUB']:
+            args_dict['target'] = input('Enter target base: ')
+            args_dict['replacement'] = input('Enter replacement for target base: ')
+            args_dict['position'] = int(input('Enter position of target: '))
+        elif args_dict['mutation_type'].upper() in ['I', 'INS']:
+            args_dict['target'] = None
+            args_dict['replacement'] = input('Enter insertion sequence: ')
+            args_dict['position'] = int(input('Enter insertion position: '))
+        elif args_dict['mutation_type'].upper() in ['D', 'DEL']:
+            args_dict['target'] = input('Enter target base: ')
+            args_dict['replacement'] = None
+            args_dict['position'] = int(input('Enter position of target: '))
+        else:
+            raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
 
     return args_dict
