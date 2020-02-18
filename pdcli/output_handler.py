@@ -1,34 +1,34 @@
+from pandas import concat
+from datetime import datetime
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
 from Bio.SeqRecord import SeqRecord
 
 
-def interactive_saver(res, df):
+def interactive_saver(df):
     save = input("\nSave? [y/n] ")
     if save.upper() == "Y":
         while True:
             savename = input("Enter filename: ")
             if savename.endswith(".csv"):
+                df = concat([*df])
                 df.to_csv(savename)
                 break
             elif savename.endswith(".html"):
+                df = concat([*df])
                 df.to_html(savename)
                 break
             elif savename.endswith(".fasta"):
-                seq_forward = SeqRecord(
-                    Seq(res.forward, IUPAC.unambiguous_dna),
-                    id=f"{datetime.now()}",
-                    description=f"{''.join(savename.split('.')[:-1])} forward strand, {res.gc_content*100:.2f}% G/C, Tm = {res.melt_temp:.2f} C, {len(res)} bp"
-                )
-                seq_reverse = SeqRecord(
-                    Seq(res.rev_compl, IUPAC.unambiguous_dna),
-                    id=f"{datetime.now()}",
-                    description=f"{''.join(savename.split('.')[:-1])} reverse strand, {res.gc_content*100:.2f}% G/C, Tm = {res.melt_temp:.2f} C, {len(res)} bp"
-                )
-                seq_primer = [seq_forward, seq_reverse]
+                seq_list = []
+                for i, seq in enumerate(df):
+                    seq_list.append(SeqRecord(
+                        Seq(df[i]['Forward'].values[0], IUPAC.unambiguous_dna),
+                        id=f"{datetime.now()}",
+                        description=f"Primer {i+1} template strand, {df[i]['GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Melting temp'].values[0]:.2s} C, {df[i]['Length'].values[0]}"
+                    ))
                 with open(savename, "w") as f:
-                    SeqIO.write(seq_primer, f, "fasta")
+                    SeqIO.write(seq_list, f, "fasta")
                 break
             else:
                 print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta")

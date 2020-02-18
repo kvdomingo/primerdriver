@@ -15,16 +15,11 @@ class PrimerDesign:
         target=None,
         replacement=None,
         position=None,
-        Tm_range=(75, 85),
-        length_range=(25, 45),
-        gc_range=(40, 60),
-        flank5_range=(11, 21),
-        flank3_range=(11, 21),
-        terminate_gc=True,
-        center_mutation=True,
-        primer_mode=0,
-        savename=None
+        savename=None,
+        settings="pdcli/settings.json"
     ):
+        with open(settings, "r") as f:
+            settings = load(f)
         self.mode = mode.upper()
         self.sequence = sequence.upper()
         self.mutation_type = mutation_type[0].upper()
@@ -32,15 +27,16 @@ class PrimerDesign:
         self.replacement = replacement.upper() if replacement is not None else None
         self.position = int(position) if position is not None else None
         self.target = target.upper() if target is not None else None
-        self.Tm_range = Tm_range
-        self.length_range = length_range
-        self.gc_range = gc_range
-        self.flank5_range = flank5_range
-        self.flank3_range = flank3_range
-        self.terminate_gc = terminate_gc
-        self.center_mutation = center_mutation
-        self.primer_mode = primer_mode
+        self.Tm_range = (settings["Tm_range_min"], settings["Tm_range_max"])
+        self.length_range = (settings["length_min"], settings["length_max"])
+        self.gc_range = (settings["gc_range_min"], settings["gc_range_max"])
+        self.flank5_range = (settings["flank5_range_min"], settings["flank5_range_max"])
+        self.flank3_range = (settings["flank3_range_min"], settings["flank3_range_max"])
+        self.terminate_gc = bool(settings["terminate_gc"])
+        self.center_mutation = bool(settings["center_mutation"])
+        self.primer_mode = bool(settings["primer_mode"])
         self.savename = savename
+        self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             lut = load(f)
         with open("pdcli/settings.json", "r") as f:
@@ -57,8 +53,9 @@ class PrimerDesign:
         seq = list(seq)
         return [self.lut["complement"][b] for b in seq][::-1]
 
-    def is_gc_end(self, seq):
-        return (self.sequence.startswith('G') or self.sequence.startswith('C')) and (self.sequence.endswith('G') or self.sequence.endswith('C'))
+    def is_gc_end(self, sequence):
+        sequence = ''.join(sequence)
+        return (sequence.startswith('G') or sequence.startswith('C')) and (sequence.endswith('G') or sequence.endswith('C'))
 
     def calculate_Tm(self, seq, mutation_type, replacement, gc_content, mismatch):
         gc_content = int(gc_content*100)
@@ -116,11 +113,14 @@ class PrimerDesign:
             headers=[f'Primer {index}'],
             tablefmt='orgtbl'
         ), sep="")
-        self.df = DataFrame(
+        dat = array([dat])
+        df = DataFrame(
             data=dat,
-            columns=['Primer 1'],
-            index=col
+            columns=col,
+            index=[f"Primer {index}"]
         )
+        self.df = df
+        return df
 
     def substitution(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
         valid_primers = []
@@ -146,11 +146,13 @@ class PrimerDesign:
                 if valid_gc and valid_temp and valid_ends and valid_length:
                     valid_primers.append(candidate)
         if len(valid_primers) > 0:
+            df = []
             print(f"\nGenerated primers: {len(valid_primers)}")
             for i, p in enumerate(valid_primers):
-                self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1)
+                df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
         else:
             print("No valid primers found")
+        return df
 
     def deletion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
         valid_primers = []
@@ -174,11 +176,13 @@ class PrimerDesign:
                 if valid_gc and valid_temp and valid_ends and valid_length:
                     valid_primers.append(candidate)
         if len(valid_primers) > 0:
+            df = []
             print(f"\nGenerated primers: {len(valid_primers)}")
             for i, p in enumerate(valid_primers):
-                self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1)
+                df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
         else:
             print("No valid primers found")
+        return df
 
     def insertion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
         valid_primers = []
@@ -204,11 +208,13 @@ class PrimerDesign:
                 if valid_gc and valid_temp and valid_ends and valid_length:
                     valid_primers.append(candidate)
         if len(valid_primers) > 0:
+            df = []
             print(f"\nGenerated primers: {len(valid_primers)}")
             for i, p in enumerate(valid_primers):
-                self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1)
+                df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
         else:
             print("No valid primers found")
+        return df
 
     def dna_based(self):
         if self.mutation_type in ['S', 'SUB']:
@@ -223,17 +229,19 @@ class PrimerDesign:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.replacement)
             result = self.insertion(self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases)
+        return result
 
     def protein_based(self):
         pass
 
     def main(self):
         if self.mode == 'CHAR':
-            self.characterize_primer(self.sequence, self.mutation_type, self.replacement, self.mismatched_bases)
+            df = self.characterize_primer(self.sequence, self.mutation_type, self.replacement, self.mismatched_bases)
         elif self.mode == 'DNA':
-            self.dna_based()
+            df = self.dna_based()
         elif self.mode == 'PRO':
-            self.protein_based()
+            df = self.protein_based()
+        self.df = df
 
 
 class PrimerChecks:
