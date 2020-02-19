@@ -182,16 +182,17 @@ class PrimerDesign:
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
             valid_reverse = []
-            revsequence = sequence[:start_position-1] + replacement + sequence[start_position-1+seqlen:]
             for primers in valid_primers:
-                start = revsequence.find(primers)
+                sequence = sequence[:start_position-1] + replacement + sequence[start_position+seqlen:]
+                start = sequence.find(primers)
                 end = start + len(primers)-1
                 prilen = len(primers)
                 while start < self.position-7 and end > self.position+seqlen+7:
                     start = start-1
                     end = end-1
+
                 for i in range(start, self.position-7):
-                    candidate = revsequence[i:prilen+i]
+                    candidate = sequence[start:prilen]
                     candidate = [self.lut["complement"][b] for b in candidate]
                     if len(candidate) == 0:
                         continue
@@ -200,12 +201,13 @@ class PrimerDesign:
                     Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
                     sc = SequenceChecks(primers)
                     valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                    valid_temp = sc.check_Tm(Tm,self.Tm_range)
                     valid_ends = sc.check_ends_gc(self.terminate_gc)
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_reverse.append(primers)
-                    start = start + 1
+                    start += 1
+
         if not len(valid_primers) > 0:
             print("No valid primers found")
             return
@@ -220,9 +222,8 @@ class PrimerDesign:
                     print('No valid reverse primers found')
                     return
                 for i, p in enumerate(valid_primers):
-                    for j, rev in enumerate(valid_reverse):
-                        for r in rev:
-                            df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1, r))
+                    for j, r in enumerate(valid_reverse):
+                        df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1, r))
         return df
 
     def deletion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
