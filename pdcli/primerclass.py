@@ -191,7 +191,7 @@ class PrimerDesign:
                     start = start-1
                     end = end-1
 
-                while start < self.position-7:
+                for i in range(start, self.position-7):
                     candidate = sequence[start:prilen]
                     candidate = [self.lut["complement"][b] for b in candidate]
                     if len(candidate) == 0:
