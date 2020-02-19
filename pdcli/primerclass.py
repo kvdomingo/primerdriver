@@ -185,23 +185,28 @@ class PrimerDesign:
             for primers in valid_primers:
                 sequence = sequence[:start_position-1] + replacement + sequence[start_position+seqlen:]
                 start = sequence.find(primers)
-                end = start + len(primers)
-                for f5 in range(8,self.flank5_range[1]):
-                    for f3 in range(8,self.flank3_range[1]):
-                        candidate = sequence[start-f5:end+seqlen+f3]
-                        candidate = [self.lut["complement"][b] for b in candidate]
-                        if len(candidate) == 0:
-                            continue
-                        gc_content = self.calculate_gc_content(candidate)
-                        mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                        Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
-                        sc = SequenceChecks(primers)
-                        valid_gc = sc.check_gc_content(self.gc_range)
-                        valid_temp = sc.check_Tm(Tm,self.Tm_range)
-                        valid_ends = sc.check_ends_gc(self.terminate_gc)
-                        valid_length = sc.check_sequence_length(self.length_range)
-                        if valid_gc and valid_temp and valid_ends and valid_length:
-                            valid_reverse.append(primers)
+                end = start + len(primers)-1
+                prilen = len(primers)
+                while start < self.position-7 and end > self.position+seqlen+7:
+                    start = start-1
+                    end = end-1
+
+                while start < self.position-7:
+                    candidate = sequence[start:prilen]
+                    candidate = [self.lut["complement"][b] for b in candidate]
+                    if len(candidate) == 0:
+                        continue
+                    gc_content = self.calculate_gc_content(candidate)
+                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                    Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
+                    sc = SequenceChecks(primers)
+                    valid_gc = sc.check_gc_content(self.gc_range)
+                    valid_temp = sc.check_Tm(Tm,self.Tm_range)
+                    valid_ends = sc.check_ends_gc(self.terminate_gc)
+                    valid_length = sc.check_sequence_length(self.length_range)
+                    if valid_gc and valid_temp and valid_ends and valid_length:
+                        valid_reverse.append(primers)
+                    start = start + 1
 
         if not len(valid_primers) > 0:
             print("No valid primers found")
