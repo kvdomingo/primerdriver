@@ -183,17 +183,16 @@ class PrimerDesign:
                         valid_primers.append(candidate)
             valid_reverse = []
             for primers in valid_primers:
-                sequence = sequence[:start_position-1] + replacement + sequence[start_position+seqlen:]
+                sequence = sequence[:start_position-1] + replacement + sequence[start_position-1+seqlen:]
                 start = sequence.find(primers)
                 end = start + len(primers)-1
                 prilen = len(primers)
-                while start < self.position-7 and end > self.position+seqlen+7:
+                while start < self.position-9 and end > self.position+seqlen+9:
                     start = start-1
                     end = end-1
-
-                for i in range(start, self.position-7):
-                    candidate = sequence[start:prilen]
-                    candidate = [self.lut["complement"][b] for b in candidate]
+                for i in range(start, self.position-9):
+                    candidate = sequence[start:end+1]
+                    #candidate = [self.lut["complement"][b] for b in candidate]
                     if len(candidate) == 0:
                         continue
                     gc_content = self.calculate_gc_content(candidate)
@@ -207,7 +206,7 @@ class PrimerDesign:
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_reverse.append(primers)
                     start += 1
-
+                    end += 1
         if not len(valid_primers) > 0:
             print("No valid primers found")
             return
