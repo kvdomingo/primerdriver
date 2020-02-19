@@ -9,7 +9,7 @@
     "flank5_range_max": 21,
     "flank3_range_min": 11,
     "flank3_range_max": 21,
-    "terminate_gc" : 0,
+    "terminate_gc" : 1,
     "center_mutation": 0,
     "primer_mode": "overlapping",
     "expression_system": "None"
