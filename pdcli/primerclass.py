@@ -3,6 +3,7 @@ from json import load
 from pandas import DataFrame
 from tabulate import tabulate
 from numpy import array
+from Bio.Seq import Seq
 
 
 class PrimerDesign:
@@ -35,6 +36,7 @@ class PrimerDesign:
         self.terminate_gc = bool(settings["terminate_gc"])
         self.center_mutation = bool(settings["center_mutation"])
         self.primer_mode = settings["primer_mode"]
+        self.expression_system = settings["expression_system"]
         self.savename = savename
         self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
@@ -139,9 +141,12 @@ class PrimerDesign:
                     candidate = ''.join(candidate)
                     if len(candidate) == 0:
                         continue
+                    gc_content = self.calculate_gc_content(candidate)
+                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                    Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
                     sc = SequenceChecks(candidate)
                     valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(self.Tm_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
                     valid_ends = sc.check_ends_gc(self.terminate_gc)
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
@@ -196,6 +201,7 @@ class PrimerDesign:
                 df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
         else:
             print("No valid primers found")
+            return
         return df
 
     def deletion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
@@ -276,7 +282,22 @@ class PrimerDesign:
         return result
 
     def protein_based(self):
-        pass
+        if self.mutation_type in ['S', 'SUB']:
+            if self.mismatched_bases is None:
+                self.mismatched_bases = len(self.replacement)
+            with open("pdcli/AAcompressed.json", "r") as f:
+                cod1 = load(f)
+            with open("pdcli/symnucbases.json", "r") as f:
+                sym = load(f)
+            rna = ''.join([cod1[b][0] for b in self.sequence])
+            rna = ''.join([sym[b][0] for b in rna])
+            dna = rna.replace('U', 'T')
+            target = cod1[self.target][0]
+            target = ''.join([sym[b][0] for b in target]).replace('U', 'T')
+            replacement = cod1[self.replacement][0]
+            replacement = ''.join([sym[b][0] for b in replacement]).replace('U', 'T')
+            result = self.substitution(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
+            return result
 
     def main(self):
         if self.mode == 'CHAR':
@@ -295,14 +316,23 @@ class PrimerChecks:
     def check_valid_base(self):
         unique_bases = set(list(self.sequence.upper()))
         true_bases = {'A', 'C', 'T', 'G'}
-        invalid_bases = unique_bases.symmetric_difference(true_bases)
-        print(invalid_bases)
+        invalid_bases = unique_bases.difference(true_bases)
         if len(invalid_bases) != 0:
             warn("Sequence contains invalid bases. Automatically removing...", Warning)
             for b in invalid_bases:
                 self.sequence = self.sequence.upper().replace(b, "")
-        else:
-            return 0
+        return self.sequence
+
+    def check_valid_protein(self):
+        unique_prots = set(list(self.sequence.upper()))
+        with open("pdcli/AAcompressed.json", "r") as f:
+            true_prots = load(f)
+        invalid_prots = unique_prots.difference(true_prots.keys())
+        if len(invalid_prots) != 0:
+            warn("Sequence contains invalid proteins. Automatically removing...", Warning)
+            for b in invalid_prots:
+                self.sequence = self.sequence.upper().replace(b, "")
+        return self.sequence
 
     def check_sequence_length(self):
         if len(self.sequence) < 40:
@@ -330,16 +360,14 @@ class SequenceChecks:
 
     def check_gc_content(self, gc_range):
         seq = list(self.sequence)
-        gc = (seq.count('C') + seq.count('G'))/len(seq)
-        if gc < gc_range[0] and gc > gc_range[1]:
+        gc = (seq.count('C') + seq.count('G'))/len(seq) * 100
+        if gc < gc_range[0] or gc > gc_range[1]:
             return False
         else:
             return True
 
-    def check_Tm(self, Tm_range):
-        seq = list(self.sequence)
-        Tm = (seq.count('C') + seq.count('G'))/len(seq)
-        if Tm < Tm_range[0] and Tm > Tm_range[1]:
+    def check_Tm(self, Tm, Tm_range):
+        if Tm < Tm_range[0] or Tm > Tm_range[1]:
             return False
         else:
             return True
