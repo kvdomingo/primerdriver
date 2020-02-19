@@ -11,5 +11,5 @@
     "flank3_range_max": 21,
     "terminate_gc" : 0,
     "center_mutation": 0,
-    "primer_mode": "complementary"
+    "primer_mode": "overlapping"
 }

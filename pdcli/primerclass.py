@@ -152,7 +152,7 @@ class PrimerDesign:
             revseq = list(sequence)[::-1]
             seqlen = len(replacement)
             forseq[start_position-1] = replacement
-            for f5 in range(8,self.flank5_range[1]):
+            for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
@@ -172,16 +172,20 @@ class PrimerDesign:
                         valid_primers.append(candidate)
             valid_reverse = []
             for primers in valid_primers:
+                sequence = sequence[:start_position-1] + replacement + sequence[start_position+seqlen:]
                 start = sequence.find(primers)
                 end = start + len(primers)
-                primer_length = revseq[start:end]
-                sc = SequenceChecks(primers)
-                valid_gc = sc.check_gc_content(self.gc_range)
-                valid_temp = sc.check_Tm(self.Tm_range)
-                valid_ends = sc.check_ends_gc(self.terminate_gc)
-                valid_length = sc.check_sequence_length(self.length_range)
-                if valid_gc and valid_temp and valid_ends and valid_length:
-                    valid_reverse.append(primers)
+                for f5 in range(8,self.flank5_range[1]):
+                    for f3 in range(8,self.flank3_range[1]):
+                        candidate = sequence[start-f5:end+seqlen+f3]
+                        candidate = [self.lut["complement"][b] for b in candidate]
+                        sc = SequenceChecks(primers)
+                        valid_gc = sc.check_gc_content(self.gc_range)
+                        valid_temp = sc.check_Tm(self.Tm_range)
+                        valid_ends = sc.check_ends_gc(self.terminate_gc)
+                        valid_length = sc.check_sequence_length(self.length_range)
+                        if valid_gc and valid_temp and valid_ends and valid_length:
+                            valid_reverse.append(primers)
 
         else:
             pass
