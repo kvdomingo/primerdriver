@@ -370,6 +370,7 @@ class PrimerChecks:
         elif gc > 0.60:
             warn('GC content is greater than 60%', Warning)
 
+
 class SequenceChecks:
     def __init__(self, sequence):
         self.sequence = sequence.upper()
