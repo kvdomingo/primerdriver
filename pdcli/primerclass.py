@@ -74,11 +74,14 @@ class PrimerDesign:
                 N = len(seq) - len(replacement)
             return 81.5 + 0.41*gc_content - 675/N
 
-    def characterize_primer(self, sequence, mutation_type, replacement, mismatched_bases, index=None):
+    def characterize_primer(self, sequence, mutation_type, replacement, mismatched_bases, index=None, reverse=None):
         mol_weight = self.lut["mol_weight"]
         complement_dict = self.lut["complement"]
         seq = list(sequence)
-        rev = self.get_reverse_complement(sequence)
+        if self.primer_mode == "complementary":
+            rev = ''.join(self.get_reverse_complement(sequence))
+        else:
+            rev = reverse
         primer_length = len(seq)
         gc_content = self.calculate_gc_content(seq)
         mismatch = self.calculate_mismatch(seq, mismatched_bases)
@@ -98,8 +101,8 @@ class PrimerDesign:
             'Ends in G/C'
         ]
         dat = [
-            f'{sequence}',
-            f'{"".join(rev)}',
+            sequence,
+            rev,
             f'{primer_length} bp',
             f'{gc_content*100:.2f}%',
             f'{melt_temp:.2f} C',
@@ -151,7 +154,7 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
-        elif self.primer_mode == 'overlapping':
+        else:
             valid_primers = []
             forseq = list(sequence)
             revseq = list(sequence)[::-1]
@@ -202,16 +205,24 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_reverse.append(primers)
-        else:
-            pass
-        if len(valid_primers) > 0:
-            df = []
-            print(f"\nGenerated primers: {len(valid_primers)}")
-            for i, p in enumerate(valid_primers):
-                df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
-        else:
+                    start = start + 1
+        if not len(valid_primers) > 0:
             print("No valid primers found")
             return
+        else:
+            df = []
+            print(f"\nGenerated forward primers: {len(valid_primers)}")
+            if self.primer_mode == "complementary":
+                for i, p in enumerate(valid_primers):
+                    df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
+            else:
+                if len(valid_reverse) == 0:
+                    print('No valid reverse primers found')
+                    return
+                for i, p in enumerate(valid_primers):
+                    for j, rev in enumerate(valid_reverse):
+                        for r in rev:
+                            df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1, r))
         return df
 
     def deletion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
