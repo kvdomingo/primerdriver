@@ -173,23 +173,22 @@ class PrimerDesign:
                     Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
                     sc = SequenceChecks(candidate)
                     valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(Tm,self.Tm_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
                     valid_ends = sc.check_ends_gc(self.terminate_gc)
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
             valid_reverse = []
+            revsequence = sequence[:start_position-1] + replacement + sequence[start_position-1+seqlen:]
             for primers in valid_primers:
-                sequence = sequence[:start_position-1] + replacement + sequence[start_position+seqlen:]
-                start = sequence.find(primers)
+                start = revsequence.find(primers)
                 end = start + len(primers)-1
                 prilen = len(primers)
                 while start < self.position-7 and end > self.position+seqlen+7:
                     start = start-1
                     end = end-1
-
-                while start < self.position-7:
-                    candidate = sequence[start:prilen]
+                for i in range(start, self.position-7):
+                    candidate = revsequence[i:prilen+i]
                     candidate = [self.lut["complement"][b] for b in candidate]
                     if len(candidate) == 0:
                         continue
@@ -198,13 +197,11 @@ class PrimerDesign:
                     Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
                     sc = SequenceChecks(primers)
                     valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(Tm,self.Tm_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
                     valid_ends = sc.check_ends_gc(self.terminate_gc)
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_reverse.append(primers)
-                    start = start + 1
-
         else:
             pass
         if len(valid_primers) > 0:
