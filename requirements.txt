@@ -3,7 +3,7 @@ astroid==2.3.3
 attrs==19.3.0
 backcall==0.1.0
 biopython==1.76
-bleach==3.1.0
+bleach==3.1.1
 cffi==1.14.0
 colorama==0.4.3
 cryptography==2.8
@@ -74,5 +74,5 @@ wcwidth==0.1.8
 webencodings==0.5.1
 whitenoise==5.0.1
 widgetsnbextension==3.5.1
-wrapt==1.11.2
+wrapt==1.12.0
 zipp==3.0.0
