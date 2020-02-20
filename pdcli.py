@@ -37,8 +37,8 @@ def main():
     if args.interactive:
         interactive_saver(res.df)
     else:
-        if savename is not None:
-            singleCommand_saver(res, df, savename)
+        if res.savename is not None:
+            singleCommand_saver(res, res.df, res.savename)
 
     return 0
 

@@ -4,6 +4,7 @@ from pandas import DataFrame
 from tabulate import tabulate
 from numpy import array
 from Bio.Seq import Seq
+from .checks import *
 
 
 class PrimerDesign:
@@ -33,6 +34,8 @@ class PrimerDesign:
         self.gc_range = (settings["gc_range_min"], settings["gc_range_max"])
         self.flank5_range = (settings["flank5_range_min"], settings["flank5_range_max"])
         self.flank3_range = (settings["flank3_range_min"], settings["flank3_range_max"])
+        self.forward_overlap5 = settings["forward_overlap5"]
+        self.forward_overlap3 = settings["forward_overlap3"]
         self.terminate_gc = bool(settings["terminate_gc"])
         self.center_mutation = bool(settings["center_mutation"])
         self.primer_mode = settings["primer_mode"]
@@ -41,8 +44,6 @@ class PrimerDesign:
         self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             lut = load(f)
-        with open("pdcli/settings.json", "r") as f:
-            settings = load(f)
         self.lut = lut
 
     def calculate_gc_content(self, seq):
@@ -82,42 +83,67 @@ class PrimerDesign:
             rev = ''.join(self.get_reverse_complement(sequence))
         else:
             rev = reverse
-        primer_length = len(seq)
-        gc_content = self.calculate_gc_content(seq)
-        mismatch = self.calculate_mismatch(seq, mismatched_bases)
-        melt_temp = self.calculate_Tm(seq, mutation_type, replacement, gc_content, mismatch)
-        gc_end = self.is_gc_end(seq)
-        molweight_fwd = sum(float(mol_weight[b])*2 for b in seq)
-        molweight_rev = sum(float(mol_weight[b])*2 for b in rev)
+
+        forwards = {}
+        forwards["sequence"] = sequence
+        forwards["length"] = len(seq)
+        forwards["gc_content"] = self.calculate_gc_content(seq)
+        forwards["mismatch"] = self.calculate_mismatch(seq, mismatched_bases)
+        forwards["Tm"] = self.calculate_Tm(seq, mutation_type, replacement, forwards["gc_content"], forwards["mismatch"])
+        forwards["gc_end"] = self.is_gc_end(seq)
+        forwards["mol_weight"] = sum(float(mol_weight[b])*2 for b in seq)
+        
+        reverses = {}
+        reverses["sequence"] = rev
+        reverses["length"] = len(rev)
+        reverses["gc_content"] = self.calculate_gc_content(rev)
+        reverses["mismatch"] = self.calculate_mismatch(rev, mismatched_bases)
+        reverses["Tm"] = self.calculate_Tm(seq, mutation_type, replacement, reverses["gc_content"], reverses["mismatch"])
+        reverses["gc_end"] = self.is_gc_end(rev)
+        reverses["mol_weight"] = sum(float(mol_weight[b])*2 for b in rev)
+
         col = [
             'Forward',
             'Reverse',
-            'Length',
-            'GC content',
-            'Melting temp',
-            'Mol. weight (fwd)',
-            'Mol. weight (rev)',
-            'Mismatch',
-            'Ends in G/C'
+            'Fwd length',
+            'Rev length',
+            'Fwd GC content',
+            'Rev GC content',
+            'Fwd melting temp',
+            'Rev melting temp',
+            'Fwd mol. weight',
+            'Rev mol. weight',
+            'Fwd mismatch',
+            'Rev mismatch',
+            'Fwd ends in G/C',
+            'Rev ends in G/C'
         ]
         dat = [
-            sequence,
-            rev,
-            f'{primer_length} bp',
-            f'{gc_content*100:.2f}%',
-            f'{melt_temp:.2f} C',
-            f'{molweight_fwd:.2f} g/mol',
-            f'{molweight_rev:.2f} g/mol',
-            f'{mismatch*100:.2f}%',
-            gc_end
+            forwards["sequence"],
+            reverses["sequence"],
+            f'{forwards["length"]} bp',
+            f'{reverses["length"]} bp',
+            f'{forwards["gc_content"]*100:.2f}%',
+            f'{reverses["gc_content"]*100:.2f}%',
+            f'{forwards["Tm"]:.2f} C',
+            f'{reverses["Tm"]:.2f} C',
+            f'{forwards["mol_weight"]:.2f} g/mol',
+            f'{reverses["mol_weight"]:.2f} g/mol',
+            f'{forwards["mismatch"]*100:.2f}%',
+            f'{reverses["mismatch"]*100:.2f}%',
+            forwards["gc_end"],
+            reverses["gc_end"],
         ]
         if index == None:
             index = 1
-        print('\n', tabulate(
-            array([col, dat]).T,
-            headers=[f'Primer {index}'],
-            tablefmt='orgtbl'
-        ), sep="")
+        if index <= 10:
+            print('\n', tabulate(
+                array([col, dat]).T,
+                headers=[f'Primer {index}'],
+                tablefmt='orgtbl'
+            ), sep="")
+        elif index == 11:
+            print("Too many results; truncating output...")
         dat = array([dat])
         df = DataFrame(
             data=dat,
@@ -187,26 +213,29 @@ class PrimerDesign:
                 start = sequence.find(primers)
                 end = start + len(primers)-1
                 prilen = len(primers)
-                while start < self.position-9 and end > self.position+seqlen+9:
+                while start < self.position-self.forward_overlap5 and end > self.position+seqlen+self.forward_overlap3:
                     start = start-1
                     end = end-1
-                for i in range(start, self.position-9):
+                for i in range(start, self.position-self.forward_overlap5):
                     candidate = sequence[start:end+1]
-                    #candidate = [self.lut["complement"][b] for b in candidate]
+                    candidate = [self.lut["complement"][b] for b in candidate]
                     if len(candidate) == 0:
                         continue
                     gc_content = self.calculate_gc_content(candidate)
                     mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                    fwd_Tm = Tm
                     Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
                     sc = SequenceChecks(primers)
                     valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(Tm,self.Tm_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                    valid_trange = sc.check_close_Tm(fwd_Tm, Tm)
                     valid_ends = sc.check_ends_gc(self.terminate_gc)
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_reverse.append(primers)
-                    start += 1
-                    end += 1
+                        if valid_trange:
+                            valid_reverse.append(primers)
+                        else:
+                            old_Tm = valid_primers.pop(-1)
         if not len(valid_primers) > 0:
             print("No valid primers found")
             return
@@ -220,9 +249,11 @@ class PrimerDesign:
                 if len(valid_reverse) == 0:
                     print('No valid reverse primers found')
                     return
+                count = 1
                 for i, p in enumerate(valid_primers):
                     for j, r in enumerate(valid_reverse):
-                        df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1, r))
+                        df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, count, r))
+                        count += 1
         return df
 
     def deletion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
@@ -328,74 +359,3 @@ class PrimerDesign:
         elif self.mode == 'PRO':
             df = self.protein_based()
         self.df = df
-
-
-class PrimerChecks:
-    def __init__(self, sequence):
-        self.sequence = sequence
-
-    def check_valid_base(self):
-        unique_bases = set(list(self.sequence.upper()))
-        true_bases = {'A', 'C', 'T', 'G'}
-        invalid_bases = unique_bases.difference(true_bases)
-        if len(invalid_bases) != 0:
-            warn("Sequence contains invalid bases. Automatically removing...", Warning)
-            for b in invalid_bases:
-                self.sequence = self.sequence.upper().replace(b, "")
-        return self.sequence
-
-    def check_valid_protein(self):
-        unique_prots = set(list(self.sequence.upper()))
-        with open("pdcli/AAcompressed.json", "r") as f:
-            true_prots = load(f)
-        invalid_prots = unique_prots.difference(true_prots.keys())
-        if len(invalid_prots) != 0:
-            warn("Sequence contains invalid proteins. Automatically removing...", Warning)
-            for b in invalid_prots:
-                self.sequence = self.sequence.upper().replace(b, "")
-        return self.sequence
-
-    def check_sequence_length(self):
-        if len(self.sequence) < 40:
-            warn('DNA sequence is too short', Warning)
-        elif len(self.sequence) > 8000:
-            warn('DNA sequence is too long', Warning)
-
-    def check_gc_content(self):
-        seq = list(self.sequence)
-        gc = (seq.count('C') + seq.count('G'))/len(seq)
-        if gc < 0.40:
-            warn("GC content is less than 40%", Warning)
-        elif gc > 0.60:
-            warn('GC content is greater than 60%', Warning)
-
-
-class SequenceChecks:
-    def __init__(self, sequence):
-        self.sequence = sequence.upper()
-
-    def check_sequence_length(self, length_range):
-        if len(self.sequence) >= length_range[0] and len(self.sequence) <= length_range[1]:
-            return True
-        else:
-            return False
-
-    def check_gc_content(self, gc_range):
-        seq = list(self.sequence)
-        gc = (seq.count('C') + seq.count('G'))/len(seq) * 100
-        if gc < gc_range[0] or gc > gc_range[1]:
-            return False
-        else:
-            return True
-
-    def check_Tm(self, Tm, Tm_range):
-        if Tm < Tm_range[0] or Tm > Tm_range[1]:
-            return False
-        else:
-            return True
-
-    def check_ends_gc(self, terminate_gc):
-        if not terminate_gc or (self.sequence[0] in ['C', 'G'] and self.sequence[-1] in ['C', 'G']):
-            return True
-        else:
-            return False

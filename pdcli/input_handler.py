@@ -13,7 +13,7 @@ def singleCommand_handler(args):
     if args.save:
         args_dict['savename'] = args.save
     if args.mode.upper() =='DNA':
-        args_dict['sequence'] = args.sequence
+        args_dict['sequence'] = args.sequence.upper()
         PrimerChecks(args.sequence).check_sequence_length()
         PrimerChecks(args.sequence).check_valid_base()
         args_dict['mutation_type'] = args.mutation_type
