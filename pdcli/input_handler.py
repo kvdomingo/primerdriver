@@ -12,31 +12,54 @@ def singleCommand_handler(args):
     args_dict['mode'] = args.mode
     if args.save:
         args_dict['savename'] = args.save
+    if args.sequence.endswith('.txt'):
+        with open(args.sequence, 'r', encoding='utf-8') as f:
+            args_dict['sequence'] = f.read().strip()
+    elif args.sequence.endswith('.fasta'):
+        with open(args.sequence, 'r', encoding='utf-8') as f:
+            args_dict['sequence'] =  str(list(SeqIO.parse(f, 'fasta'))[0].seq).strip()
+    else:
+        args_dict['sequence'] = args.sequence
     if args.mode.upper() =='DNA':
-        args_dict['sequence'] = args.sequence.upper()
-        PrimerChecks(args.sequence).check_sequence_length()
-        PrimerChecks(args.sequence).check_valid_base()
+        PrimerChecks(args_dict["sequence"]).check_sequence_length()
+        PrimerChecks(args_dict["sequence"]).check_valid_base()
         args_dict['mutation_type'] = args.mutation_type
         args_dict['position'] = args.position
         args_dict['replacement'] = args.replacement
         if args.mutation_type.upper() in ['S', 'SUB']:
             args_dict['target'] = args.target
+        elif args_dict['mutation_type'].upper() in ['I', 'INS']:
+            args_dict['target'] = None
+            args_dict['replacement'] = args.replacement
+            args_dict['position'] = int(args.position)
+        elif args_dict['mutation_type'].upper() in ['D', 'DEL']:
+            args_dict['target'] = args.target
+            args_dict['replacement'] = None
+            args_dict['position'] = int(args.position)
         else:
             raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
     elif args.mode.upper() == 'CHAR':
-        if args.sequence.endswith('.txt'):
-            with open(args.sequence, 'r', encoding='utf-8') as f:
-                args_dict['sequence'] = f.read().strip()
-        elif args.sequence.endswith('.fasta'):
-            with open(args.sequence, 'r', encoding='utf-8') as f:
-                args_dict['sequence'] = list(SeqIO.parse(f, 'fasta'))[0].seq.strip()
-        else:
-            args_dict['sequence'] = args.sequence
         PrimerChecks(args.sequence).check_valid_base()
         args_dict['mutation_type'] = args.mutation_type
         args_dict['mismatched_bases'] = args.position
-    else:
-        raise NotImplementedError(f"{args_dict['mode']} mode not implemented (yet).")
+    elif args.mode.upper() == 'PRO':
+        args_dict['sequence'] = args.sequence
+        args_dict['sequence'] = PrimerChecks(args_dict['sequence']).check_valid_protein()
+        args_dict['mutation_type'] = args.mutation_type
+        if args_dict['mutation_type'].upper() in ['S', 'SUB']:
+            args_dict['target'] = args.target
+            args_dict['replacement'] = args.replacement
+            args_dict['position'] = int(args.position)
+        elif args_dict['mutation_type'].upper() in ['I', 'INS']:
+            args_dict['target'] = None
+            args_dict['replacement'] = args.replacement
+            args_dict['position'] = int(args.position)
+        elif args_dict['mutation_type'].upper() in ['D', 'DEL']:
+            args_dict['target'] = args.target
+            args_dict['replacement'] = None
+            args_dict['position'] = int(args.position)
+        else:
+            raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
     return args_dict
 
 def interactive_handler():

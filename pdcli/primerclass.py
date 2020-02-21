@@ -79,7 +79,7 @@ class PrimerDesign:
         mol_weight = self.lut["mol_weight"]
         complement_dict = self.lut["complement"]
         seq = list(sequence)
-        if self.primer_mode == "complementary":
+        if self.primer_mode == "complementary" or self.mode == "CHAR":
             rev = ''.join(self.get_reverse_complement(sequence))
         else:
             rev = reverse
@@ -91,7 +91,7 @@ class PrimerDesign:
         forwards["mismatch"] = self.calculate_mismatch(seq, mismatched_bases)
         forwards["Tm"] = self.calculate_Tm(seq, mutation_type, replacement, forwards["gc_content"], forwards["mismatch"])
         forwards["gc_end"] = self.is_gc_end(seq)
-        forwards["mol_weight"] = sum(float(mol_weight[b])*2 for b in seq)
+        forwards["mol_weight"] = sum(float(mol_weight[b]) for b in seq)
         
         reverses = {}
         reverses["sequence"] = rev
@@ -100,7 +100,7 @@ class PrimerDesign:
         reverses["mismatch"] = self.calculate_mismatch(rev, mismatched_bases)
         reverses["Tm"] = self.calculate_Tm(seq, mutation_type, replacement, reverses["gc_content"], reverses["mismatch"])
         reverses["gc_end"] = self.is_gc_end(rev)
-        reverses["mol_weight"] = sum(float(mol_weight[b])*2 for b in rev)
+        reverses["mol_weight"] = sum(float(mol_weight[b]) for b in rev)
 
         col = [
             'Forward',
@@ -148,7 +148,7 @@ class PrimerDesign:
         df = DataFrame(
             data=dat,
             columns=col,
-            index=[f"Primer {index}"]
+            index=[index]
         )
         self.df = df
         return df
@@ -185,6 +185,7 @@ class PrimerDesign:
             forseq = list(sequence)
             revseq = list(sequence)[::-1]
             seqlen = len(replacement)
+            print(self.sequence, len(self.sequence))
             forseq[start_position-1] = replacement
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
@@ -214,12 +215,11 @@ class PrimerDesign:
                 end = start + len(primers)-1
                 prilen = len(primers)
                 while start < self.position-self.forward_overlap5 and end > self.position+seqlen+self.forward_overlap3:
-                    start = start-1
-                    end = end-1
+                    start -= 1
+                    end -= 1
                 for i in range(self.position-self.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start-j:end]
-                        #candidate = [self.lut["complement"][b] for b in candidate]
                         if len(candidate) == 0:
                             continue
                         gc_content = self.calculate_gc_content(candidate)
@@ -232,14 +232,10 @@ class PrimerDesign:
                         valid_trange = sc.check_close_Tm(fwd_Tm, Tm)
                         valid_ends = sc.check_ends_gc(self.terminate_gc)
                         valid_length = sc.check_sequence_length(self.length_range)
-                        if valid_gc and valid_temp and valid_ends and valid_length:
-                            if valid_trange:
-                                valid_reverse.append(primers)
-                            else:
-                                pass
-                                # old_Tm = valid_primers.pop(-1)
-                    end = end + 1
-                
+                        if valid_gc and valid_temp and valid_ends and valid_length and valid_trange:
+                            valid_reverse.append(candidate)
+                    end += 1
+
         if not len(valid_primers) > 0:
             print("No valid primers found")
             return

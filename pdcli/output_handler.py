@@ -39,14 +39,19 @@ def interactive_saver(df):
                 with open(savename, "w") as f:
                     SeqIO.write(seq_list, f, "fasta")
                 break
+            elif savename.endswith(".json"):
+                df = concat([*df])
+                df.to_json(savename, indent=4)
             else:
                 print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta")
 
 def singleCommand_saver(res, df, savename):
     if savename.endswith(".csv"):
+        df = concat([*df])
         df.to_csv(savename)
         return 0
     elif savename.endswith(".html"):
+        df = concat([*df])
         df.to_html(savename)
         return 0
     elif savename.endswith(".fasta"):
@@ -68,6 +73,9 @@ def singleCommand_saver(res, df, savename):
             )
         with open(savename, "w") as f:
             SeqIO.write(seq_list, f, "fasta")
+    elif savename.endswith(".json"):
+        df = concat([*df])
+        df.to_json(savename, indent=4)
     else:
         print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta")
         return 1
