@@ -74,6 +74,12 @@ def interactive_handler():
     args_dict['mode'] = input('Enter primer mode [dna/pro/char]: ')
     if args_dict['mode'].upper() == 'DNA':
         args_dict['sequence'] = input('Enter DNA sequence: ')
+        if args_dict['sequence'].endswith('.txt'):
+            with open(args_dict['sequence'], 'r', encoding='utf-8') as f:
+                args_dict['sequence'] = f.read().strip()
+        elif args_dict['sequence'].endswith('.fasta'):
+            with open(args_dict['sequence'], 'r', encoding='utf-8') as f:
+                args_dict['sequence'] =  str(list(SeqIO.parse(f, 'fasta'))[0].seq).strip()
         PrimerChecks(args_dict['sequence']).check_sequence_length()
         args_dict['sequence'] = PrimerChecks(args_dict['sequence']).check_valid_base()
         args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')

@@ -18,7 +18,8 @@ class PrimerDesign:
         replacement=None,
         position=None,
         savename=None,
-        settings="pdcli/settings.json"
+        settings="pdcli/settings.json",
+        print_buffer=20
     ):
         with open(settings, "r") as f:
             settings = load(f)
@@ -40,6 +41,7 @@ class PrimerDesign:
         self.center_mutation = bool(settings["center_mutation"])
         self.primer_mode = settings["primer_mode"]
         self.expression_system = settings["expression_system"]
+        self.print_buffer = print_buffer
         self.savename = savename
         self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
@@ -136,13 +138,13 @@ class PrimerDesign:
         ]
         if index == None:
             index = 1
-        if index <= 10:
+        if index < self.print_buffer:
             print('\n', tabulate(
                 array([col, dat]).T,
                 headers=[f'Primer {index}'],
                 tablefmt='orgtbl'
             ), sep="")
-        elif index == 11:
+        elif index == self.print_buffer:
             print("Too many results; truncating output...")
         dat = array([dat])
         df = DataFrame(
@@ -181,7 +183,7 @@ class PrimerDesign:
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
-            valid_primers = []
+            valid_primers = {}
             forseq = list(sequence)
             revseq = list(sequence)[::-1]
             seqlen = len(replacement)
@@ -207,8 +209,7 @@ class PrimerDesign:
                     valid_ends = sc.check_ends_gc(self.terminate_gc)
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_primers.append(candidate)
-            valid_reverse = []
+                        valid_primers[candidate] = []
             for primers in valid_primers:
                 sequence = sequence[:start_position-1] + replacement + sequence[start_position-1+seqlen:]
                 start = sequence.find(primers)
@@ -233,7 +234,7 @@ class PrimerDesign:
                         valid_ends = sc.check_ends_gc(self.terminate_gc)
                         valid_length = sc.check_sequence_length(self.length_range)
                         if valid_gc and valid_temp and valid_ends and valid_length and valid_trange:
-                            valid_reverse.append(candidate)
+                            valid_primers[primers].append(candidate)
                     end += 1
 
         if not len(valid_primers) > 0:
@@ -246,13 +247,10 @@ class PrimerDesign:
                 for i, p in enumerate(valid_primers):
                     df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
             else:
-                if len(valid_reverse) == 0:
-                    print('No valid reverse primers found')
-                    return
                 count = 1
-                for i, p in enumerate(valid_primers):
-                    for j, r in enumerate(valid_reverse):
-                        df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, count, r))
+                for _, (k, v) in enumerate(valid_primers.items()):
+                    for r in v:
+                        df.append(self.characterize_primer(k, mutation_type, replacement, mismatched_bases, count, r))
                         count += 1
         return df
 

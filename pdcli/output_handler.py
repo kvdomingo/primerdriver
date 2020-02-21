@@ -43,7 +43,7 @@ def interactive_saver(df):
                 df = concat([*df])
                 df.to_json(savename, indent=4)
             else:
-                print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta")
+                print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
 
 def singleCommand_saver(res, df, savename):
     if savename.endswith(".csv"):
@@ -77,5 +77,5 @@ def singleCommand_saver(res, df, savename):
         df = concat([*df])
         df.to_json(savename, indent=4)
     else:
-        print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta")
+        print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
         return 1
