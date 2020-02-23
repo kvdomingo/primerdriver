@@ -279,7 +279,7 @@ class PrimerDesign:
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
-            valid_primers = []
+            valid_primers = {}
             seqlen = len(self.target)
             seq = list(sequence)
             for f5 in range(*self.flank5_range):
@@ -334,6 +334,7 @@ class PrimerDesign:
             return
         else:
             df = []
+            print(valid_primers); return
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.primer_mode == "complementary":
                 for i, p in enumerate(valid_primers):
@@ -374,7 +375,7 @@ class PrimerDesign:
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
-            valid_primers = []
+            valid_primers = dict()
             seq = list(sequence)
             seqlen = len(replacement)
             seq[start_position-1] = replacement + seq[start_position-1] 
