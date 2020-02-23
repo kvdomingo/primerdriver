@@ -32,7 +32,7 @@
 <!-- LRT Station -->
 <div id="LRTstation" class="container text-left py-5" style="height: 800px">
     <form class="text-center border border-light p-5" method="post" action="#!">
-        <div v-if="step === 0">
+        {# <div v-if="step === 0">
             <h2 class="h2-responsive">Choose your path</h2><br /><br />
             <a @click.prevent="next()">
                 <img src="{{ static('sdm/media/private/gps.png') }}" height="100" style="filter: hue-rotate(45deg)" alt="Primer characterization"></img>
@@ -65,7 +65,7 @@
             </div>
             <button @click.prevent="prev()" type="button" class="btn btn-indigo btn-rounded">Previous</button>
             <button type="button" class="btn btn-indigo btn-rounded">Next</button>
-        </div>
+        </div> #}
     </form>
 </div>
 

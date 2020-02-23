@@ -1,24 +1,8 @@
-var app = new Vue({
-    el: "#LRTstation",
-    vuetify: new Vuetify(),
-    data: () => ({
-        step: 0,
-        items: ['Substitution', 'Insertion', 'Deletion'],
-        characterize: {
-            sequence: null,
-            mutation_type: null,
-            mismatched_bases: null
-        }
-    }),
-    methods: {
-        prev() {
-            this.step--;
-        },
-        next() {
-            this.step++;
-        },
-        submit() {
-            alert("Submitted");
-        }
+function get_results(data_in) {
+    const request = new XMLHttpRequest();
+    request.open("POST", "/primer-design");
+    request.onload = () => {
+        const data = JSON.parse(request.responseText);
+        data.forEach()
     }
-});
+}
