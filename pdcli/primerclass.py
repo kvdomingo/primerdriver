@@ -187,7 +187,6 @@ class PrimerDesign:
             forseq = list(sequence)
             revseq = list(sequence)[::-1]
             seqlen = len(replacement)
-            print(self.sequence, len(self.sequence))
             forseq[start_position-1] = replacement
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
@@ -255,65 +254,193 @@ class PrimerDesign:
         return df
 
     def deletion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
-        valid_primers = []
-        seqlen = len(self.target)
-        seq = list(sequence)
-        for f5 in range(*self.flank5_range):
-            for f3 in range(*self.flank3_range):
-                if abs(f5 - f3) > 1 and self.center_mutation:
-                    continue
-                candidate1 = seq[start_position-1-f5 : start_position-1]
-                candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
-                candidate = candidate1 + candidate2
-                candidate = ''.join(candidate)
-                if len(candidate) == 0:
-                    continue
-                sc = SequenceChecks(candidate)
-                valid_gc = sc.check_gc_content(self.gc_range)
-                valid_temp = sc.check_Tm(self.Tm_range)
-                valid_ends = sc.check_ends_gc(self.terminate_gc)
-                valid_length = sc.check_sequence_length(self.length_range)
-                if valid_gc and valid_temp and valid_ends and valid_length:
-                    valid_primers.append(candidate)
-        if len(valid_primers) > 0:
-            df = []
-            print(f"\nGenerated primers: {len(valid_primers)}")
-            for i, p in enumerate(valid_primers):
-                df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
+        if self.primer_mode == 'complementary':
+            valid_primers = []
+            seqlen = len(self.target)
+            seq = list(sequence)
+            for f5 in range(*self.flank5_range):
+                for f3 in range(*self.flank3_range):
+                    if abs(f5 - f3) > 1 and self.center_mutation:
+                        continue
+                    candidate1 = seq[start_position-1-f5 : start_position-1]
+                    candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    candidate = candidate1 + candidate2
+                    candidate = ''.join(candidate)
+                    if len(candidate) == 0:
+                        continue
+                    gc_content = self.calculate_gc_content(candidate)
+                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                    Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
+                    sc = SequenceChecks(candidate)
+                    valid_gc = sc.check_gc_content(self.gc_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                    valid_ends = sc.check_ends_gc(self.terminate_gc)
+                    valid_length = sc.check_sequence_length(self.length_range)
+                    if valid_gc and valid_temp and valid_ends and valid_length:
+                        valid_primers.append(candidate)
         else:
+            valid_primers = []
+            seqlen = len(self.target)
+            seq = list(sequence)
+            for f5 in range(*self.flank5_range):
+                for f3 in range(*self.flank3_range):
+                    if abs(f5 - f3) > 1 and self.center_mutation:
+                        continue
+                    candidate1 = seq[start_position-1-f5 : start_position-1]
+                    candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    candidate = candidate1 + candidate2
+                    candidate = ''.join(candidate)
+                    if len(candidate) == 0:
+                        continue
+                    gc_content = self.calculate_gc_content(candidate)
+                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                    Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
+                    sc = SequenceChecks(candidate)
+                    valid_gc = sc.check_gc_content(self.gc_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                    valid_ends = sc.check_ends_gc(self.terminate_gc)
+                    valid_length = sc.check_sequence_length(self.length_range)
+                    if valid_gc and valid_temp and valid_ends and valid_length:
+                        valid_primers[candidate] = []
+            for primers in valid_primers:
+                sequence = sequence[:start_position-1] + sequence[start_position+seqlen:]
+                start = sequence.find(primers)
+                end = start + len(primers)-1
+                prilen = len(primers)
+                while start < self.position-self.forward_overlap5 and end > self.position+seqlen+self.forward_overlap3:
+                    start -= 1
+                    end -= 1
+                for i in range(self.position-self.forward_overlap5, end):
+                    for j in range(self.flank3_range[1]):
+                        candidate = sequence[start-j:end]
+                        if len(candidate) == 0:
+                            continue
+                        gc_content = self.calculate_gc_content(candidate)
+                        mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                        fwd_Tm = Tm
+                        Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
+                        sc = SequenceChecks(candidate)
+                        valid_gc = sc.check_gc_content(self.gc_range)
+                        valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                        valid_trange = sc.check_close_Tm(fwd_Tm, Tm)
+                        valid_ends = sc.check_ends_gc(self.terminate_gc)
+                        valid_length = sc.check_sequence_length(self.length_range)
+                        if valid_gc and valid_temp and valid_ends and valid_length and valid_trange:
+                            valid_primers[primers].append(candidate)
+                    end += 1
+
+        if not len(valid_primers) > 0:
             print("No valid primers found")
+            return
+        else:
+            df = []
+            print(f"\nGenerated forward primers: {len(valid_primers)}")
+            if self.primer_mode == "complementary":
+                for i, p in enumerate(valid_primers):
+                    df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
+            else:
+                count = 1
+                for _, (k, v) in enumerate(valid_primers.items()):
+                    for r in v:
+                        df.append(self.characterize_primer(k, mutation_type, replacement, mismatched_bases, count, r))
+                        count += 1
         return df
 
     def insertion(self, sequence, mutation_type, target, replacement, start_position, mismatched_bases):
-        valid_primers = []
-        seq = list(sequence)
-        seqlen = len(replacement)
-        seq[start_position-1] = replacement
-        for f5 in range(*self.flank5_range):
-            for f3 in range(*self.flank3_range):
-                if abs(f5 - f3) > 1 and self.center_mutation:
-                    continue
-                candidate1 = seq[start_position-1-f5 : start_position-1]
-                candidate3 = list(replacement)
-                candidate2 = seq[start_position-1 : start_position+seqlen+f3]
-                candidate = candidate1 + candidate3 + candidate2
-                candidate = ''.join(candidate)
-                if len(candidate) == 0:
-                    continue
-                sc = SequenceChecks(candidate)
-                valid_gc = sc.check_gc_content(self.gc_range)
-                valid_temp = sc.check_Tm(self.Tm_range)
-                valid_ends = sc.check_ends_gc(self.terminate_gc)
-                valid_length = sc.check_sequence_length(self.length_range)
-                if valid_gc and valid_temp and valid_ends and valid_length:
-                    valid_primers.append(candidate)
-        if len(valid_primers) > 0:
-            df = []
-            print(f"\nGenerated primers: {len(valid_primers)}")
-            for i, p in enumerate(valid_primers):
-                df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
+        if self.primer_mode == "complementary":
+            valid_primers = []
+            seq = list(sequence)
+            seqlen = len(replacement)
+            seq[start_position-1] = replacement + seq[start_position-1] 
+            for f5 in range(*self.flank5_range):
+                for f3 in range(*self.flank3_range):
+                    if abs(f5 - f3) > 1 and self.center_mutation:
+                        continue
+                    candidate1 = seq[start_position-1-f5 : start_position-1]
+                    candidate3 = list(replacement)
+                    candidate2 = seq[start_position-1 : start_position+seqlen+f3]
+                    candidate = candidate1 + candidate2
+                    candidate = ''.join(candidate)
+                    if len(candidate) == 0:
+                        continue
+                    gc_content = self.calculate_gc_content(candidate)
+                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                    Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
+                    sc = SequenceChecks(candidate)
+                    valid_gc = sc.check_gc_content(self.gc_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                    valid_ends = sc.check_ends_gc(self.terminate_gc)
+                    valid_length = sc.check_sequence_length(self.length_range)
+                    if valid_gc and valid_temp and valid_ends and valid_length:
+                        valid_primers.append(candidate)
         else:
+            valid_primers = []
+            seq = list(sequence)
+            seqlen = len(replacement)
+            seq[start_position-1] = replacement + seq[start_position-1] 
+            for f5 in range(*self.flank5_range):
+                for f3 in range(*self.flank3_range):
+                    if abs(f5 - f3) > 1 and self.center_mutation:
+                        continue
+                    candidate1 = seq[start_position-1-f5 : start_position-1]
+                    candidate3 = list(replacement)
+                    candidate2 = seq[start_position-1 : start_position+seqlen+f3]
+                    candidate = candidate1 + candidate2
+                    candidate = ''.join(candidate)
+                    if len(candidate) == 0:
+                        continue
+                    gc_content = self.calculate_gc_content(candidate)
+                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                    Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
+                    sc = SequenceChecks(candidate)
+                    valid_gc = sc.check_gc_content(self.gc_range)
+                    valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                    valid_ends = sc.check_ends_gc(self.terminate_gc)
+                    valid_length = sc.check_sequence_length(self.length_range)
+                    if valid_gc and valid_temp and valid_ends and valid_length:
+                        valid_primers[candidate] = []
+            for primers in valid_primers:
+                sequence = sequence[:start_position] + replacement + sequence[start_position-1+seqlen:]
+                start = sequence.find(primers)
+                end = start + len(primers)-1
+                prilen = len(primers)
+                while start < self.position-self.forward_overlap5 and end > self.position+seqlen+self.forward_overlap3:
+                    start -= 1
+                    end -= 1
+                for i in range(self.position-self.forward_overlap5, end):
+                    for j in range(self.flank3_range[1]):
+                        candidate = sequence[start-j:end]
+                        if len(candidate) == 0:
+                            continue
+                        gc_content = self.calculate_gc_content(candidate)
+                        mismatch = self.calculate_mismatch(candidate, mismatched_bases)
+                        fwd_Tm = Tm
+                        Tm = self.calculate_Tm(candidate, mutation_type, replacement, gc_content, mismatch)
+                        sc = SequenceChecks(candidate)
+                        valid_gc = sc.check_gc_content(self.gc_range)
+                        valid_temp = sc.check_Tm(Tm, self.Tm_range)
+                        valid_trange = sc.check_close_Tm(fwd_Tm, Tm)
+                        valid_ends = sc.check_ends_gc(self.terminate_gc)
+                        valid_length = sc.check_sequence_length(self.length_range)
+                        if valid_gc and valid_temp and valid_ends and valid_length and valid_trange:
+                            valid_primers[primers].append(candidate)
+                    end += 1
+
+        if not len(valid_primers) > 0:
             print("No valid primers found")
+            return
+        else:
+            df = []
+            print(f"\nGenerated forward primers: {len(valid_primers)}")
+            if self.primer_mode == "complementary":
+                for i, p in enumerate(valid_primers):
+                    df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))
+            else:
+                count = 1
+                for _, (k, v) in enumerate(valid_primers.items()):
+                    for r in v:
+                        df.append(self.characterize_primer(k, mutation_type, replacement, mismatched_bases, count, r))
+                        count += 1
         return df
 
     def dna_based(self):
