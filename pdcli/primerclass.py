@@ -302,8 +302,8 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
+            sequence = sequence[:start_position-1] + sequence[start_position+seqlen-1:]
             for primers in valid_primers:
-                sequence = sequence[:start_position-1] + sequence[start_position+seqlen:]
                 start = sequence.find(primers)
                 end = start + len(primers)-1
                 prilen = len(primers)
@@ -334,7 +334,6 @@ class PrimerDesign:
             return
         else:
             df = []
-            print(valid_primers); return
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.primer_mode == "complementary":
                 for i, p in enumerate(valid_primers):
@@ -400,8 +399,8 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
+            sequence = sequence[:start_position-1] + replacement + sequence[start_position-1:]
             for primers in valid_primers:
-                sequence = sequence[:start_position] + replacement + sequence[start_position-1+seqlen:]
                 start = sequence.find(primers)
                 end = start + len(primers)-1
                 prilen = len(primers)
