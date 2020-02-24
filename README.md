@@ -17,3 +17,6 @@ You can access and download all the CLI releases [here](https://github.com/kvdom
 
 ## Web application
 The updated website can be accessed via https://primerdriver.herokuapp.com/.
+
+## Documentation
+The documentation is available at https://kvdomingo.github.io/primerdriver/.
