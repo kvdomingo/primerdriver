@@ -65,11 +65,11 @@ def singleCommand_handler(args):
 def interactive_handler():
     args_dict = dict()
     print('')
-    print('====================================')
-    print('======                        ======')
-    print(f'===     PrimerDriver v{__version__}      ===')
-    print('======                        ======')
-    print('====================================\n')
+    print('                ---.   .------------.')
+    print('                ||||\ /||||||||||||||\    ')
+    print('              Primer · Driver v 1.0       ')
+    print('        \|||||||||||/ \|||||||              ')
+    print('         `---------`   `------' '\n')
     print('(c) 2020 Kenneth Domingo & Nomer Gutierrez\n')
     args_dict['mode'] = input('Enter primer mode [dna/pro/char]: ')
     if args_dict['mode'].upper() == 'DNA':
