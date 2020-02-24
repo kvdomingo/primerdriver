@@ -241,7 +241,6 @@ class PrimerDesign:
             return
         else:
             df = []
-            print(valid_primers)
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.primer_mode == "complementary":
                 for i, p in enumerate(valid_primers):
@@ -263,8 +262,12 @@ class PrimerDesign:
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
-                    candidate1 = seq[start_position-1-f5 : start_position-1]
-                    candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    if self.mode == 'DNA':
+                        candidate1 = seq[start_position-1-f5 : start_position-1]
+                        candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    elif self.mode == 'PRO':
+                        candidate1 = seq[start_position-1-f5 : start_position-1]
+                        candidate2 = seq[start_position+seqlen*3-1 : start_position+seqlen+f3]
                     candidate = candidate1 + candidate2
                     candidate = ''.join(candidate)
                     if len(candidate) == 0:
@@ -287,8 +290,12 @@ class PrimerDesign:
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
-                    candidate1 = seq[start_position-1-f5 : start_position-1]
-                    candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    if self.mode == 'DNA':
+                        candidate1 = seq[start_position-1-f5 : start_position-1]
+                        candidate2 = seq[start_position+seqlen-1 : start_position+seqlen+f3]
+                    elif self.mode == 'PRO':
+                        candidate1 = seq[start_position-1-f5 : start_position-1]
+                        candidate2 = seq[start_position+seqlen*3-1 : start_position+seqlen+f3]
                     candidate = candidate1 + candidate2
                     candidate = ''.join(candidate)
                     if len(candidate) == 0:
@@ -303,7 +310,10 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
-            sequence = sequence[:start_position-1] + sequence[start_position+seqlen-1:]
+            if self.mode == 'DNA':
+                sequence = sequence[:start_position-1] + sequence[start_position+seqlen-1:]
+            elif self.mode == 'PRO':
+                sequence = sequence[:start_position-1] + sequence[start_position+seqlen*3-1:]   
             for primers in valid_primers:
                 start = sequence.find(primers)
                 end = start + len(primers)-1
@@ -335,6 +345,7 @@ class PrimerDesign:
             return
         else:
             df = []
+            print(valid_primers)
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.primer_mode == "complementary":
                 for i, p in enumerate(valid_primers):
@@ -467,36 +478,20 @@ class PrimerDesign:
             dna = rna.replace('U', 'T')
             target = ''.join(self.expression_system[self.target]).replace('U', 'T')
             replacement = ''.join(self.expression_system[self.replacement]).replace('U', 'T')
-            result = self.substitution(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
+            result = self.substitution(dna, self.mutation_type, target, replacement, self.position*3-2, self.mismatched_bases)
         elif self.mutation_type in ['D', 'DEL']:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.target)
-            with open("pdcli/AAcompressed.json", "r") as f:
-                cod1 = load(f)
-            with open("pdcli/symnucbases.json", "r") as f:
-                sym = load(f)
-            rna = ''.join([cod1[b][0] for b in self.sequence])
-            rna = ''.join([sym[b][0] for b in rna])
+            rna = ''.join([self.expression_system[b] for b in self.sequence])
             dna = rna.replace('U', 'T')
-            target = cod1[self.target][0]
-            target = ''.join([sym[b][0] for b in target]).replace('U', 'T')
-            replacement = None
-            result = self.deletion(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
+            result = self.deletion(dna, self.mutation_type, self.target, self.replacement, self.position*3-2, self.mismatched_bases)
         elif self.mutation_type in ['I', 'INS']:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.replacement)
-            with open("pdcli/AAcompressed.json", "r") as f:
-                cod1 = load(f)
-            with open("pdcli/symnucbases.json", "r") as f:
-                sym = load(f)
-            rna = ''.join([cod1[b][0] for b in self.sequence])
-            rna = ''.join([sym[b][0] for b in rna])
+            rna = ''.join([self.expression_system[b] for b in self.sequence])
             dna = rna.replace('U', 'T')
-            target = cod1[self.target][0]
-            target = ''.join([sym[b][0] for b in target]).replace('U', 'T')
-            replacement = cod1[self.replacement][0]
-            replacement = ''.join([sym[b][0] for b in replacement]).replace('U', 'T')
-            result = self.insertion(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
+            replacement = ''.join(self.expression_system[self.replacement]).replace('U', 'T')
+            result = self.insertion(dna, self.mutation_type, self.target, replacement, self.position*3-2, self.mismatched_bases)
         return result
 
     def main(self):
