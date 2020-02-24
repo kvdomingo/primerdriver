@@ -18,9 +18,7 @@ dj-database-url==0.5.0
 Django==3.0.3
 django-cors-headers==3.2.1
 django-heroku==0.3.1
-django-webpack-loader==0.6.0
 djangorestframework==3.11.0
-djangorestframework-jwt==1.11.0
 doc8==0.8.0
 docutils==0.16
 ecdsa==0.15
@@ -38,7 +36,7 @@ jedi==0.16.0
 Jinja2==2.11.1
 jsonschema==3.2.0
 jupyter==1.0.0
-jupyter-client==5.3.4
+jupyter-client==6.0.0
 jupyter-console==6.1.0
 jupyter-core==4.6.3
 lazy-object-proxy==1.4.3
