@@ -3,7 +3,7 @@
         $(".navbar").hide();
         $(function() {
             $(window).scroll(function() {
-                if ($(this).scrollTop() > 300) {
+                if ($(this).scrollTop() > 0) {
                     $('.navbar').fadeIn();
                 }
                 else {

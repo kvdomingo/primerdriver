@@ -12,3 +12,12 @@ def index(request):
         "settings": settings,
     }
     return render(request, "sdm/index.html.j2", context)
+
+
+def train(request):
+    context = {
+        "html_title": "Driver",
+        "active_page": "design",
+        "settings": settings
+    }
+    return render(request, "sdm/train.html.j2", context)

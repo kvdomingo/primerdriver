@@ -42,9 +42,9 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark fixed-top" style="transition: background-color 0.5s ease 0s;">
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark sticky-top" style="transition: background-color 0.5s ease 0s;">
         <a class="navbar-brand" href="{{ url('index') }}">
-            <img src="{{ static('sdm/media/private/PrimerDriver_logo.png') }}" height=50 class="pb-1" />
+            <img src="{{ static('sdm/media/private/PrimerDriver_logo.png') }}" height="50" class="pb-1" />
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false", aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -53,6 +53,9 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item {{ 'active' if active_page == 'index' }}">
                     <a class="nav-link" href="{{ url('index') }}">Home</a>
+                </li>
+                <li class="nav-item {{ 'active' if active_page == 'design' }}">
+                    <a class="nav-link" href="{{ url('design') }}">Design</a>
                 </li>
                 <li class="nav-item {{ 'active' if active_page == 'download' }}">
                     <a class="nav-link" href="https://github.com/kvdomingo/primerdriver/releases" target="_blank">Download</a>
@@ -72,7 +75,7 @@
         </div>
     </footer>
 
-<script src="{{ static('sdm/js/nav.js') }}"></script>
+{# <script src="{{ static('sdm/js/nav.js') }}"></script> #}
 
 </body>
 </html>
