@@ -474,7 +474,36 @@ class PrimerDesign:
             replacement = cod1[self.replacement][0]
             replacement = ''.join([sym[b][0] for b in replacement]).replace('U', 'T')
             result = self.substitution(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
-            return result
+        elif self.mutation_type in ['D', 'DEL']:
+            if self.mismatched_bases is None:
+                self.mismatched_bases = len(self.target)
+            with open("pdcli/AAcompressed.json", "r") as f:
+                cod1 = load(f)
+            with open("pdcli/symnucbases.json", "r") as f:
+                sym = load(f)
+            rna = ''.join([cod1[b][0] for b in self.sequence])
+            rna = ''.join([sym[b][0] for b in rna])
+            dna = rna.replace('U', 'T')
+            target = cod1[self.target][0]
+            target = ''.join([sym[b][0] for b in target]).replace('U', 'T')
+            replacement = None
+            result = self.deletion(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
+        elif self.mutation_type in ['I', 'INS']:
+            if self.mismatched_bases is None:
+                self.mismatched_bases = len(self.replacement)
+            with open("pdcli/AAcompressed.json", "r") as f:
+                cod1 = load(f)
+            with open("pdcli/symnucbases.json", "r") as f:
+                sym = load(f)
+            rna = ''.join([cod1[b][0] for b in self.sequence])
+            rna = ''.join([sym[b][0] for b in rna])
+            dna = rna.replace('U', 'T')
+            target = cod1[self.target][0]
+            target = ''.join([sym[b][0] for b in target]).replace('U', 'T')
+            replacement = cod1[self.replacement][0]
+            replacement = ''.join([sym[b][0] for b in replacement]).replace('U', 'T')
+            result = self.insertion(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
+        return result
 
     def main(self):
         if self.mode == 'CHAR':
