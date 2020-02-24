@@ -1,8 +1,10 @@
+from django.http import HttpResponseRedirect
 from django.core.files import File
 from django.shortcuts import render, HttpResponse
 from django.templatetags.static import static
 from django.conf import settings
 from mimetypes import guess_type
+from .forms import Characterize
 
 
 def index(request):
@@ -15,9 +17,16 @@ def index(request):
 
 
 def train(request):
+    if request.method == "POST":
+        form = Characterize(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect("sdm/train.html.j2")
+    else:
+        form = Characterize()
     context = {
         "html_title": "Driver",
         "active_page": "design",
-        "settings": settings
+        "settings": settings,
+        "form": form
     }
     return render(request, "sdm/train.html.j2", context)

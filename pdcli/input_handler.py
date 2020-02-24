@@ -67,7 +67,7 @@ def interactive_handler():
     print('')
     print('                ---.   .------------.')
     print('                ||||\ /||||||||||||||\    ')
-    print('              Primer · Driver v 1.0       ')
+    print(f'             Primer · Driver v{__version__}       ')
     print('        \|||||||||||/ \|||||||              ')
     print('         `---------`   `------' '\n')
     print('(c) 2020 Kenneth Domingo & Nomer Gutierrez\n')
