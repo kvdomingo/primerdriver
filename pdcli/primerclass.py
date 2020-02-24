@@ -41,11 +41,12 @@ class PrimerDesign:
         self.center_mutation = bool(settings["center_mutation"])
         self.primer_mode = settings["primer_mode"]
         self.print_buffer = print_buffer
+        self.expression_name = settings["expression_system"]
         self.savename = savename
         self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             self.lut = load(f)
-        with open(f"pdcli/expression system/{settings['expression_system']}.json", "r") as f:
+        with open(f"pdcli/expression system/{self.expression_name}.json", "r") as f:
             self.expression_system = load(f)
 
     def calculate_gc_content(self, seq):
@@ -241,8 +242,9 @@ class PrimerDesign:
             return
         else:
             df = []
-            print(valid_primers)
             print(f"\nGenerated forward primers: {len(valid_primers)}")
+            if self.mode == 'PRO':
+                print(f"Using expression system: {self.expression_name}")
             if self.primer_mode == "complementary":
                 for i, p in enumerate(valid_primers):
                     df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i+1))

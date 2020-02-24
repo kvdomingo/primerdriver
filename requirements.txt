@@ -6,6 +6,7 @@ biopython==1.76
 bleach==3.1.1
 cffi==1.14.0
 colorama==0.4.3
+coverage==5.0.3
 cryptography==2.8
 decorator==4.4.1
 defusedxml==0.6.0
