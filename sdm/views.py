@@ -3,20 +3,7 @@ from django.shortcuts import render, HttpResponse
 from django.templatetags.static import static
 from django.conf import settings
 from mimetypes import guess_type
-from rest_framework import generics
-from .models import Characterize
-from .serializers import CharacterizeSerializer
 
-
-class CharacterizeList(generics.ListCreateAPIView):
-    queryset = Characterize.objects.all()
-    serializer_class = CharacterizeSerializer
-
-
-class CharacterizeDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Characterize.objects.all()
-    serializer_class = CharacterizeSerializer
-    
 
 def index(request):
     context = {
