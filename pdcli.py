@@ -7,7 +7,7 @@ from pdcli.output_handler import *
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('--mode', help="Choose between 'dna' (DNA), 'pro' (protein), or 'char' (primer characterization) mode", type=str)
+    parser.add_argument('-M', '--mode', help="Choose between 'dna' (DNA), 'pro' (protein), or 'char' (primer characterization) mode", type=str)
     parser.add_argument('-s', '--sequence', help='Template DNA sequence', type=str)
     parser.add_argument('-m', '--mutation-type', help='Mutation type', type=str)
     parser.add_argument('-t', '--target', help='Target base', type=str)
