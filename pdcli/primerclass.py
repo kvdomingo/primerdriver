@@ -40,13 +40,13 @@ class PrimerDesign:
         self.terminate_gc = bool(settings["terminate_gc"])
         self.center_mutation = bool(settings["center_mutation"])
         self.primer_mode = settings["primer_mode"]
-        self.expression_system = settings["expression_system"]
         self.print_buffer = print_buffer
         self.savename = savename
         self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
-            lut = load(f)
-        self.lut = lut
+            self.lut = load(f)
+        with open(f"pdcli/expression system/{settings['expression_system']}.json", "r") as f:
+            self.expression_system = load(f)
 
     def calculate_gc_content(self, seq):
         return (seq.count('G') + seq.count('C'))/len(seq)
@@ -241,6 +241,7 @@ class PrimerDesign:
             return
         else:
             df = []
+            print(valid_primers)
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.primer_mode == "complementary":
                 for i, p in enumerate(valid_primers):
@@ -462,17 +463,10 @@ class PrimerDesign:
         if self.mutation_type in ['S', 'SUB']:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.replacement)
-            with open("pdcli/AAcompressed.json", "r") as f:
-                cod1 = load(f)
-            with open("pdcli/symnucbases.json", "r") as f:
-                sym = load(f)
-            rna = ''.join([cod1[b][0] for b in self.sequence])
-            rna = ''.join([sym[b][0] for b in rna])
+            rna = ''.join([self.expression_system[b] for b in self.sequence])
             dna = rna.replace('U', 'T')
-            target = cod1[self.target][0]
-            target = ''.join([sym[b][0] for b in target]).replace('U', 'T')
-            replacement = cod1[self.replacement][0]
-            replacement = ''.join([sym[b][0] for b in replacement]).replace('U', 'T')
+            target = ''.join(self.expression_system[self.target]).replace('U', 'T')
+            replacement = ''.join(self.expression_system[self.replacement]).replace('U', 'T')
             result = self.substitution(dna, self.mutation_type, target, replacement, self.position*3, self.mismatched_bases)
             return result
 
