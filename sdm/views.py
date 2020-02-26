@@ -13,14 +13,23 @@ def index(request):
         "active_page": "index",
         "settings": settings,
     }
-    return render(request, "sdm/index.html.j2", context)
+    return render(request, "sdm/index.html.jinja2", context)
 
 
 def train(request):
+    context = {
+        "html_title": "Driver",
+        "active_page": "design",
+        "settings": settings
+    }
+    return render(request, "sdm/train.html.jinja2", context)
+
+
+def characterize(request):
     if request.method == "POST":
         form = Characterize(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect("sdm/train.html.j2")
+            return HttpResponseRedirect("sdm/characterize.html.jinja2")
     else:
         form = Characterize()
     context = {
@@ -29,4 +38,4 @@ def train(request):
         "settings": settings,
         "form": form
     }
-    return render(request, "sdm/train.html.j2", context)
+    return render(request, "sdm/characterize.html.jinja2", context)

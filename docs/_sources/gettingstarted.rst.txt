@@ -1,0 +1,28 @@
+.. _getting_started:
+
+***************
+Getting Started
+***************
+
+.. _requirements:
+
+Requirements
+============
+
+To use *PrimerDriver*, you should have:
+    - Updated web browser
+    - Python 3.6.8 or above
+
+Additional packages can be installed via the ``requirements.txt`` file, which will be covered in the next section. Before proceeding, it is recommended that you create a separate environment and activate it now.
+
+
+.. _installaton:
+
+Installation
+============
+
+First, download the latest release from `Github <https://github.com/kvdomingo/primerdriver/releases>`_ and extract it to your local machine. Open a terminal and ``cd`` to where you extracted the files. Install the required packages via::
+
+    > pip install -r requirements.txt
+
+Now you are ready to design mutagenic primers.

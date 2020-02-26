@@ -1,0 +1,21 @@
+{% extends 'sdm/layout.html.jinja2' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+
+{% block body %}
+
+<div class="container" id="app">
+    <div class="list-group">
+        <a href="{{ url('characterize') }}" class="list-group-item list-group-item-action">Primer Characterization</a>
+        <a href="#" class="list-group-item list-group-item-action">DNA-based Primer Design</a>
+        <a href="#" class="list-group-item list-group-item-action">Protein-based Primer Design</a>
+    </div>
+</div>
+
+<script src="{{ static('sdm/js/train.js') }}"></script>
+<script src="{{ static('sdm/js/main.js') }}"></script>
+
+{% endblock %}
