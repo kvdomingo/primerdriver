@@ -17,7 +17,7 @@ def index(request):
         "active_page": "index",
         "settings": settings,
     }
-    return render(request, "sdm/index.html.jinja2", context)
+    return render(request, "sdm/index.html.j2", context)
 
 
 def train(request):
@@ -26,7 +26,7 @@ def train(request):
         "active_page": "design",
         "settings": settings
     }
-    return render(request, "sdm/train.html.jinja2", context)
+    return render(request, "sdm/train.html.j2", context)
 
 
 def characterize(request):
@@ -35,7 +35,7 @@ def characterize(request):
         "active_page": "design",
         "settings": settings
     }
-    return render(request, "sdm/characterize.html.jinja2", context)
+    return render(request, "sdm/characterize.html.j2", context)
 
 
 def dna_based(request):
@@ -44,7 +44,7 @@ def dna_based(request):
         "active_page": "design",
         "settings": settings
     }
-    return render(request, "sdm/dnabased.html.jinja2", context)
+    return render(request, "sdm/dnabased.html.j2", context)
 
 def protein_based(request):
     exp_systems = sorted([''.join(f.split('.')[:-1]).strip() for f in listdir(f'{settings.BASE_DIR}/pdcli/expression system')])
@@ -54,7 +54,7 @@ def protein_based(request):
         "settings": settings,
         "expression_system": exp_systems
     }
-    return render(request, "sdm/proteinbased.html.jinja2", context)
+    return render(request, "sdm/proteinbased.html.j2", context)
 
 
 def result(request):
