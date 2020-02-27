@@ -23,16 +23,6 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.11.0/js/mdb.min.js"></script>
-    {% if settings.DEBUG %}
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    {% else %}
-        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    {% endif %}
-    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js" rel="stylesheet">
-    <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
     <title>{% block title %}{% endblock %} | PrimerDriver</title>
     <style>
         body {
@@ -40,6 +30,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar navbar-expand-xl navbar-dark bg-dark sticky-top" style="transition: background-color 0.5s ease 0s;">
@@ -75,7 +66,7 @@
         </div>
     </footer>
 
-{# <script src="{{ static('sdm/js/nav.js') }}"></script> #}
+<!-- <script src="{{ static('sdm/js/anim.js') }}"></script> -->
 
 </body>
 </html>

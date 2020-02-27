@@ -82,4 +82,32 @@ The following definitions and considerations should be made for designing mutage
         Both the forward and reverse primers will be screened for the flanking region values. Forward overlap values will also be applied when generating the primer pairs.
 
 - ``expression_system``
-    When using Protein based primer design, the user can choose from a number of commonly used model organisms used in molecular and cell biology. This enables the tool to generate primers that use the optimum codon for the chosen organism. 
+    When using Protein based primer design, the user can choose from a number of commonly used model organisms used in molecular and cell biology. This enables the tool to generate primers that use the optimum codon for the chosen organism.
+
+
+.. _interface:
+
+Choosing an interface
+=====================
+
+PrimerDriver lets you choose from two different interfaces:
+
+- Interactive
+    Guides the user through a step-by-step input prompt. 
+
+- Single Command
+    Requires the user to include all the inputs and arguments needed to perform the task in a single command.
+
+
+.. _design_mode:
+
+Choosing primer design modes
+============================
+
+PrimerDriver asks you to choose from three different modes when using the command-line interface:
+
+- DNA-based primer design
+
+- Protein-based primer design
+
+- Primer characterization

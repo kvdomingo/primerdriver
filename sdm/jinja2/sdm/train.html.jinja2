@@ -7,11 +7,45 @@
 
 {% block body %}
 
-<div class="container" id="app">
-    <div class="list-group">
-        <a href="{{ url('characterize') }}" class="list-group-item list-group-item-action">Primer Characterization</a>
-        <a href="#" class="list-group-item list-group-item-action">DNA-based Primer Design</a>
-        <a href="#" class="list-group-item list-group-item-action">Protein-based Primer Design</a>
+<div class="container my-5 animsition" id="app">
+    <div class="card-deck">
+
+        <div class="card mb-4">
+            <div class="view overlay">
+                <img class="card-img-top" src="{{ static('sdm/media/private/characterize.png') }}">
+                <a href="{{ url('characterize') }}">
+                    <div class="mask rgba-white-slight"></div>
+                </a>
+            </div>
+            <div class="card-body text-center">
+                <a href="{{ url('characterize') }}"><button type="button" class="btn btn-indigo btn-md">Primer Characterization</button></a>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="view overlay">
+                <img class="card-img-top" src="{{ static('sdm/media/private/dna.png') }}">
+                <a href="{{ url('dna') }}">
+                    <div class="mask rgba-white-slight"></div>
+                </a>
+            </div>
+            <div class="card-body text-center">
+                <a href="{{ url('dna') }}"><button type="button" class="btn btn-indigo btn-md">DNA-based</button></a>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="view overlay">
+                <img class="card-img-top" src="{{ static('sdm/media/private/protein.png') }}">
+                <a href="#!">
+                    <div class="mask rgba-white-slight"></div>
+                </a>
+            </div>
+            <div class="card-body text-center">
+                <button type="button" class="btn btn-indigo btn-md">Protein-based</button>
+            </div>
+        </div>
+
     </div>
 </div>
 

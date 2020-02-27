@@ -21,7 +21,7 @@ Additional packages can be installed via the ``requirements.txt`` file, which wi
 Installation
 ============
 
-First, download the latest release from `Github <https://github.com/kvdomingo/primerdriver/releases>`_ and extract it to your local machine. Open a terminal and ``cd`` to where you extracted the files. Install the required packages via::
+First, download the latest release from `GitHub <https://github.com/kvdomingo/primerdriver/releases>`_ and extract it to your local machine. Open a terminal and ``cd`` to where you extracted the files. Install the required packages via::
 
     > pip install -r requirements.txt
 

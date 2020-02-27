@@ -10,9 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $(document).on('keyup keypress keydown mousedown mouseup change blur', function(e) {
         var valid_sequence = ($('#sequence').val().length > 0);
-        var valid_mismatch = ($('#mismatch').val().length > 0);
+        var valid_target = ($('#target').val().length > 0);
+        var valid_position = !(isNaN(parseInt($('#position').val()))) && (parseInt($('#position').val()) > 0);
+        var valid_replacement = ($('#target').val().length > 0);
         var valid_type = ($('#mut_type').val().length > 0);
-        if (valid_sequence && valid_mismatch && valid_type) {
+        if (valid_sequence && valid_target && valid_position && valid_replacement && valid_type) {
             $('#submit').removeClass('disabled');
         }
         else {
@@ -23,8 +25,35 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#submit').onclick = () => {
         const xhttp = new XMLHttpRequest();
         const sequence = document.querySelector('#sequence').value;
-        const mismatch = document.querySelector('#mismatch').value;
-        const mut_type = document.querySelector('#mut_type').value;
+        const target = document.querySelector('#target').value;
+        const position = document.querySelector('#position').value;
+        const replacement = document.querySelector('#replacement').value;
+        const valued_settings = [
+            '#Tm_range_min',
+            '#Tm_range_max',
+            '#gc_range_min',
+            '#gc_range_max',
+            '#length_min',
+            '#length_max',
+            '#flank5_range_min',
+            '#flank5_range_max',
+            '#flank3_range_min',
+            '#flank3_range_max',
+            '#primer_mode'
+        ];
+        const checked_settings = [
+            '#terminate_gc',
+            '#center_mutation'
+        ];
+        var settings = {};
+        for (var set in valued_settings) {
+            settings[set.slice(1)] = $(set).val();
+        }
+        for (set in checked_settings) {
+            settings[set.slice(1)] = $(set)[0].checked;
+        }
+        settings = JSON.stringify(settings);
+
         xhttp.open('POST', '/result');
         xhttp.onload = () => {
             const raw = xhttp.responseText;
@@ -39,15 +68,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             contents += `
                 </tbody></table></div>
-                <button class="btn btn-blue-grey btn-rounded" onclick="window.location.href='/characterize'">Try again</button>
+                <button class="btn btn-blue-grey btn-rounded" onclick="window.location.href='/dna-based'">Try again</button>
                 `;
             document.querySelector('#form').innerHTML = contents;
         };
         const data = new FormData();
-        data.append('mode', 'CHAR');
+        data.append('mode', 'DNA');
         data.append('sequence', sequence);
-        data.append('mismatched_bases', mismatch);
-        data.append('mutation_type', mut_type);
+        data.append('target', target);
+        data.append('position', position);
+        data.append('replacement', replacement);
+        data.append('settings', settings);
         xhttp.send(data);
         return false;
     };

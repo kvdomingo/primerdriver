@@ -5,9 +5,6 @@ from django.shortcuts import render, HttpResponse
 from django.templatetags.static import static
 from django.urls import reverse
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
-from mimetypes import guess_type
-from .forms import Characterize
 from pdcli.primerclass import *
 
 
@@ -22,7 +19,7 @@ def index(request):
 
 def train(request):
     context = {
-        "html_title": "Driver",
+        "html_title": "Design",
         "active_page": "design",
         "settings": settings
     }
@@ -30,27 +27,28 @@ def train(request):
 
 
 def characterize(request):
-    if request.method == "POST":
-        form = Characterize(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect("sdm/characterize.html.jinja2")
-    else:
-        form = Characterize()
     context = {
-        "html_title": "Driver",
+        "html_title": "Primer Characterization",
         "active_page": "design",
-        "settings": settings,
-        "form": form
+        "settings": settings
     }
     return render(request, "sdm/characterize.html.jinja2", context)
 
 
+def dna_based(request):
+    context = {
+        "html_title": "DNA-based",
+        "active_page": "design",
+        "settings": settings
+    }
+    return render(request, "sdm/dnabased.html.jinja2", context)
+
+
 def result(request):
     data = dict()
-    if request.POST.get('mode') == 'CHAR':
-        for k, v in request.POST.items():
-            data[k] = v
-        res = PrimerDesign(**data)
-        res.main()
-        out = res.df.to_json()
+    for k, v in request.POST.items():
+        data[k] = v
+    res = PrimerDesign(**data)
+    res.main()
+    out = res.df.to_json()
     return HttpResponse(out)

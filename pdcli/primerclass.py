@@ -1,5 +1,5 @@
 from warnings import warn
-from json import load
+from json import load, loads
 from pandas import DataFrame
 from tabulate import tabulate
 from numpy import array
@@ -21,8 +21,13 @@ class PrimerDesign:
         settings="pdcli/settings.json",
         print_buffer=20
     ):
-        with open(settings, "r") as f:
-            settings = load(f)
+        if isinstance(settings, str):
+            if settings.endswith('json'):
+                with open(settings, "r") as f:
+                    settings = load(f)
+            else:
+                settings = loads(settings)
+        self.settings = settings
         self.mode = mode.upper()
         self.sequence = sequence.upper()
         self.mutation_type = mutation_type[0].upper()
@@ -43,7 +48,6 @@ class PrimerDesign:
         self.print_buffer = print_buffer
         self.expression_name = settings["expression_system"]
         self.savename = savename
-        self.settings = settings
         with open("pdcli/lut.json", "r", encoding="utf-8") as f:
             self.lut = load(f)
         with open(f"pdcli/expression system/{self.expression_name}.json", "r") as f:
@@ -95,7 +99,7 @@ class PrimerDesign:
         forwards["Tm"] = self.calculate_Tm(seq, mutation_type, replacement, forwards["gc_content"], forwards["mismatch"])
         forwards["gc_end"] = self.is_gc_end(seq)
         forwards["mol_weight"] = sum(float(mol_weight[b]) for b in seq)
-        
+
         reverses = {}
         reverses["sequence"] = rev
         reverses["length"] = len(rev)
@@ -316,7 +320,7 @@ class PrimerDesign:
             if self.mode == 'DNA':
                 sequence = sequence[:start_position-1] + sequence[start_position+seqlen-1:]
             elif self.mode == 'PRO':
-                sequence = sequence[:start_position-1] + sequence[start_position+seqlen*3-1:]   
+                sequence = sequence[:start_position-1] + sequence[start_position+seqlen*3-1:]
             for primers in valid_primers:
                 start = sequence.find(primers)
                 end = start + len(primers)-1
@@ -366,7 +370,7 @@ class PrimerDesign:
             valid_primers = []
             seq = list(sequence)
             seqlen = len(replacement)
-            seq[start_position-1] = replacement + seq[start_position-1] 
+            seq[start_position-1] = replacement + seq[start_position-1]
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
@@ -392,7 +396,7 @@ class PrimerDesign:
             valid_primers = dict()
             seq = list(sequence)
             seqlen = len(replacement)
-            seq[start_position-1] = replacement + seq[start_position-1] 
+            seq[start_position-1] = replacement + seq[start_position-1]
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
