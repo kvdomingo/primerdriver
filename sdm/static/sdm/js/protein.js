@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('#sequence').on('keyup keypress keydown mousedown mouseup change blur', function(e) {
         var cursorposition = $('#sequence').prop('selectionStart');
         document.getElementById('cursorposition').innerHTML = cursorposition + 1;
-        document.getElementById('counter').innerHTML = `${this.value.length}/20000`;
+        document.getElementById('counter').innerHTML = `${this.value.length}/8000`;
     });
 
     $('#form').on('keyup keypress keydown mousedown mouseup change blur', function(e) {
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             settings[checked_settings[set].slice(1)] = $(checked_settings[set]).prop('checked');
         }
         settings.primer_mode = $('#primer_mode').val();
-        settings.expression_system = 'Homo sapiens';
+        settings.expression_system = $('#expression_system').val();
         settings = JSON.stringify(settings);
 
         xhttp.open('POST', '/result');
@@ -93,11 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </tbody></table></div>
                     `;
             }
-            contents += `<button class="btn btn-blue-grey btn-rounded" onclick="window.location.href='/dna-based'">Try again</button>`;
+            contents += `<button class="btn btn-blue-grey btn-rounded" onclick="window.location.href='/protein-based'">Try again</button>`;
             document.querySelector('#form').innerHTML = contents;
         };
         const data = new FormData();
-        data.append('mode', 'DNA');
+        data.append('mode', 'PRO');
         data.append('sequence', sequence);
         data.append('target', target);
         data.append('position', position);

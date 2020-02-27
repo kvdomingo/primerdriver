@@ -1,8 +1,14 @@
-.. _parameter_setting:
+.. _software_features:
 
 *****************
-Parameter Setting
+Software Features
 *****************
+
+
+.. _parameter_setting:
+
+Parameter Setting
+=================
 
 The user parameter setting is possible for the inputs in PrimerDriver. The tool designs the desired mutagenic primer pairs according to user input and performs site-directed mutagenesis from single- or multiple-bases within the sequence.
 
@@ -85,12 +91,20 @@ The following definitions and considerations should be made for designing mutage
     When using Protein based primer design, the user can choose from a number of commonly used model organisms used in molecular and cell biology. This enables the tool to generate primers that use the optimum codon for the chosen organism.
 
 
+.. _input_format:
+
+Input format
+============
+
+In PrimerDriver, sequences can be added either by copying/pasting into the input cursor. The tool also accepts one or multiple sequences when uploaded in FASTA format. The input sequence must match the DNA sequence that will serve as template for PCR. Before processing the sequences, a basic input emending (FASTA headers, unsupported characters) is performed.
+
+
 .. _interface:
 
 Choosing an interface
 =====================
 
-PrimerDriver lets you choose from two different interfaces:
+As a powerful and useful feature in DNA engineering, the Web server offers the possibility of designing primers for site-directed mutagenesis. The tool can accommodate both DNA and protein sequences to incorporate base pair insertions, deletions, and substitutions as specified by the user. This can cater to an array of primer designs for site-directed single mutagenesis. PrimerDriver also lets you choose from two different command-line modes:
 
 - Interactive mode
     Guides the user through a step-by-step input prompt. Primarily aimed towards demonstration purposes and first-time users of the program.

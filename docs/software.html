@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Parameter Setting &#8212; PrimerDriver v0.2.1 documentation</title>
+    <title>Software Features &#8212; PrimerDriver v1.0.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -32,8 +32,10 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="parameter-setting">
-<span id="id1"></span><h1>Parameter Setting<a class="headerlink" href="#parameter-setting" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="software-features">
+<span id="id1"></span><h1>Software Features<a class="headerlink" href="#software-features" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="parameter-setting">
+<span id="id2"></span><h2>Parameter Setting<a class="headerlink" href="#parameter-setting" title="Permalink to this headline">¶</a></h2>
 <p>The user parameter setting is possible for the inputs in PrimerDriver. The tool designs the desired mutagenic primer pairs according to user input and performs site-directed mutagenesis from single- or multiple-bases within the sequence.</p>
 <p>The user needs to open the <code class="docutils literal notranslate"><span class="pre">pdcli/settings.json</span></code> file to define the range of allowable values in most of the parameters. The <code class="docutils literal notranslate"><span class="pre">json</span></code> file with the default settings appears as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
@@ -134,9 +136,14 @@
 </dl>
 </li>
 </ul>
+</div>
+<div class="section" id="input-format">
+<span id="id3"></span><h2>Input format<a class="headerlink" href="#input-format" title="Permalink to this headline">¶</a></h2>
+<p>In PrimerDriver, sequences can be added either by copying/pasting into the input cursor. The tool also accepts one or multiple sequences when uploaded in FASTA format. The input sequence must match the DNA sequence that will serve as template for PCR. Before processing the sequences, a basic input emending (FASTA headers, unsupported characters) is performed.</p>
+</div>
 <div class="section" id="choosing-an-interface">
 <span id="interface"></span><h2>Choosing an interface<a class="headerlink" href="#choosing-an-interface" title="Permalink to this headline">¶</a></h2>
-<p>PrimerDriver lets you choose from two different interfaces:</p>
+<p>As a powerful and useful feature in DNA engineering, the Web server offers the possibility of designing primers for site-directed mutagenesis. The tool can accommodate both DNA and protein sequences to incorporate base pair insertions, deletions, and substitutions as specified by the user. This can cater to an array of primer designs for site-directed single mutagenesis. PrimerDriver also lets you choose from two different command-line modes:</p>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Interactive mode</dt><dd><p>Guides the user through a step-by-step input prompt. Primarily aimed towards demonstration purposes and first-time users of the program.</p>
@@ -183,7 +190,9 @@
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Parameter Setting</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Software Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-setting">Parameter Setting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-format">Input format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#choosing-an-interface">Choosing an interface</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#choosing-primer-design-modes">Choosing primer design modes</a></li>
 </ul>
@@ -230,7 +239,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="_sources/parameter.rst.txt"
+      <a href="_sources/software.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

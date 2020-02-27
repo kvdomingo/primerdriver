@@ -37,12 +37,12 @@
         <div class="card mb-4">
             <div class="view overlay">
                 <img class="card-img-top" src="{{ static('sdm/media/private/protein.png') }}">
-                <a href="#!">
+                <a href="{{ url('protein') }}">
                     <div class="mask rgba-white-slight"></div>
                 </a>
             </div>
             <div class="card-body text-center">
-                <button type="button" class="btn btn-indigo btn-md">Protein-based</button>
+                <a href="{{ url('protein') }}"><button type="button" class="btn btn-indigo btn-md">Protein-based</button></a>
             </div>
         </div>
 

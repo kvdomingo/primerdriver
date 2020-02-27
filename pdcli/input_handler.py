@@ -5,7 +5,7 @@ from Bio.Alphabet import IUPAC
 from Bio.SeqRecord import SeqRecord
 
 
-__version__ = '0.2.1'
+__version__ = '1.0.0'
 
 def singleCommand_handler(args):
     args_dict = dict()
@@ -100,7 +100,7 @@ def interactive_handler():
     elif args_dict['mode'].upper() == 'CHAR':
         args_dict['sequence'] = input('Enter primer sequence: ')
         args_dict['mutation_type'] = input('Enter mutation type [s/i/d]: ')
-        args_dict['mismatched_bases'] = input('Enter number of mismatched bases: ')
+        args_dict['mismatched_bases'] = int(input('Enter number of mismatched bases: '))
     elif args_dict['mode'].upper() == 'PRO':
         args_dict['sequence'] = input('Enter protein sequence: ')
         args_dict['sequence'] = PrimerChecks(args_dict['sequence']).check_valid_protein()

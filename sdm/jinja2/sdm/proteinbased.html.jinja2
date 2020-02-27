@@ -11,10 +11,10 @@
 <div class="container" id="app">
     <a href="{{ url('design') }}"><button class="btn btn-blue-grey btn-rounded" style="margin-top: 30px">Back</button></a>
     <form id="form" class="text-center border border-light p-5" method="post">
-        <h1 class="h1-responsive">DNA-based Primer Design</h1>
+        <h1 class="h1-responsive">Protein-based Primer Design</h1>
         <div class="md-form md-outline">
-            <textarea id="sequence" class="form-control md-textarea " maxlength="20000" rows="3" autofocus></textarea>
-            <label for="sequence">Enter DNA sequence</label>
+            <textarea id="sequence" class="form-control md-textarea " maxlength="8000" rows="3" autofocus></textarea>
+            <label for="sequence">Enter protein sequence (1-letter IUPAC codes)</label>
             <div class="row">
                 <div class="col">
                     <div class="text-left">
@@ -23,7 +23,7 @@
                 </div>
                 <div class="col">
                     <div class="text-right">
-                        <small class="blue-grey-text" id="counter">0/20000</small>
+                        <small class="blue-grey-text" id="counter">0/8000</small>
                     </div>
                 </div>
             </div>
@@ -169,6 +169,25 @@
                             </div>
                             <div class="col"></div>
                         </div>
+                        <div class="row">
+                            <div class="col-4 text-right">
+                                Expression system
+                            </div>
+                            <div class="col">
+                                <div class="md-outline">
+                                    <select class="browser-default custom-select" id="expression_system">
+                                        {% for expression in expression_system %}
+                                            {% if expression == 'Homo sapiens' %}
+                                                <option value="{{ expression }}" selected>{{ expression }}</option>
+                                            {% else %}
+                                                <option value="{{ expression }}">{{ expression }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col"></div>
+                        </div>
                         <div class="custom-control custom-checkbox text-left">
                             <input type="checkbox" class="custom-control-input" id="terminate_gc" checked>
                             <label class="custom-control-label" for="terminate_gc">Terminates in G/C</label>
@@ -190,6 +209,6 @@
     </form>
 </div>
 
-<script src="{{ static('sdm/js/dna.js') }}"></script>
+<script src="{{ static('sdm/js/protein.js') }}"></script>
 
 {% endblock %}
