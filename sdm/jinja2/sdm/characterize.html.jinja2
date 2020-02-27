@@ -9,22 +9,25 @@
 
 <!-- LRT Station -->
 <div class="container" id="app">
-    <form class="text-center border border-light p-5" action="#!">
-        <div class="md-form">
-            <textarea id="sequence" class="form-control md-textarea" length="20000" rows="3" required></textarea>
+    <form id="form" class="text-center border border-light p-5" method="post">
+        <div class="md-form md-outline">
+            <textarea id="sequence" class="form-control md-textarea " length="20000" rows="3" style="font-family: monospace" required></textarea>
             <label for="sequence">Enter DNA sequence</label>
+            <div class="text-right">
+                <small class="blue-grey-text" id="counter">0/20000</small>
+            </div>
         </div>
         <div class="row">
             <div class="col">
-                <div class="md-form">
+                <div class="md-form input-group md-outline">
                     <input type="number" id="mismatch" class="form-control" required />
                     <label for="mismatch">Mismatched bases</label>
                 </div>
             </div>
             <div class="col">
                 <div class="md-form">
-                    <select class="browser-default custom-select" required>
-                        <option selected>Mutation type</option>
+                    <select class="browser-default custom-select" id="mut_type" required>
+                        <option selected disabled>Mutation type</option>
                         <option value="sub">Substitution</option>
                         <option value="ins">Insertion</option>
                         <option value="del">Deletion</option>
@@ -32,11 +35,11 @@
                 </div>
             </div>
         </div>
-        <a href="#"><button type="button" class="btn btn-indigo btn-rounded">Next</button></a>
+        <input type="reset" class="btn btn-indigo btn-rounded" value="Reset" />
+        <input type="submit" class="btn btn-indigo btn-rounded" value="Submit" id="submit">
     </form>
 </div>
 
-<script src="{{ static('sdm/js/train.js') }}"></script>
-<script src="{{ static('sdm/js/main.js') }}"></script>
+<script src="{{ static('sdm/js/characterize.js') }}"></script>
 
 {% endblock %}
