@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.querySelector('#submit').onclick = () => {
+
         const xhttp = new XMLHttpRequest();
         const sequence = document.querySelector('#sequence').value;
         const target = document.querySelector('#target').value;
@@ -64,6 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
         settings.primer_mode = $('#primer_mode').val();
         settings.expression_system = 'Homo sapiens';
         settings = JSON.stringify(settings);
+
+        const loading = `
+            <div class="d-flex justify-content-center">
+                <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        `;
+        document.querySelector('#form').innerHTML = loading;
 
         xhttp.open('POST', '/result');
         xhttp.onload = () => {

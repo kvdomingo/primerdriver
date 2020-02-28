@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sequence = document.querySelector('#sequence').value;
         const mismatch = document.querySelector('#mismatch').value;
         const mut_type = document.querySelector('#mut_type').value;
+        
         xhttp.open('POST', '/result');
         xhttp.onload = () => {
             const raw = xhttp.responseText;

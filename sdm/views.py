@@ -70,5 +70,7 @@ def result(request):
     res.main()
     if data['mode'] != 'CHAR':
         df = concat([*res.df]).T
+    else:
+        df = res.df
     out = df.to_json()
     return HttpResponse(out)

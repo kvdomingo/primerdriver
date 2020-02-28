@@ -143,14 +143,14 @@ class PrimerDesign:
         ]
         if index == None:
             index = 1
-        if index < self.print_buffer:
+        if index-1 < self.print_buffer:
             print('\n', tabulate(
                 array([col, dat]).T,
                 headers=[f'Primer {index}'],
                 tablefmt='orgtbl'
             ), sep="")
-        elif index == self.print_buffer:
-            print("Too many results; truncating output...")
+        elif index-1 == self.print_buffer:
+            print("\nToo many results; truncating output...")
         dat = array([dat])
         df = DataFrame(
             data=dat,
