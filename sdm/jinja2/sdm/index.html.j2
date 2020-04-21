@@ -8,10 +8,10 @@
 {% block body %}
 
 <!-- Landing -->
-<div class="jumbotron text-center blue-grey lighten-5">
+<div class="jumbotron text-center" style="box-shadow: none;">
     <div class="row d-flex justify-content-center">
         <div class="col-xl-7 mb-4">
-            <img src="{{ static('sdm/media/private/PrimerDriver_logo.png') }}" class="img-fluid" style="margin-top: -50px" />
+            <img class="cld-responsive" data-src="https://res.cloudinary.com/kdphotography-assets/image/upload/c_scale,w_auto,dpr_auto/v1/primerdriver/PrimerDriver_logo.png" class="img-fluid" />
         </div>
         <div class="col-xl-7 pb-2">
             <p class="card-text">
@@ -23,8 +23,56 @@
         </div>
     </div>
     <div class="pt-2">
-        <a href="{{ url('design') }}"><button type="button" class="btn btn-indigo btn-rounded">Get Started</button></a>
+        <a href="#app"><button type="button" class="btn btn-indigo btn-rounded">Get Started</button></a>
     </div>
 </div>
+
+<div class="container" id="app">
+    <div class="jumbotron blue-grey lighten-5 my-5">
+        <div class="card-deck">
+
+            <div
+                class="app-data"
+                data-src="{{ static('sdm/media/private/characterize.png') }}"
+                data-href="{{ url('characterize') }}"
+                data-name='Primer Characterization'
+            />
+
+            <div
+                class="app-data"
+                data-src="{{ static('sdm/media/private/dna.png') }}"
+                data-href="{{ url('dna') }}"
+                data-name='Primer Characterization'
+            />
+
+            <div class="card mb-4">
+                <div class="view overlay">
+                    <img class="card-img-top" src="{{ static('sdm/media/private/dna.png') }}">
+                    <a href="{{ url('dna') }}">
+                        <div class="mask rgba-white-slight"></div>
+                    </a>
+                </div>
+                <div class="card-body text-center">
+                    <a href="{{ url('dna') }}"><button type="button" class="btn btn-indigo btn-md">DNA-based</button></a>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="view overlay">
+                    <img class="card-img-top" src="{{ static('sdm/media/private/protein.png') }}">
+                    <a href="{{ url('protein') }}">
+                        <div class="mask rgba-white-slight"></div>
+                    </a>
+                </div>
+                <div class="card-body text-center">
+                    <a href="{{ url('protein') }}"><button type="button" class="btn btn-dark-green btn-md">Protein-based</button></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="{{ static('sdm/js/index.js') }}"></script>
 
 {% endblock %}

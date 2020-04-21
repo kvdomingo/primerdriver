@@ -235,3 +235,6 @@ dist
 
 # VScode
 .vscode
+
+# Travis (temporary)
+.travis.yml
