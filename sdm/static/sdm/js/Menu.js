@@ -6,18 +6,32 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Main = function (_React$Component) {
-    _inherits(Main, _React$Component);
+var Menu = function (_React$Component) {
+    _inherits(Menu, _React$Component);
 
-    function Main(props) {
-        _classCallCheck(this, Main);
+    function Menu(props) {
+        _classCallCheck(this, Menu);
 
-        return _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
+
+        if (_this.props.currentPage !== 'main') {
+            var _ret;
+
+            return _ret = null, _possibleConstructorReturn(_this, _ret);
+        }
+        return _this;
     }
 
-    _createClass(Main, [{
+    _createClass(Menu, [{
+        key: 'goToPage',
+        value: function goToPage(page) {
+            this.setState({ currentPage: page.split('#')[1] });
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             return React.createElement(
                 'div',
                 { className: 'jumbotron blue-grey lighten-5 my-5' },
@@ -34,11 +48,14 @@ var Main = function (_React$Component) {
                                 React.createElement(
                                     'div',
                                     { className: 'view overlay' },
-                                    React.createElement('img', { className: 'card-img-top', src: station.src }),
+                                    React.createElement('img', { className: 'card-img-top cld-responsive', 'data-src': station.src }),
                                     React.createElement(
                                         'a',
-                                        { href: station.href },
-                                        React.createElement('div', { className: 'mask rgba-white-slight' })
+                                        {
+                                            href: station.href,
+                                            onClick: _this2.goToPage.bind(_this2, station.href)
+                                        },
+                                        React.createElement('div', { className: 'mask rgba-black-slight' })
                                     )
                                 ),
                                 React.createElement(
@@ -46,7 +63,11 @@ var Main = function (_React$Component) {
                                     { className: 'card-body text-center' },
                                     React.createElement(
                                         'a',
-                                        { href: station.href, className: 'btn btn-md' },
+                                        {
+                                            href: station.href,
+                                            className: 'btn btn-' + station.color + ' btn-md',
+                                            onClick: _this2.goToPage.bind(_this2, station.href)
+                                        },
                                         station.name
                                     )
                                 )
@@ -58,9 +79,5 @@ var Main = function (_React$Component) {
         }
     }]);
 
-    return Main;
+    return Menu;
 }(React.Component);
-
-document.addEventListener('DOMContentLoaded', function () {
-    src = document.getElementsByClassName('app-data');
-});

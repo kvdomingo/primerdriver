@@ -8,71 +8,24 @@
 {% block body %}
 
 <!-- Landing -->
-<div class="jumbotron text-center" style="box-shadow: none;">
-    <div class="row d-flex justify-content-center">
-        <div class="col-xl-7 mb-4">
-            <img class="cld-responsive" data-src="https://res.cloudinary.com/kdphotography-assets/image/upload/c_scale,w_auto,dpr_auto/v1/primerdriver/PrimerDriver_logo.png" class="img-fluid" />
-        </div>
-        <div class="col-xl-7 pb-2">
-            <p class="card-text">
-                <b>PrimerDriver</b> ties together key primer design tools and protocols to automate the design of mutagenic PCR primers. This allows input of sequences from different origins (i.e., FASTA, FASTQ, and manual input). The tool can accommodate both DNA & protein sequences to incorporate base pair insertions, deletions, and substitutions as specified by the user.
-            </p>
-            <p>
-                <b>PrimerDriver</b> can design primer pairs and compute for all oligonucleotide sequences that incorporate the desired mutations. This can cater to an array of primer designs from random mutations, site-directed single mutagenesis, batch design site-directed mutagenesis, to multiple-site mutagenesis. Lastly, you can choose to download the results in different file formats - HTML, fasta, and pdf.
-            </p>
-        </div>
+<div class="container text-md-center py-md-5" style="box-shadow: none;">
+    <img class="cld-responsive img-fluid" data-src="https://res.cloudinary.com/kdphotography-assets/image/upload/c_scale,w_auto,dpr_auto/v1/primerdriver/PrimerDriver_logo.png" class="img-fluid" />
+    <div class="my-4">
+        <p>
+            <b>PrimerDriver</b> ties together key primer design tools and protocols to automate the design of mutagenic PCR primers. This allows input of sequences from different origins (i.e., FASTA, FASTQ, and manual input). The tool can accommodate both DNA & protein sequences to incorporate base pair insertions, deletions, and substitutions as specified by the user.
+        </p>
+        <p>
+            <b>PrimerDriver</b> can design primer pairs and compute for all oligonucleotide sequences that incorporate the desired mutations. This can cater to an array of primer designs from random mutations, site-directed single mutagenesis, batch design site-directed mutagenesis, to multiple-site mutagenesis. Lastly, you can choose to download the results in different file formats - HTML, fasta, and pdf.
+        </p>
     </div>
-    <div class="pt-2">
-        <a href="#app"><button type="button" class="btn btn-indigo btn-rounded">Get Started</button></a>
-    </div>
+    <a href="#app"><button type="button" class="btn btn-indigo btn-rounded">Get Started</button></a>
 </div>
 
-<div class="container" id="app">
-    <div class="jumbotron blue-grey lighten-5 my-5">
-        <div class="card-deck">
+<div class="container" id="app"></div>
 
-            <div
-                class="app-data"
-                data-src="{{ static('sdm/media/private/characterize.png') }}"
-                data-href="{{ url('characterize') }}"
-                data-name='Primer Characterization'
-            />
-
-            <div
-                class="app-data"
-                data-src="{{ static('sdm/media/private/dna.png') }}"
-                data-href="{{ url('dna') }}"
-                data-name='Primer Characterization'
-            />
-
-            <div class="card mb-4">
-                <div class="view overlay">
-                    <img class="card-img-top" src="{{ static('sdm/media/private/dna.png') }}">
-                    <a href="{{ url('dna') }}">
-                        <div class="mask rgba-white-slight"></div>
-                    </a>
-                </div>
-                <div class="card-body text-center">
-                    <a href="{{ url('dna') }}"><button type="button" class="btn btn-indigo btn-md">DNA-based</button></a>
-                </div>
-            </div>
-
-            <div class="card mb-4">
-                <div class="view overlay">
-                    <img class="card-img-top" src="{{ static('sdm/media/private/protein.png') }}">
-                    <a href="{{ url('protein') }}">
-                        <div class="mask rgba-white-slight"></div>
-                    </a>
-                </div>
-                <div class="card-body text-center">
-                    <a href="{{ url('protein') }}"><button type="button" class="btn btn-dark-green btn-md">Protein-based</button></a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
-
+<script src="{{ static('sdm/js/CharacterizeForm.js') }}"></script>
+<script src="{{ static('sdm/js/Menu.js') }}"></script>
+<script src="{{ static('sdm/js/App.js') }}"></script>
 <script src="{{ static('sdm/js/index.js') }}"></script>
 
 {% endblock %}

@@ -144,6 +144,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-if bool(int(os.environ['ON_HEROKU'])):
+ON_HEROKU = bool(int(os.environ['ON_HEROKU']))
+
+if ON_HEROKU:
     import django_heroku
     django_heroku.settings(locals())
