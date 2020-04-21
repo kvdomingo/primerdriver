@@ -1,0 +1,27 @@
+{
+  "name": "primerx",
+  "version": "1.0.0",
+  "description": "![PrimerDriver](https://raw.githubusercontent.com/kvdomingo/primerdriver/master/sdm/static/sdm/media/private/PrimerDriver_logo.png) [![Build Status](https://travis-ci.com/kvdomingo/primerdriver.svg?branch=master)](https://travis-ci.com/kvdomingo/primerdriver) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT?style=flat-square) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kvdomingo/primerdriver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kvdomingo/primerdriver/issues"
+  },
+  "homepage": "https://github.com/kvdomingo/primerdriver#readme",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2"
+  }
+}
