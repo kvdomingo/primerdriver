@@ -19,7 +19,7 @@ def main():
 
     if len(sys.argv) < 2:
         parser.print_help(sys.stderr)
-        sys.exit(1)
+        sys.exit(0)
 
     args = parser.parse_args()
 

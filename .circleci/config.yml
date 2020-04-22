@@ -3,7 +3,7 @@ version: 2.1
 orbs:
     python: circleci/python@0.2.1
     heroku: circleci/heroku@0.0.10
-
+    percy: percy/agent@0.1.2
 
 jobs:
     build-and-test:
@@ -27,9 +27,13 @@ workflows:
     heroku_deploy:
         jobs:
             - build-and-test
+            - percy/finalize_all
+                requires:
+                    -build-and-test
             - heroku/deploy-via-git:
                 requires:
                     - build-and-test
+                    - percy/finalize_all
                 filters:
                     branches:
                         only: master
