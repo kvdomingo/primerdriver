@@ -12,6 +12,9 @@ jobs:
             - image: cimg/base:2020.01
         steps:
             - checkout
+            - run:
+                command: python -m pip install -U pip
+                name: Install Python package manager
             - python/load-cache
             - python/install-deps
             - python/save-cache
