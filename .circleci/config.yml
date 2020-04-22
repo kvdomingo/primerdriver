@@ -12,6 +12,9 @@ jobs:
             - python/install-deps
             - python/save-cache
             - run:
+                command: python -m pip install coverage
+                name: Install coverage
+            - run:
                 command: python manage.py test
                 name: Test
             - run:
