@@ -53,6 +53,7 @@ pandas==1.0.1
 pandocfilters==1.4.2
 parso==0.6.1
 pbr==5.4.4
+percy-python-selenium==0.1.2
 pickleshare==0.7.5
 prometheus-client==0.7.1
 prompt-toolkit==3.0.3
@@ -73,6 +74,7 @@ qtconsole==4.6.0
 requests==2.23.0
 restructuredtext-lint==1.3.0
 rsa==4.0
+selenium==3.141.0
 Send2Trash==1.5.0
 six==1.14.0
 snowballstemmer==2.0.0
