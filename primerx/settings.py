@@ -35,6 +35,8 @@ ALLOWED_HOSTS = [
     'primerx-dev.herokuapp.com',
     'primerdriver.herokuapp.com',
     'localhost',
+    '127.0.0.1',
+    'testserver',
 ]
 
 
