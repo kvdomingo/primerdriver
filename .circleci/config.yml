@@ -15,7 +15,7 @@ jobs:
             - python/install-deps
             - python/save-cache
             - run:
-                command: python manage.py runserver 127.0.0.1:8000
+                command: nohup python manage.py runserver 127.0.0.1:8000 &
                 name: Start development server
             - browser-tools/install-firefox
             - browser-tools/install-geckodriver
