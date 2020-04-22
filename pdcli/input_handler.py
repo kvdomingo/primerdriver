@@ -5,7 +5,7 @@ from Bio.Alphabet import IUPAC
 from Bio.SeqRecord import SeqRecord
 
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 def singleCommand_handler(args):
     args_dict = dict()
