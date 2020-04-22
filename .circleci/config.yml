@@ -16,7 +16,7 @@ jobs:
                 command: sudo apt-get install python3.6.8
                 name: Install Python
             - run:
-                command: python -m pip install -U pip
+                command: python3 -m pip install -U pip
                 name: Install Python package manager
             - python/load-cache
             - python/install-deps
@@ -24,13 +24,13 @@ jobs:
             - browser-tools/install-firefox
             - browser-tools/install-geckodriver
             - run:
-                command: python manage.py test
+                command: python3 manage.py test
                 name: Test
             - run:
-                command: python -m coverage run --source='.' manage.py test
+                command: python3 -m coverage run --source='.' manage.py test
                 name: Coverage
             - run:
-                command: python -m codecov
+                command: python3 -m codecov
                 name: Upload coverage report
 
 workflows:
