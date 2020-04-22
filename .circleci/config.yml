@@ -3,6 +3,7 @@ version: 2.1
 orbs:
     python: circleci/python@0.2.1
     heroku: circleci/heroku@0.0.10
+    browser-tools: circleci/browser-tools@1.0.0
     percy: percy/agent@0.1.2
 
 jobs:
@@ -13,6 +14,7 @@ jobs:
             - python/load-cache
             - python/install-deps
             - python/save-cache
+            - browser-tools/install-browser-tools
             - run:
                 command: python manage.py test
                 name: Test
