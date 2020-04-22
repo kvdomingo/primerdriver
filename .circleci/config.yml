@@ -19,6 +19,9 @@ jobs:
             - browser-tools/install-firefox
             - browser-tools/install-geckodriver
             - run:
+                command: sudo apt-get install libasound2
+                name: Fix chromium build issue
+            - run:
                 command: npx percy exec -- python -m coverage run --source='.' manage.py test
                 name: Run test and generate coverage report
             - run:
