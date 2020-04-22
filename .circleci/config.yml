@@ -8,29 +8,25 @@ orbs:
 
 jobs:
     build-and-test:
+        working-directory: ~/app
         docker:
-            - image: cimg/base:2020.01
+            - image: circleci/python:3.6.8
+            # - image: circleci/node:10.20.1
         steps:
             - checkout
-            - run:
-                command: sudo apt-get update && sudo apt-get install python3.6 -y
-                name: Install Python
-            - run:
-                command: python3 -m pip install -U pip
-                name: Install Python package manager
             - python/load-cache
             - python/install-deps
             - python/save-cache
             - browser-tools/install-firefox
             - browser-tools/install-geckodriver
             - run:
-                command: python3 manage.py test
+                command: python manage.py test
                 name: Test
             - run:
-                command: python3 -m coverage run --source='.' manage.py test
+                command: python -m coverage run --source='.' manage.py test
                 name: Coverage
             - run:
-                command: python3 -m codecov
+                command: python -m codecov
                 name: Upload coverage report
 
 workflows:
