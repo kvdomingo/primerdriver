@@ -9,7 +9,7 @@ class LandingTestCase(TestCase):
     options = Options()
     options.headless = True
     browser = webdriver.Firefox(options=options)
-    browser.get('http://localhost:8000')
+    browser.get('http://127.0.0.1:8000')
     browser.implicitly_wait(10)
     browser.execute_script('window.scrollTo(100, Y)')
     percySnapshot(browser=browser, name='homepage')
