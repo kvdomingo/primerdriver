@@ -5,7 +5,9 @@ from selenium.webdriver.firefox.options import Options
 from percy import percySnapshot
 
 
-class LandingTestCase(StaticLiveServerTestCase):
+PERCY_BS_WIDTHS = [576, 768, 992, 1200]
+
+class WebTestCase(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -19,7 +21,7 @@ class LandingTestCase(StaticLiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
-    def test_shotLanding(self):
+    def test_landing(self):
         self.selenium.get(self.live_server_url)
         self.selenium.execute_script('window.scrollTo(0, 100)')
-        percySnapshot(browser=self.selenium, name='homepage')
+        percySnapshot(browser=self.selenium, name='homepage', widths=PERCY_BS_WIDTHS)

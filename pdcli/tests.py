@@ -1,4 +1,6 @@
-import subprocess
+import io, subprocess
+from pandas import DataFrame
+from contextlib import redirect_stdout
 from django.test import TestCase
 from .primerclass import *
 
@@ -48,3 +50,27 @@ class CharacterizeTestCase(TestCase):
             self.pd.is_gc_end(self.pd.sequence),
             False
         )
+
+    def test_calculate_Tm(self):
+        self.assertAlmostEqual(
+            self.pd.calculate_Tm(
+                self.pd.sequence,
+                self.pd.mutation_type,
+                self.pd.replacement,
+                0.286,
+                self.pd.mismatched_bases
+            ),
+            -103.449,
+            3
+        )
+
+    def test_characterization_is_dataframe(self):
+        out_catch = io.StringIO()
+        with redirect_stdout(out_catch):
+            out = self.pd.characterize_primer(
+                self.pd.sequence,
+                self.pd.mutation_type,
+                self.pd.replacement,
+                self.pd.mismatched_bases
+            )
+        self.assertEqual(isinstance(out, DataFrame), True)
