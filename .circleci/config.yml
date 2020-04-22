@@ -2,6 +2,8 @@ version: 2.1
 
 orbs:
     python: circleci/python@0.2.1
+    heroku: circleci/heroku@0.0.10.
+
 
 jobs:
     build-and-test:
@@ -22,6 +24,12 @@ jobs:
                 name: Upload coverage report
 
 workflows:
-    main:
+    heroku_deploy:
         jobs:
             - build-and-test
+            - heroku/deploy-via-git:
+                requires:
+                    - build-and-test
+                filters:
+                    branches:
+                        only: master
