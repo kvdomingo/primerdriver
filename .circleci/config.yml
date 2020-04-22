@@ -10,8 +10,7 @@ jobs:
     build-and-test:
         working_directory: ~/app
         docker:
-            - image: circleci/python:3.6.8
-            - image: circleci/node:10.20.1
+            - image: jiripuc/circleci-python-node:stretch-python-3.6.8-node-10.14.2
         steps:
             - checkout
             - python/load-cache
