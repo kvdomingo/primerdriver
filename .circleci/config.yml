@@ -18,10 +18,7 @@ jobs:
                 command: python -m coverage run --source='.' manage.py test
                 name: Coverage
             - run:
-                command: python -m coverage xml
-                name: Generate coverage report
-            - run:
-                command: codecov
+                command: python -m codecov
                 name: Upload coverage report
 
 workflows:
