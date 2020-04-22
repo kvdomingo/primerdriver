@@ -13,7 +13,7 @@ jobs:
         steps:
             - checkout
             - run:
-                command: sudo apt-get update && sudo apt-get install python3.6.8
+                command: sudo apt-get update && sudo apt-get install python3.6
                 name: Install Python
             - run:
                 command: python3 -m pip install -U pip
