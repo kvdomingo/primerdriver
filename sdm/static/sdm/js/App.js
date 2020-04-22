@@ -23,7 +23,12 @@ var App = function (_React$Component) {
     _createClass(App, [{
         key: 'render',
         value: function render() {
-            return React.createElement(Menu, this.props);
+            return React.createElement(
+                'div',
+                null,
+                React.createElement(Menu, Object.assign({}, this.props, { currentPage: this.state.currentPage })),
+                React.createElement(CharacterizeForm, Object.assign({}, this.props, { currentPage: this.state.currentPage }))
+            );
         }
     }]);
 

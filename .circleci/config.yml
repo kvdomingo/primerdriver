@@ -14,7 +14,8 @@ jobs:
             - python/load-cache
             - python/install-deps
             - python/save-cache
-            - browser-tools/install-browser-tools
+            - browser-tools/install-firefox
+            - browser-tools/install-geckodriver
             - run:
                 command: python manage.py test
                 name: Test

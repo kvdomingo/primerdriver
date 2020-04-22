@@ -37,38 +37,42 @@ var Menu = function (_React$Component) {
                 { className: 'jumbotron blue-grey lighten-5 my-5' },
                 React.createElement(
                     'div',
-                    { className: 'card-deck' },
+                    { className: 'row row-cols-1 row-cols-md-3' },
                     this.props.stations.map(function (station, i) {
                         return React.createElement(
                             React.Fragment,
                             null,
                             React.createElement(
                                 'div',
-                                { className: 'card mb-4' },
+                                { className: 'col' },
                                 React.createElement(
                                     'div',
-                                    { className: 'view overlay' },
-                                    React.createElement('img', { className: 'card-img-top cld-responsive', 'data-src': station.src }),
+                                    { className: 'card mb-4' },
                                     React.createElement(
-                                        'a',
-                                        {
-                                            href: station.href,
-                                            onClick: _this2.goToPage.bind(_this2, station.href)
-                                        },
-                                        React.createElement('div', { className: 'mask rgba-black-slight' })
-                                    )
-                                ),
-                                React.createElement(
-                                    'div',
-                                    { className: 'card-body text-center' },
+                                        'div',
+                                        { className: 'view overlay' },
+                                        React.createElement('img', { className: 'card-img-top cld-responsive', 'data-src': station.src }),
+                                        React.createElement(
+                                            'a',
+                                            {
+                                                href: station.href,
+                                                onClick: _this2.goToPage.bind(_this2, station.href)
+                                            },
+                                            React.createElement('div', { className: 'mask rgba-black-slight' })
+                                        )
+                                    ),
                                     React.createElement(
-                                        'a',
-                                        {
-                                            href: station.href,
-                                            className: 'btn btn-' + station.color + ' btn-md',
-                                            onClick: _this2.goToPage.bind(_this2, station.href)
-                                        },
-                                        station.name
+                                        'div',
+                                        { className: 'card-body text-center' },
+                                        React.createElement(
+                                            'a',
+                                            {
+                                                href: station.href,
+                                                className: 'btn btn-' + station.color + ' btn-md',
+                                                onClick: _this2.goToPage.bind(_this2, station.href)
+                                            },
+                                            station.name
+                                        )
                                     )
                                 )
                             )

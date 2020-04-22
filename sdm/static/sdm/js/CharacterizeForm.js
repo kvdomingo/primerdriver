@@ -40,7 +40,7 @@ var CharacterizeForm = function (_React$Component) {
                     type: 'text',
                     value: this.props.sequence,
                     onChange: this.props.handleChange,
-                    autofocus: true
+                    autoFocus: true
                 })
             );
         }
