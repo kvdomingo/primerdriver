@@ -12,16 +12,13 @@ jobs:
             - python/install-deps
             - python/save-cache
             - run:
-                command: python -m pip install coverage
-                name: Install coverage
-            - run:
                 command: python manage.py test
                 name: Test
             - run:
-                command: coverage run --source='.' manage.py test
+                command: python -m coverage run --source='.' manage.py test
                 name: Coverage
             - run:
-                command: coverage xml
+                command: python -m coverage xml
                 name: Generate coverage report
             - run:
                 command: codecov
