@@ -42,3 +42,9 @@ class CharacterizeTests(TestCase):
             self.pd.get_reverse_complement(self.pd.sequence),
             list('TGTAATC')
         )
+
+    def test_gc_end(self):
+        self.assertEqual(
+            self.pd.is_gc_end(self.pd.sequence),
+            False
+        )
