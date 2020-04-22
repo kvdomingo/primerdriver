@@ -1,16 +1,22 @@
-from selenium import webdriver
-from selenium.webdriver.firefox.options import Options
+from django.test import TestCase, LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
 from percy import percySnapshot
-from django.test import TestCase
-from django.conf import settings
 
 
-# class LandingTestCase(TestCase):
-#     options = Options()
-#     options.headless = True
-#     browser = webdriver.Firefox(options=options)
-#     browser.get('http://127.0.0.1:8000')
-#     browser.implicitly_wait(10)
-#     browser.execute_script('window.scrollTo(100, Y)')
-#     percySnapshot(browser=browser, name='homepage')
-#     browser.close()
+class LandingTestCase(StaticLiveServerTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.selenium = WebDriver()
+        cls.selenium.implicitly_wait(10)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super().tearDownClass()
+
+    def test_shotLanding(self):
+        self.selenium.get(self.live_server_url)
+        self.selenium.execute_script('window.scrollTo(0, 100)')
+        percySnapshot(browser=self.selenium, name='homepage')
