@@ -17,7 +17,7 @@ class CharacterizeForm extends React.Component {
                     type='text'
                     value={this.props.sequence}
                     onChange={this.props.handleChange}
-                    autofocus
+                    autoFocus={true}
                 />
             </div>
         );

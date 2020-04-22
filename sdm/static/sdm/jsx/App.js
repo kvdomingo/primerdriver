@@ -8,8 +8,10 @@ class App extends React.Component {
 
     render() {
         return (
-            <Menu {...this.props} currentPage={this.state.currentPage} />
-            <CharacterizeForm {...this.props} currentPage={this.state.currentPage} />
+            <div>
+                <Menu {...this.props} currentPage={this.state.currentPage} />
+                <CharacterizeForm {...this.props} currentPage={this.state.currentPage} />
+            </div>
         );
     }
 }
