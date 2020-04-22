@@ -29,7 +29,7 @@ workflows:
             - build-and-test
             - percy/finalize_all:
                 requires:
-                    -build-and-test
+                    - build-and-test
             - heroku/deploy-via-git:
                 requires:
                     - build-and-test
