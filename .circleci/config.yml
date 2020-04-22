@@ -20,11 +20,8 @@ jobs:
             - browser-tools/install-firefox
             - browser-tools/install-geckodriver
             - run:
-                command: python manage.py test
-                name: Test
-            - run:
-                command: python -m coverage run --source='.' manage.py test
-                name: Coverage
+                command: npx percy exec -- python -m coverage run --source='.' manage.py test
+                name: Run test and generate coverage report
             - run:
                 command: python -m codecov
                 name: Upload coverage report
