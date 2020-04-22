@@ -27,7 +27,7 @@ workflows:
     heroku_deploy:
         jobs:
             - build-and-test
-            - percy/finalize_all
+            - percy/finalize_all:
                 requires:
                     -build-and-test
             - heroku/deploy-via-git:
