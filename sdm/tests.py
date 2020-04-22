@@ -5,7 +5,7 @@ from django.test import TestCase
 
 class CommandLineTests(TestCase):
     def test_return_help_on_no_arguments(self):
-        self.assertEqual(os.system('python pdcli.py'), 1)
+        self.assertNotEqual(os.system('python pdcli.py'), 0)
 
     def test_no_exception_on_help(self):
         self.assertEqual(os.system('python pdcli.py -h'), 0)
