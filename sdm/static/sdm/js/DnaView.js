@@ -1,40 +1,49 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var CharacterizeView = function (_React$Component) {
-    _inherits(CharacterizeView, _React$Component);
+var DnaView = function (_React$Component) {
+    _inherits(DnaView, _React$Component);
 
-    function CharacterizeView(props) {
-        _classCallCheck(this, CharacterizeView);
+    function DnaView(props) {
+        _classCallCheck(this, DnaView);
 
-        var _this = _possibleConstructorReturn(this, (CharacterizeView.__proto__ || Object.getPrototypeOf(CharacterizeView)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (DnaView.__proto__ || Object.getPrototypeOf(DnaView)).call(this, props));
 
-        _this.textAreaHandler = function (e) {
-            sequence = e.target.value.toUpperCase().split("");
-            filteredSequence = [];
-            sequence.forEach(function (char, i) {
-                if (['A', 'T', 'C', 'G'].includes(char)) filteredSequence.push(char);
+        _this.genericNucleobaseHandler = function (e) {
+            name = e.target.name;
+            value = e.target.value;
+            old_value = e.target.value.toUpperCase().split("");
+            value = [];
+            old_value.forEach(function (char, i) {
+                if (['A', 'T', 'C', 'G'].includes(char)) value.push(char);
             });
-            _this.setState({
-                sequence: filteredSequence.join(""),
-                cursorPosition: e.target.selectionStart + 1,
-                sequenceLength: e.target.value.length
-            });
-        };
+            value = value.join('');
 
-        _this.mismatchedBasesHandler = function (e) {
-            e.preventDefault();
-            _this.setState({ mismatched_bases: parseInt(e.target.value) });
+            if (name === 'sequence') {
+                var _this$setState;
+
+                _this.setState((_this$setState = {}, _defineProperty(_this$setState, name, value), _defineProperty(_this$setState, 'cursorPosition', e.target.selectionStart + 1), _defineProperty(_this$setState, 'sequenceLength', e.target.value.length), _this$setState));
+            } else {
+                _this.setState(_defineProperty({}, name, value));
+            }
         };
 
         _this.mutationTypeHandler = function (e) {
             e.preventDefault();
             _this.setState({ mutation_type: e.target.value });
+        };
+
+        _this.genericChangeHandler = function (e) {
+            name = e.target.name;
+            value = e.target.value;
+            _this.setState(_defineProperty({}, name, value));
         };
 
         _this.resetForm = function () {
@@ -76,16 +85,33 @@ var CharacterizeView = function (_React$Component) {
             sequenceLength: 0,
             submitValid: false,
             loading: false,
-            mode: 'CHAR',
+            mode: 'DNA',
             sequence: '',
-            mismatched_bases: 0,
-            mutation_type: ''
+            mutation_type: '',
+            target: '',
+            position: 1,
+            replacement: '',
+            Tm_range_min: 75,
+            Tm_range_max: 85,
+            gc_range_min: 40,
+            gc_range_max: 60,
+            length_min: 25,
+            length_max: 45,
+            flank5_range_min: 11,
+            flank5_range_max: 21,
+            flank3_range_min: 11,
+            flank3_range_max: 21,
+            forward_overlap5: 9,
+            forward_overlap3: 9,
+            terminate_gc: true,
+            center_mutation: true,
+            primer_mode: 'complementary'
         };
         _this.formResetDefaults = Object.assign({}, _this.state);
         return _this;
     }
 
-    _createClass(CharacterizeView, [{
+    _createClass(DnaView, [{
         key: 'render',
         value: function render() {
             var _this2 = this;
@@ -124,7 +150,7 @@ var CharacterizeView = function (_React$Component) {
                     React.createElement(
                         'h2',
                         { className: 'text-md-center py-2 mx-md-2 h2-responsive d-md-inline' },
-                        'Characterization'
+                        'DNA-based Primer Design'
                     ),
                     React.createElement(
                         'form',
@@ -152,9 +178,9 @@ var CharacterizeView = function (_React$Component) {
                                 name: 'sequence',
                                 type: 'text',
                                 value: this.state.sequence,
-                                onChange: this.textAreaHandler,
-                                onKeyUp: this.textAreaHandler,
-                                onMouseUp: this.textAreaHandler,
+                                onChange: this.genericNucleobaseHandler,
+                                onKeyUp: this.genericNucleobaseHandler,
+                                onMouseUp: this.genericNucleobaseHandler,
                                 autoFocus: true,
                                 required: true,
                                 style: { height: '128px' }
@@ -186,23 +212,63 @@ var CharacterizeView = function (_React$Component) {
                         ),
                         React.createElement(
                             'div',
-                            { className: 'row row-cols-1 row-cols-md-2' },
+                            { className: 'form-group' },
+                            React.createElement(
+                                'label',
+                                { htmlFor: 'mutation_type' },
+                                'Mutation type'
+                            ),
+                            React.createElement(
+                                'select',
+                                {
+                                    className: 'browser-default custom-select',
+                                    id: 'mutation_type',
+                                    name: 'mutation_type',
+                                    onChange: this.mutationTypeHandler,
+                                    placeholder: 'Select mutation type',
+                                    required: true,
+                                    value: this.state.mutation_type
+                                },
+                                React.createElement(
+                                    'option',
+                                    { value: '', disabled: true },
+                                    'Select mutation type'
+                                ),
+                                React.createElement(
+                                    'option',
+                                    { value: 'sub' },
+                                    'Substitution'
+                                ),
+                                React.createElement(
+                                    'option',
+                                    { value: 'ins' },
+                                    'Insertion'
+                                ),
+                                React.createElement(
+                                    'option',
+                                    { value: 'del' },
+                                    'Deletion'
+                                )
+                            )
+                        ),
+                        React.createElement(
+                            'div',
+                            { className: 'row row-cols-1 row-cols-md-3' },
                             React.createElement(
                                 'div',
                                 { className: 'col form-group' },
                                 React.createElement(
                                     'label',
-                                    { htmlFor: 'mismatched_bases' },
-                                    'Number of mismatched bases'
+                                    { htmlFor: 'target' },
+                                    'Target'
                                 ),
                                 React.createElement('input', {
+                                    type: 'text',
                                     className: 'form-control',
-                                    min: '0',
-                                    type: 'number',
-                                    id: 'mismatched_bases',
-                                    name: 'mismatched_bases',
-                                    value: this.state.mismatched_bases,
-                                    onChange: this.mismatchedBasesHandler,
+                                    name: 'target',
+                                    id: 'target',
+                                    value: this.state.target,
+                                    onChange: this.genericNucleobaseHandler,
                                     required: true
                                 })
                             ),
@@ -211,41 +277,38 @@ var CharacterizeView = function (_React$Component) {
                                 { className: 'col form-group' },
                                 React.createElement(
                                     'label',
-                                    { htmlFor: 'mutation_type' },
-                                    'Mutation type'
+                                    { htmlFor: 'target' },
+                                    'Position'
                                 ),
+                                React.createElement('input', {
+                                    type: 'number',
+                                    min: '0',
+                                    className: 'form-control',
+                                    name: 'position',
+                                    id: 'position',
+                                    value: this.state.position,
+                                    onChange: this.genericChangeHandler,
+                                    required: true
+                                })
+                            ),
+                            React.createElement(
+                                'div',
+                                { className: 'col form-group' },
                                 React.createElement(
-                                    'select',
-                                    {
-                                        className: 'browser-default custom-select',
-                                        id: 'mutation_type',
-                                        name: 'mutation_type',
-                                        onChange: this.mutationTypeHandler,
-                                        placeholder: 'Select mutation type',
-                                        required: true,
-                                        value: this.state.mutation_type
-                                    },
-                                    React.createElement(
-                                        'option',
-                                        { value: '', disabled: true },
-                                        'Select mutation type'
-                                    ),
-                                    React.createElement(
-                                        'option',
-                                        { value: 'sub' },
-                                        'Substitution'
-                                    ),
-                                    React.createElement(
-                                        'option',
-                                        { value: 'ins' },
-                                        'Insertion'
-                                    ),
-                                    React.createElement(
-                                        'option',
-                                        { value: 'del' },
-                                        'Deletion'
-                                    )
-                                )
+                                    'label',
+                                    { htmlFor: 'target' },
+                                    'Replacement'
+                                ),
+                                React.createElement('input', {
+                                    type: 'text',
+                                    className: 'form-control',
+                                    name: 'replacement',
+                                    id: 'replacement',
+                                    min: '0',
+                                    value: this.state.replacement,
+                                    onChange: this.genericNucleobaseHandler,
+                                    required: true
+                                })
                             )
                         ),
                         React.createElement(
@@ -272,5 +335,5 @@ var CharacterizeView = function (_React$Component) {
         }
     }]);
 
-    return CharacterizeView;
+    return DnaView;
 }(React.Component);

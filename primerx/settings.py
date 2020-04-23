@@ -146,6 +146,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+ON_CI = bool(int(os.environ['ON_CI']))
+
 ON_HEROKU = bool(int(os.environ['ON_HEROKU']))
 
 if ON_HEROKU:
