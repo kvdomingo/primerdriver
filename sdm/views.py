@@ -1,9 +1,9 @@
 from os import listdir
 from json import loads, dumps
 from pandas import concat
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
 from django.core.files import File
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 from django.templatetags.static import static
 from django.urls import reverse
 from django.conf import settings
@@ -55,6 +55,28 @@ def protein_based(request):
         "expression_system": exp_systems
     }
     return render(request, "sdm/proteinbased.html.j2", context)
+
+
+def api(request):
+    if request.method == 'POST':
+        data = dict()
+        for k, v in request.POST.items():
+            data[k] = v
+        checks = PrimerChecks(data['sequence'])
+        if data['mode'] == 'PRO':
+            data['sequence'] = checks.check_valid_protein()
+        else:
+            data['sequence'] = checks.check_valid_base()
+        res = PrimerDesign(**data)
+        res.main()
+        if data['mode'] != 'CHAR':
+            df = concat([*res.df]).T
+        else:
+            df = res.df
+        out = df.to_dict()
+        return JsonResponse(out)
+    else:
+        return HttpResponseForbidden(f'{request.method} not allowed on /api')
 
 
 def result(request):

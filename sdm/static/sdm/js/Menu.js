@@ -14,71 +14,62 @@ var Menu = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
 
-        if (_this.props.currentPage !== 'main') {
-            var _ret;
-
-            return _ret = null, _possibleConstructorReturn(_this, _ret);
-        }
+        _this.pageId = 0;
         return _this;
     }
 
     _createClass(Menu, [{
-        key: 'goToPage',
-        value: function goToPage(page) {
-            this.setState({ currentPage: page.split('#')[1] });
-        }
-    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
             return React.createElement(
                 'div',
-                { className: 'jumbotron blue-grey lighten-5 my-5' },
-                React.createElement(
-                    'div',
-                    { className: 'row row-cols-1 row-cols-md-3' },
-                    this.props.stations.map(function (station, i) {
-                        return React.createElement(
-                            React.Fragment,
-                            null,
+                { className: 'row row-cols-1 row-cols-md-3' },
+                this.props.stations.map(function (station, i) {
+                    return React.createElement(
+                        React.Fragment,
+                        { key: i },
+                        React.createElement(
+                            'div',
+                            { className: 'col' },
                             React.createElement(
                                 'div',
-                                { className: 'col' },
+                                { className: 'card mb-4' },
                                 React.createElement(
                                     'div',
-                                    { className: 'card mb-4' },
+                                    { className: 'view overlay' },
+                                    React.createElement('img', { className: 'card-img-top', src: station.src }),
                                     React.createElement(
-                                        'div',
-                                        { className: 'view overlay' },
-                                        React.createElement('img', { className: 'card-img-top cld-responsive', 'data-src': station.src }),
-                                        React.createElement(
-                                            'a',
-                                            {
-                                                href: station.href,
-                                                onClick: _this2.goToPage.bind(_this2, station.href)
-                                            },
-                                            React.createElement('div', { className: 'mask rgba-black-slight' })
-                                        )
-                                    ),
+                                        'a',
+                                        {
+                                            href: station.href,
+                                            onClick: function onClick(e) {
+                                                return _this2.props.changeView(e, i + 1);
+                                            }
+                                        },
+                                        React.createElement('div', { className: 'mask rgba-black-slight' })
+                                    )
+                                ),
+                                React.createElement(
+                                    'div',
+                                    { className: 'card-body text-center' },
                                     React.createElement(
-                                        'div',
-                                        { className: 'card-body text-center' },
-                                        React.createElement(
-                                            'a',
-                                            {
-                                                href: station.href,
-                                                className: 'btn btn-' + station.color + ' btn-md',
-                                                onClick: _this2.goToPage.bind(_this2, station.href)
-                                            },
-                                            station.name
-                                        )
+                                        'a',
+                                        {
+                                            href: station.href,
+                                            className: 'btn btn-' + station.color + ' btn-md',
+                                            onClick: function onClick(e) {
+                                                return _this2.props.changeView(e, i + 1);
+                                            }
+                                        },
+                                        station.name
                                     )
                                 )
                             )
-                        );
-                    })
-                )
+                        )
+                    );
+                })
             );
         }
     }]);

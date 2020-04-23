@@ -4,4 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
         secure: true,
     });
     cl.responsive();
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
 });
