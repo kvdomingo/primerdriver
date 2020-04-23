@@ -8,5 +8,6 @@ urlpatterns = [
     path("characterize", views.characterize, name="characterize"),
     path("dna-based", views.dna_based, name="dna"),
     path("protein-based", views.protein_based, name="protein"),
+    path("api", views.api, name='api'),
     path("result", views.result, name="result")
 ]

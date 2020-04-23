@@ -14,20 +14,34 @@ var App = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
+        _this.changeView = function (e, pageId) {
+            e.preventDefault();
+            _this.setState({ pageId: pageId });
+        };
+
+        _this.responseCatcher = function (e, res) {
+            _this.setState({ res: res });
+        };
+
+        _this.pageId = 0;
         _this.state = {
-            currentPage: 'main'
+            res: null,
+            pageId: 0
         };
         return _this;
     }
 
     _createClass(App, [{
-        key: 'render',
+        key: "render",
         value: function render() {
             return React.createElement(
-                'div',
+                "div",
                 null,
-                React.createElement(Menu, Object.assign({}, this.props, { currentPage: this.state.currentPage })),
-                React.createElement(CharacterizeForm, Object.assign({}, this.props, { currentPage: this.state.currentPage }))
+                this.state.pageId === 0 && React.createElement(Menu, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
+                this.state.pageId === 1 && React.createElement(CharacterizeView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
+                this.state.pageId === 2 && React.createElement(DnaView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
+                this.state.pageId === 3 && React.createElement(ProteinView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
+                this.state.pageId === 4 && React.createElement(ResultView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher, results: this.state.res }))
             );
         }
     }]);
