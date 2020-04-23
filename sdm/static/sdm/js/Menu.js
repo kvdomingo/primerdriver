@@ -57,6 +57,7 @@ var Menu = function (_React$Component) {
                                     React.createElement(
                                         'a',
                                         {
+                                            id: station.href.slice(1),
                                             href: station.href,
                                             className: 'btn btn-' + station.color + ' btn-md',
                                             onClick: function onClick(e) {
