@@ -51,12 +51,12 @@ var ResultView = function (_React$Component) {
                         React.createElement(
                             'button',
                             {
-                                className: 'btn btn-blue-grey mb-5',
+                                className: 'btn btn-blue-grey mb-5 mr-3',
                                 onClick: function (e) {
                                     this.props.responseCatcher(e, null);this.props.changeView(e, 0);
                                 }.bind(this)
                             },
-                            React.createElement('i', { className: 'fas fa-arrow-left mr-2' }),
+                            React.createElement('i', { className: 'fas fa-arrow-left mr-3' }),
                             'main menu'
                         ),
                         React.createElement(
@@ -75,19 +75,20 @@ var ResultView = function (_React$Component) {
                             React.Fragment,
                             null,
                             React.createElement(
-                                'button',
+                                'a',
                                 {
-                                    className: 'btn btn-blue-grey mb-5',
+                                    className: 'btn btn-blue-grey mb-4 mr-3',
+                                    id: 'back',
                                     onClick: function (e) {
                                         this.props.responseCatcher(e, null);this.props.changeView(e, 0);
                                     }.bind(_this2)
                                 },
-                                React.createElement('i', { className: 'fas fa-arrow-left mr-2' }),
+                                React.createElement('i', { className: 'fas fa-arrow-left' }),
                                 'main menu'
                             ),
                             React.createElement(
                                 'h2',
-                                { className: 'text-md-center py-2 mx-md-2 h2-responsive d-md-inline' },
+                                { className: 'text-md-center mx-md-2 h2-responsive d-md-inline' },
                                 Object.keys(_this2.props.results).length,
                                 ' results'
                             )

@@ -8,20 +8,21 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var DnaView = function (_React$Component) {
-    _inherits(DnaView, _React$Component);
+var ProteinView = function (_React$Component) {
+    _inherits(ProteinView, _React$Component);
 
-    function DnaView(props) {
-        _classCallCheck(this, DnaView);
+    function ProteinView(props) {
+        _classCallCheck(this, ProteinView);
 
-        var _this = _possibleConstructorReturn(this, (DnaView.__proto__ || Object.getPrototypeOf(DnaView)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (ProteinView.__proto__ || Object.getPrototypeOf(ProteinView)).call(this, props));
 
         _this.genericNucleobaseHandler = function (e) {
             name = e.target.name;
             old_value = e.target.value.toUpperCase().split("");
+            amino_acids = ['A', 'R', 'N', 'D', 'B', 'C', 'E', 'Q', 'Z', 'G', 'H', 'I', 'L', 'K', 'M', 'F', 'P', 'S', 'T', 'W', 'Y', 'V'];
             value = [];
             old_value.forEach(function (char, i) {
-                if (['A', 'T', 'C', 'G'].includes(char)) value.push(char);
+                if (amino_acids.includes(char)) value.push(char);
             });
             value = value.join('');
 
@@ -64,19 +65,17 @@ var DnaView = function (_React$Component) {
 
         _this.genericFloatHandler = function (e) {
             name = e.target.name;
-            value = parseFloat(e.target.value);
+            value = parseInt(e.target.value);
 
             if (name === 'Tm_range_min' && value >= _this.state.Tm_range_max) return;
             if (name === 'Tm_range_max' && value <= _this.state.Tm_range_min) return;
-            if (name === 'gc_range_min' && value >= _this.state.gc_range_max) return;
-            if (name === 'gc_range_max' && value <= _this.state.gc_range_min) return;
 
             return _this.setState(_defineProperty({}, name, value));
         };
 
         _this.genericIntHandler = function (e) {
             name = e.target.name;
-            value = parseInt(e.target.value);
+            value = parseFloat(e.target.value);
             _this.setState(_defineProperty({}, name, value));
         };
 
@@ -87,7 +86,7 @@ var DnaView = function (_React$Component) {
         _this.formValidator = function () {
             validSequence = _this.state.sequenceLength > 0;
             validMutation = _this.state.mutation_type !== '';
-            validMutationCode = _this.state.target.length > 0 || _this.state.replacement.length > 0;
+            validMutationCode = _this.state.target.length > 0 || _this.state.replacement > 0;
             validSequence && validMutation && validMutationCode ? _this.setState({ submitValid: true }) : _this.setState({ submitValid: false });
             _this.formSettings = {
                 Tm_range_min: _this.state.Tm_range_min,
@@ -142,7 +141,7 @@ var DnaView = function (_React$Component) {
             sequenceLength: 0,
             submitValid: false,
             loading: false,
-            mode: 'DNA',
+            mode: 'PRO',
             sequence: '',
             mutation_type: '',
             target: '',
@@ -169,7 +168,7 @@ var DnaView = function (_React$Component) {
         return _this;
     }
 
-    _createClass(DnaView, [{
+    _createClass(ProteinView, [{
         key: 'render',
         value: function render() {
             var _this2 = this;
@@ -202,14 +201,13 @@ var DnaView = function (_React$Component) {
                     React.createElement(
                         'h2',
                         { className: 'text-md-center py-2 mx-md-2 h2-responsive' },
-                        'DNA-based Primer Design'
+                        'Protein-based Primer Design'
                     ),
                     React.createElement(
                         'form',
                         {
                             id: 'form',
                             onChange: this.formValidator,
-                            onKeyUp: this.formValidator,
                             onSubmit: this.submitHandler,
                             autoComplete: 'off'
                         },
@@ -618,6 +616,36 @@ var DnaView = function (_React$Component) {
                                             React.createElement(
                                                 'div',
                                                 { className: 'col text-right' },
+                                                'Expression system'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'select',
+                                                    {
+                                                        className: 'browser-default custom-select',
+                                                        id: 'expression_system',
+                                                        name: 'expression_system',
+                                                        value: this.state.expression_system,
+                                                        onChange: this.genericSelectHandler
+                                                    },
+                                                    this.props.expressionList.map(function (exp, i) {
+                                                        return React.createElement(
+                                                            'option',
+                                                            { value: exp },
+                                                            exp
+                                                        );
+                                                    })
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
                                                 'Primer type'
                                             ),
                                             React.createElement(
@@ -708,5 +736,5 @@ var DnaView = function (_React$Component) {
         }
     }]);
 
-    return DnaView;
+    return ProteinView;
 }(React.Component);
