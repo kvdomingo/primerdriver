@@ -236,7 +236,5 @@ dist
 # VScode
 .vscode
 
-# Travis (temporary)
-.travis.yml
-
+# JSX source files
 jsx/

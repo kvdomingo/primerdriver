@@ -1,0 +1,3 @@
+version: 1
+snapshot:
+    widths: [576, 768, 992, 1200]

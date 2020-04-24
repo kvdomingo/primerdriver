@@ -1,0 +1,44 @@
+version: 2.1
+
+orbs:
+    python: circleci/python@0.2.1
+    heroku: circleci/heroku@0.0.10
+    browser-tools: circleci/browser-tools@1.0.0
+    percy: percy/agent@0.1.2
+
+jobs:
+    build-and-test:
+        working_directory: ~/app
+        docker:
+            - image: jiripuc/circleci-python-node:stretch-python-3.6.8-node-10.14.2
+        steps:
+            - checkout
+            - python/load-cache
+            - python/install-deps
+            - python/save-cache
+            - browser-tools/install-firefox
+            - browser-tools/install-geckodriver
+            - run:
+                command: sudo apt-get install libasound2
+                name: Fix chromium build issue
+            - run:
+                command: npx percy exec -- python -m coverage run --source='.' manage.py test
+                name: Run test and generate coverage report
+            - run:
+                command: python -m codecov
+                name: Upload coverage report
+
+workflows:
+    main:
+        jobs:
+            - build-and-test
+            - percy/finalize_all:
+                requires:
+                    - build-and-test
+            - heroku/deploy-via-git:
+                requires:
+                    - build-and-test
+                    - percy/finalize_all
+                filters:
+                    branches:
+                        only: master

@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 from argparse import ArgumentParser
 from pdcli.input_handler import *
@@ -15,6 +16,11 @@ def main():
     parser.add_argument('-p', '--position', help='Target base position', type=int)
     parser.add_argument('-i', '--interactive', help='Interactive mode', action='store_true')
     parser.add_argument('--save', help='Filename to save to', type=str)
+
+    if len(sys.argv) < 2:
+        parser.print_help(sys.stderr)
+        sys.exit(0)
+
     args = parser.parse_args()
 
     if args.interactive:

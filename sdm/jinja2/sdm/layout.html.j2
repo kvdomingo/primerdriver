@@ -7,12 +7,13 @@
     <meta name="author" content="Kenneth V. Domingo, Nomer Gutierrez">
     <meta name="keywords" content="PrimerDriver, site-directed mutagenesis, PCR, primer design, mutagenic" />
     <link rel="shortcut icon" type="image/png" href="https://res.cloudinary.com/kdphotography-assets/image/upload/v1/primerdriver/favicon.png"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/css/mdb.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Oxygen&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/js/mdb.min.js"></script>
 
@@ -26,6 +27,8 @@
         <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
     {% endif %}
+
+    <script src="https://unpkg.com/react-transition-group/dist/react-transition-group.js"></script>
 
     {% if not DEBUG and ON_HEROKU %}
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162676656-3"></script>
@@ -73,9 +76,6 @@
                 <li class="nav-item {{ 'active' if active_page == 'index' }}">
                     <a class="nav-link" href="{{ url('index') }}">Home</a>
                 </li>
-                <li class="nav-item {{ 'active' if active_page == 'design' }}">
-                    <a class="nav-link" href="{{ url('design') }}">Design</a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="https://github.com/kvdomingo/primerdriver/releases" target="_blank">Download</a>
                 </li>
@@ -90,9 +90,11 @@
 
     <footer class="page-footer font-small bg-dark">
         <div class="footer-copyright text-center py-3 px-3">
-            &copy; {{ now.year }} <a href="mailto:kvdomingo@up.edu.ph">Kenneth Domingo</a> &amp; <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>
+            PrimerDriver v{{ program_version }} {{ web_version }} &copy; {{ now.year }} <a href="mailto:kvdomingo@up.edu.ph">Kenneth Domingo</a> &amp; <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>
         </div>
     </footer>
+
+<script src="{{ static('sdm/js/layout.js') }}"></script>
 
 </body>
 </html>

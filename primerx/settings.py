@@ -32,9 +32,10 @@ DEBUG = bool(int(os.environ['DEBUG']))
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
 ALLOWED_HOSTS = [
-    'primerx-dev.herokuapp.com',
-    'primerdriver.herokuapp.com',
+    '.herokuapp.com',
     'localhost',
+    '127.0.0.1',
+    'testserver',
 ]
 
 
@@ -144,6 +145,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-if bool(int(os.environ['ON_HEROKU'])):
+ON_CI = bool(int(os.environ['ON_CI']))
+
+ON_HEROKU = bool(int(os.environ['ON_HEROKU']))
+
+if ON_HEROKU:
     import django_heroku
     django_heroku.settings(locals())
