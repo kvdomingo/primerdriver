@@ -6,6 +6,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var _ReactTransitionGroup = ReactTransitionGroup,
+    TransitionGroup = _ReactTransitionGroup.TransitionGroup,
+    CSSTransition = _ReactTransitionGroup.CSSTransition;
+
 var App = function (_React$Component) {
     _inherits(App, _React$Component);
 
@@ -19,14 +23,15 @@ var App = function (_React$Component) {
             _this.setState({ pageId: pageId });
         };
 
-        _this.responseCatcher = function (e, res) {
-            _this.setState({ res: res });
+        _this.responseCatcher = function (e, res, mode) {
+            _this.setState({ res: res, mode: mode });
         };
 
         _this.pageId = 0;
         _this.state = {
             res: null,
-            pageId: 0
+            pageId: 0,
+            mode: null
         };
         return _this;
     }
@@ -41,7 +46,7 @@ var App = function (_React$Component) {
                 this.state.pageId === 1 && React.createElement(CharacterizeView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
                 this.state.pageId === 2 && React.createElement(DnaView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
                 this.state.pageId === 3 && React.createElement(ProteinView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
-                this.state.pageId === 4 && React.createElement(ResultView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher, results: this.state.res }))
+                this.state.pageId === 4 && React.createElement(ResultView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher, results: this.state.res, mode: this.state.mode }))
             );
         }
     }]);

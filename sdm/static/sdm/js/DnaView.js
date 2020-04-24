@@ -122,7 +122,7 @@ var DnaView = function (_React$Component) {
                     console.log(xhttp.response);
                     console.log(xhttp.responseText);
                 }
-                _this.props.responseCatcher(e, res);
+                _this.props.responseCatcher(e, res, _this.state.mode);
                 _this.props.changeView(e, 4);
             };
             data = new FormData();

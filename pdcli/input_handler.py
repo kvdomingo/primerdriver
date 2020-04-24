@@ -1,5 +1,5 @@
 from .primerclass import *
-from primerx.version import __version__
+from .version import __version__
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
