@@ -5,5 +5,5 @@ __version__ = VersionInfo(
     major=1,
     minor=1,
     patch=0,
-    prerelease=1
+    prerelease='rc.1'
 )

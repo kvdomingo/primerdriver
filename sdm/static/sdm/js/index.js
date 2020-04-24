@@ -18,6 +18,12 @@ var app_data = [{
     color: 'success'
 }];
 
+function parseEscapedJson(s) {
+    return s.replace(/\\u[0-9a-fA-F]{4}/gi, function (match) {
+        return String.fromCharCode(parseInt(match.replace(/\\u/g, ""), 16));
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     $(window).scroll(function () {
         if ($(this).scrollTop() < 50) {
@@ -27,5 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    ReactDOM.render(React.createElement(App, { stations: app_data }), document.getElementById('app'));
+    expressionList = JSON.parse(parseEscapedJson($('#expression-systems').data('list')));
+    parseEscapedJson($('#expression-systems').data('list'));
+
+    ReactDOM.render(React.createElement(App, { stations: app_data, expressionList: expressionList.data }), document.getElementById('app'));
 });
