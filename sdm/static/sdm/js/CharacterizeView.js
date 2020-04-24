@@ -28,12 +28,10 @@ var CharacterizeView = function (_React$Component) {
         };
 
         _this.mismatchedBasesHandler = function (e) {
-            e.preventDefault();
             _this.setState({ mismatched_bases: parseInt(e.target.value) });
         };
 
         _this.mutationTypeHandler = function (e) {
-            e.preventDefault();
             _this.setState({ mutation_type: e.target.value });
         };
 
@@ -58,7 +56,11 @@ var CharacterizeView = function (_React$Component) {
             xhttp = new XMLHttpRequest();
             xhttp.open('POST', '/api');
             xhttp.onload = function () {
-                res = JSON.parse(xhttp.responseText);
+                if (xhttp.status === 200) {
+                    res = JSON.parse(xhttp.responseText);
+                } else {
+                    res = 'Request failed. Please try again later.';
+                }
                 _this.props.responseCatcher(e, res);
                 _this.props.changeView(e, 4);
             };
