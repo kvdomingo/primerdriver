@@ -38,10 +38,14 @@ def api(request):
         res = PrimerDesign(**data)
         res.main()
         if data['mode'] != 'CHAR':
-            df = concat([*res.df]).T
+            try:
+                df = concat([*res.df]).T
+                out = df.to_dict()
+            except TypeError:
+                out = {'data': 'No valid primers found'}
         else:
             df = res.df
-        out = df.to_dict()
+            out = df.to_dict()
         return JsonResponse(out)
     else:
         return HttpResponseForbidden(f'{request.method} not allowed on /api')

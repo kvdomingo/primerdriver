@@ -23,7 +23,7 @@ var ResultView = function (_React$Component) {
             var _this2 = this;
 
             if (_typeof(this.props.results) === 'object') {
-                if (Object.keys(this.props.results).length === 1) {
+                if (this.props.mode === 'CHAR') {
                     table_content = [];
                     for (key in this.props.results) {
                         table_content.push(React.createElement(
@@ -49,9 +49,10 @@ var ResultView = function (_React$Component) {
                         'div',
                         { className: 'table-responsive text-nowrap' },
                         React.createElement(
-                            'button',
+                            'a',
                             {
-                                className: 'btn btn-blue-grey mb-5 mr-3',
+                                className: 'btn btn-blue-grey mb-4 mr-3',
+                                id: 'back',
                                 onClick: function (e) {
                                     this.props.responseCatcher(e, null);this.props.changeView(e, 0);
                                 }.bind(this)
@@ -83,7 +84,7 @@ var ResultView = function (_React$Component) {
                                         this.props.responseCatcher(e, null);this.props.changeView(e, 0);
                                     }.bind(_this2)
                                 },
-                                React.createElement('i', { className: 'fas fa-arrow-left' }),
+                                React.createElement('i', { className: 'fas fa-arrow-left mr-3' }),
                                 'main menu'
                             ),
                             React.createElement(
@@ -164,14 +165,14 @@ var ResultView = function (_React$Component) {
                     React.createElement(
                         'a',
                         {
-                            className: 'btn btn-blue-grey btn-rounded mb-4',
+                            className: 'btn btn-blue-grey btn-rounded mb-4 mr-3',
                             href: '/',
                             id: 'back',
                             onClick: function onClick(e) {
                                 return _this2.props.changeView(e, 0);
                             }
                         },
-                        React.createElement('i', { className: 'fas fa-arrow-left mr-2' }),
+                        React.createElement('i', { className: 'fas fa-arrow-left mr-3' }),
                         'main menu'
                     ),
                     React.createElement(

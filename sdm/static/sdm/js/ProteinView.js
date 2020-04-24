@@ -65,17 +65,19 @@ var ProteinView = function (_React$Component) {
 
         _this.genericFloatHandler = function (e) {
             name = e.target.name;
-            value = parseInt(e.target.value);
+            value = parseFloat(e.target.value);
 
             if (name === 'Tm_range_min' && value >= _this.state.Tm_range_max) return;
             if (name === 'Tm_range_max' && value <= _this.state.Tm_range_min) return;
+            if (name === 'gc_range_min' && value >= _this.state.gc_range_max) return;
+            if (name === 'gc_range_max' && value <= _this.state.gc_range_min) return;
 
             return _this.setState(_defineProperty({}, name, value));
         };
 
         _this.genericIntHandler = function (e) {
             name = e.target.name;
-            value = parseFloat(e.target.value);
+            value = parseInt(e.target.value);
             _this.setState(_defineProperty({}, name, value));
         };
 
@@ -86,7 +88,7 @@ var ProteinView = function (_React$Component) {
         _this.formValidator = function () {
             validSequence = _this.state.sequenceLength > 0;
             validMutation = _this.state.mutation_type !== '';
-            validMutationCode = _this.state.target.length > 0 || _this.state.replacement > 0;
+            validMutationCode = _this.state.target.length > 0 || _this.state.replacement.length > 0;
             validSequence && validMutation && validMutationCode ? _this.setState({ submitValid: true }) : _this.setState({ submitValid: false });
             _this.formSettings = {
                 Tm_range_min: _this.state.Tm_range_min,
@@ -121,7 +123,7 @@ var ProteinView = function (_React$Component) {
                     console.log(xhttp.response);
                     console.log(xhttp.responseText);
                 }
-                _this.props.responseCatcher(e, res);
+                _this.props.responseCatcher(e, res, _this.state.mode);
                 _this.props.changeView(e, 4);
             };
             data = new FormData();
