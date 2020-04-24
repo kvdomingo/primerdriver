@@ -238,3 +238,5 @@ dist
 
 # Travis (temporary)
 .travis.yml
+
+jsx/
