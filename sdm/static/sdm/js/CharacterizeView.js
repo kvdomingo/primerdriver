@@ -95,16 +95,10 @@ var CharacterizeView = function (_React$Component) {
             if (this.state.loading) {
                 return React.createElement(
                     'div',
-                    { className: 'container mb-5' },
-                    React.createElement(
-                        'div',
-                        { className: 'spinner-grow', role: 'status' },
-                        React.createElement(
-                            'span',
-                            { className: 'sr-only' },
-                            'Loading...'
-                        )
-                    )
+                    { className: 'container mb-5 text-center' },
+                    React.createElement('div', { className: 'spinner-grow mb-2', role: 'status' }),
+                    React.createElement('br', null),
+                    'Please wait...'
                 );
             } else {
                 return React.createElement(
