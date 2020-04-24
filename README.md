@@ -1,8 +1,8 @@
 # PrimerDriver: Automated design of mutagenic PCR primers
 ![PrimerDriver](https://raw.githubusercontent.com/kvdomingo/primerdriver/master/sdm/static/sdm/media/private/PrimerDriver_logo.png)
-[![CircleCI](https://circleci.com/gh/kvdomingo/primerdriver/tree/develop.svg?style=svg)](https://circleci.com/gh/kvdomingo/primerdriver/tree/develop)
+[![CircleCI](https://circleci.com/gh/kvdomingo/primerdriver/tree/develop.svg?style=svg)](https://circleci.com/gh/kvdomingo/primerdriver)
 [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Kenneth-V-Domingo/primerdriver)
-[![codecov](https://codecov.io/gh/kvdomingo/primerdriver/branch/develop/graph/badge.svg)](https://codecov.io/gh/kvdomingo/primerdriver)
+[![codecov](https://codecov.io/gh/kvdomingo/primerdriver/branch/master/graph/badge.svg)](https://codecov.io/gh/kvdomingo/primerdriver)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT?style=flat-square)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
