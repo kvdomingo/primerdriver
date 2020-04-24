@@ -19,7 +19,8 @@ class PrimerDesign:
         position=None,
         savename=None,
         settings="pdcli/settings.json",
-        print_buffer=20
+        print_buffer=20,
+        **kwargs
     ):
         if isinstance(settings, str):
             if settings.endswith('json'):

@@ -18,7 +18,6 @@ var DnaView = function (_React$Component) {
 
         _this.genericNucleobaseHandler = function (e) {
             name = e.target.name;
-            value = e.target.value;
             old_value = e.target.value.toUpperCase().split("");
             value = [];
             old_value.forEach(function (char, i) {
@@ -36,13 +35,46 @@ var DnaView = function (_React$Component) {
         };
 
         _this.mutationTypeHandler = function (e) {
-            e.preventDefault();
+            if (e.target.value !== _this.state.mutation_type) {
+                _this.setState({
+                    target: '',
+                    replacement: ''
+                });
+            }
             _this.setState({ mutation_type: e.target.value });
         };
 
-        _this.genericChangeHandler = function (e) {
+        _this.genericSelectHandler = function (e) {
             name = e.target.name;
             value = e.target.value;
+            _this.setState(_defineProperty({}, name, value));
+        };
+
+        _this.genericCheckedHandler = function (e) {
+            name = e.target.name;
+            value = e.target.checked;
+            _this.setState(_defineProperty({}, name, value));
+        };
+
+        _this.genericTextHandler = function (e) {
+            name = e.target.name;
+            value = e.target.value;
+            _this.setState(_defineProperty({}, name, value));
+        };
+
+        _this.genericFloatHandler = function (e) {
+            name = e.target.name;
+            value = parseInt(e.target.value);
+
+            if (name === 'Tm_range_min' && value >= _this.state.Tm_range_max) return;
+            if (name === 'Tm_range_max' && value <= _this.state.Tm_range_min) return;
+
+            return _this.setState(_defineProperty({}, name, value));
+        };
+
+        _this.genericIntHandler = function (e) {
+            name = e.target.name;
+            value = parseFloat(e.target.value);
             _this.setState(_defineProperty({}, name, value));
         };
 
@@ -52,13 +84,26 @@ var DnaView = function (_React$Component) {
 
         _this.formValidator = function () {
             validSequence = _this.state.sequenceLength > 0;
-            validMismatch = _this.state.mismatched_bases > 0;
-            validSequence && validMismatch ? _this.setState({ submitValid: true }) : _this.setState({ submitValid: false });
-            _this.formData = {
-                mode: _this.state.mode,
-                sequence: _this.state.sequence,
-                mismatched_bases: _this.state.mismatched_bases,
-                mutation_type: _this.state.mutation_type
+            validMutation = _this.state.mutation_type !== '';
+            validMutationCode = _this.state.target.length > 0 || _this.state.replacement > 0;
+            validSequence && validMutation && validMutationCode ? _this.setState({ submitValid: true }) : _this.setState({ submitValid: false });
+            _this.formSettings = {
+                Tm_range_min: _this.state.Tm_range_min,
+                Tm_range_max: _this.state.Tm_range_max,
+                gc_range_min: _this.state.gc_range_min,
+                gc_range_max: _this.state.gc_range_max,
+                length_min: _this.state.length_min,
+                length_max: _this.state.length_max,
+                flank5_range_min: _this.state.flank5_range_min,
+                flank5_range_max: _this.state.flank5_range_max,
+                flank3_range_min: _this.state.flank3_range_min,
+                flank3_range_max: _this.state.flank3_range_max,
+                forward_overlap5: _this.state.forward_overlap5,
+                forward_overlap3: _this.state.forward_overlap3,
+                terminate_gc: _this.state.terminate_gc,
+                center_mutation: _this.state.center_mutation,
+                primer_mode: _this.state.primer_mode,
+                expression_system: _this.state.expression_system
             };
         };
 
@@ -67,15 +112,25 @@ var DnaView = function (_React$Component) {
             xhttp = new XMLHttpRequest();
             xhttp.open('POST', '/api');
             xhttp.onload = function () {
-                res = JSON.parse(xhttp.responseText);
+                if (xhttp.status === 200) {
+                    res = JSON.parse(xhttp.responseText);
+                } else {
+                    res = 'Request failed. Please try again later.';
+                    console.log(xhttp.statusText);
+                    console.log(xhttp.response);
+                    console.log(xhttp.responseText);
+                }
                 _this.props.responseCatcher(e, res);
                 _this.props.changeView(e, 4);
             };
             data = new FormData();
             data.append('mode', _this.state.mode);
             data.append('sequence', _this.state.sequence);
-            data.append('mismatched_bases', _this.state.mismatched_bases);
+            data.append('target', _this.state.target);
+            data.append('position', _this.state.position);
+            data.append('replacement', _this.state.replacement);
             data.append('mutation_type', _this.state.mutation_type);
+            data.append('settings', JSON.stringify(_this.formSettings));
             xhttp.send(data);
             e.preventDefault();
         };
@@ -105,7 +160,8 @@ var DnaView = function (_React$Component) {
             forward_overlap3: 9,
             terminate_gc: true,
             center_mutation: true,
-            primer_mode: 'complementary'
+            primer_mode: 'complementary',
+            expression_system: 'Homo sapiens'
         };
         _this.formResetDefaults = Object.assign({}, _this.state);
         return _this;
@@ -119,16 +175,10 @@ var DnaView = function (_React$Component) {
             if (this.state.loading) {
                 return React.createElement(
                     'div',
-                    { className: 'container mb-5' },
-                    React.createElement(
-                        'div',
-                        { className: 'spinner-grow', role: 'status' },
-                        React.createElement(
-                            'span',
-                            { className: 'sr-only' },
-                            'Loading...'
-                        )
-                    )
+                    { className: 'container mb-5 text-center' },
+                    React.createElement('div', { className: 'spinner-grow mb-2', role: 'status' }),
+                    React.createElement('br', null),
+                    'Please wait...'
                 );
             } else {
                 return React.createElement(
@@ -157,7 +207,8 @@ var DnaView = function (_React$Component) {
                         {
                             id: 'form',
                             onChange: this.formValidator,
-                            onSubmit: this.submitHandler
+                            onSubmit: this.submitHandler,
+                            autoComplete: 'off'
                         },
                         React.createElement(
                             'div',
@@ -231,7 +282,7 @@ var DnaView = function (_React$Component) {
                                 },
                                 React.createElement(
                                     'option',
-                                    { value: '', disabled: true },
+                                    { value: '' },
                                     'Select mutation type'
                                 ),
                                 React.createElement(
@@ -251,64 +302,383 @@ var DnaView = function (_React$Component) {
                                 )
                             )
                         ),
+                        React.createElement(MutationCodeLayout, Object.assign({}, this.state, {
+                            genericNucleobaseHandler: this.genericNucleobaseHandler,
+                            genericIntHandler: this.genericIntHandler
+                        })),
                         React.createElement(
                             'div',
-                            { className: 'row row-cols-1 row-cols-md-3' },
+                            { className: 'accordion my-3', id: 'accordionAdvanced' },
                             React.createElement(
                                 'div',
-                                { className: 'col form-group' },
+                                { className: 'card z-depth-0 bordered' },
                                 React.createElement(
-                                    'label',
-                                    { htmlFor: 'target' },
-                                    'Target'
+                                    'div',
+                                    { className: 'card-header', id: 'headingAdvanced' },
+                                    React.createElement(
+                                        'h5',
+                                        { className: 'mb-0 text-center' },
+                                        React.createElement(
+                                            'button',
+                                            { className: 'btn btn-link', id: 'show-advanced', type: 'button', 'data-toggle': 'collapse', 'data-target': '#advanced', 'aria-expanded': 'true', 'aria-controls': 'advanced' },
+                                            'Advanced settings'
+                                        )
+                                    )
                                 ),
-                                React.createElement('input', {
-                                    type: 'text',
-                                    className: 'form-control',
-                                    name: 'target',
-                                    id: 'target',
-                                    value: this.state.target,
-                                    onChange: this.genericNucleobaseHandler,
-                                    required: true
-                                })
-                            ),
-                            React.createElement(
-                                'div',
-                                { className: 'col form-group' },
                                 React.createElement(
-                                    'label',
-                                    { htmlFor: 'target' },
-                                    'Position'
-                                ),
-                                React.createElement('input', {
-                                    type: 'number',
-                                    min: '0',
-                                    className: 'form-control',
-                                    name: 'position',
-                                    id: 'position',
-                                    value: this.state.position,
-                                    onChange: this.genericChangeHandler,
-                                    required: true
-                                })
-                            ),
-                            React.createElement(
-                                'div',
-                                { className: 'col form-group' },
-                                React.createElement(
-                                    'label',
-                                    { htmlFor: 'target' },
-                                    'Replacement'
-                                ),
-                                React.createElement('input', {
-                                    type: 'text',
-                                    className: 'form-control',
-                                    name: 'replacement',
-                                    id: 'replacement',
-                                    min: '0',
-                                    value: this.state.replacement,
-                                    onChange: this.genericNucleobaseHandler,
-                                    required: true
-                                })
+                                    'div',
+                                    { id: 'advanced', className: 'collapse', 'aria-labelledby': 'headingAdvanced', 'data-parent': '#accordionAdvanced' },
+                                    React.createElement(
+                                        'div',
+                                        { className: 'card-body' },
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3 text-center' },
+                                            React.createElement('div', { className: 'col' }),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                'Min'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                'Max'
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                'Melting point (',
+                                                React.createElement(
+                                                    'sup',
+                                                    null,
+                                                    'o'
+                                                ),
+                                                'C)'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'Tm_range_min',
+                                                        name: 'Tm_range_min',
+                                                        className: 'form-control',
+                                                        value: this.state.Tm_range_min,
+                                                        onChange: this.genericFloatHandler
+                                                    })
+                                                )
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'Tm_range_max',
+                                                        name: 'Tm_range_max',
+                                                        className: 'form-control',
+                                                        value: this.state.Tm_range_max,
+                                                        onChange: this.genericFloatHandler
+                                                    })
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                'GC Content (%)'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'gc_range_min',
+                                                        name: 'gc_range_min',
+                                                        className: 'form-control',
+                                                        value: this.state.gc_range_min,
+                                                        onChange: this.genericFloatHandler
+                                                    })
+                                                )
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'gc_range_max',
+                                                        name: 'gc_range_max',
+                                                        className: 'form-control',
+                                                        value: this.state.gc_range_max,
+                                                        onChange: this.genericFloatHandler
+                                                    })
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                'Length (bp)'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'length_min',
+                                                        name: 'length_min',
+                                                        className: 'form-control',
+                                                        value: this.state.length_min,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'length_max',
+                                                        name: 'length_max',
+                                                        className: 'form-control',
+                                                        value: this.state.length_max,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                '5\' flanking region (bp)'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'flank5_range_min',
+                                                        name: 'flank5_range_min',
+                                                        className: 'form-control',
+                                                        value: this.state.flank5_range_min,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'flank5_range_max',
+                                                        name: 'flank5_range_max',
+                                                        className: 'form-control',
+                                                        value: this.state.flank5_range_max,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                '3\' flanking region (bp)'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'flank3_range_min',
+                                                        name: 'flank3_range_min',
+                                                        className: 'form-control',
+                                                        value: this.state.flank3_range_min,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'flank3_range_max',
+                                                        name: 'flank3_range_max',
+                                                        className: 'form-control',
+                                                        value: this.state.flank3_range_max,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                '5\' forward overlap (bp)'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'forward_overlap5',
+                                                        name: 'forward_overlap5',
+                                                        className: 'form-control',
+                                                        value: this.state.forward_overlap5,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            ),
+                                            React.createElement('div', { className: 'col' })
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                '3\' forward overlap (bp)'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'div',
+                                                    { className: 'md-outline' },
+                                                    React.createElement('input', {
+                                                        type: 'number',
+                                                        id: 'forward_overlap3',
+                                                        name: 'forward_overlap3',
+                                                        className: 'form-control',
+                                                        value: this.state.forward_overlap3,
+                                                        onChange: this.genericIntHandler
+                                                    })
+                                                )
+                                            ),
+                                            React.createElement('div', { className: 'col' })
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'row row-cols-3' },
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col text-right' },
+                                                'Primer type'
+                                            ),
+                                            React.createElement(
+                                                'div',
+                                                { className: 'col' },
+                                                React.createElement(
+                                                    'select',
+                                                    {
+                                                        className: 'browser-default custom-select',
+                                                        id: 'primer_mode',
+                                                        name: 'primer_mode',
+                                                        value: this.state.primer_mode,
+                                                        onChange: this.genericSelectHandler
+                                                    },
+                                                    React.createElement(
+                                                        'option',
+                                                        { value: 'complementary' },
+                                                        'Complementary'
+                                                    ),
+                                                    React.createElement(
+                                                        'option',
+                                                        { value: 'overlapping' },
+                                                        'Overlapping'
+                                                    )
+                                                )
+                                            ),
+                                            React.createElement('div', { className: 'col' })
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'custom-control custom-checkbox text-left mt-3' },
+                                            React.createElement('input', {
+                                                type: 'checkbox',
+                                                className: 'custom-control-input',
+                                                id: 'terminate_gc',
+                                                name: 'terminate_gc',
+                                                checked: this.state.terminate_gc,
+                                                onChange: this.genericCheckedHandler
+                                            }),
+                                            React.createElement(
+                                                'label',
+                                                { className: 'custom-control-label', htmlFor: 'terminate_gc' },
+                                                'Terminates in G/C'
+                                            )
+                                        ),
+                                        React.createElement(
+                                            'div',
+                                            { className: 'custom-control custom-checkbox text-left' },
+                                            React.createElement('input', {
+                                                type: 'checkbox',
+                                                className: 'custom-control-input',
+                                                id: 'center_mutation',
+                                                name: 'center_mutation',
+                                                checked: this.state.center_mutation,
+                                                onChange: this.genericCheckedHandler
+                                            }),
+                                            React.createElement(
+                                                'label',
+                                                { className: 'custom-control-label', htmlFor: 'center_mutation' },
+                                                'Mutation at center of primer'
+                                            )
+                                        )
+                                    )
+                                )
                             )
                         ),
                         React.createElement(
