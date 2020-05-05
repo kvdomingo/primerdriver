@@ -7,7 +7,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var _ReactTransitionGroup = ReactTransitionGroup,
-    TransitionGroup = _ReactTransitionGroup.TransitionGroup,
     CSSTransition = _ReactTransitionGroup.CSSTransition;
 
 var App = function (_React$Component) {
@@ -31,23 +30,97 @@ var App = function (_React$Component) {
         _this.state = {
             res: null,
             pageId: 0,
-            mode: null
+            mode: null,
+            transitionSpeed: 300,
+            transitionName: 'fade'
         };
         return _this;
     }
 
     _createClass(App, [{
-        key: "render",
+        key: 'render',
         value: function render() {
-            return React.createElement(
-                "div",
-                null,
-                this.state.pageId === 0 && React.createElement(Menu, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
-                this.state.pageId === 1 && React.createElement(CharacterizeView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
-                this.state.pageId === 2 && React.createElement(DnaView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
-                this.state.pageId === 3 && React.createElement(ProteinView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher })),
-                this.state.pageId === 4 && React.createElement(ResultView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher, results: this.state.res, mode: this.state.mode }))
-            );
+            if (this.state.pageId === 0) {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        CSSTransition,
+                        {
+                            key: 0,
+                            'in': this.state.pageId === 0,
+                            appear: true,
+                            timeout: this.state.transitionSpeed,
+                            classNames: this.state.transitionName
+                        },
+                        React.createElement(Menu, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher }))
+                    )
+                );
+            } else if (this.state.pageId === 1) {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        CSSTransition,
+                        {
+                            key: 1,
+                            'in': this.state.pageId === 1,
+                            appear: true,
+                            timeout: this.state.transitionSpeed,
+                            classNames: this.state.transitionName
+                        },
+                        React.createElement(CharacterizeView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher }))
+                    )
+                );
+            } else if (this.state.pageId === 2) {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        CSSTransition,
+                        {
+                            key: 2,
+                            'in': this.state.pageId === 2,
+                            appear: true,
+                            timeout: this.state.transitionSpeed,
+                            classNames: this.state.transitionName
+                        },
+                        React.createElement(DnaView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher }))
+                    )
+                );
+            } else if (this.state.pageId === 3) {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        CSSTransition,
+                        {
+                            key: 3,
+                            'in': this.state.pageId === 3,
+                            appear: true,
+                            timeout: this.state.transitionSpeed,
+                            classNames: this.state.transitionName
+                        },
+                        React.createElement(ProteinView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher }))
+                    )
+                );
+            } else if (this.state.pageId === 4) {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        CSSTransition,
+                        {
+                            key: 4,
+                            'in': this.state.pageId === 4,
+                            appear: true,
+                            timeout: this.state.transitionSpeed,
+                            classNames: this.state.transitionName
+                        },
+                        React.createElement(ResultView, Object.assign({}, this.props, { changeView: this.changeView, responseCatcher: this.responseCatcher, results: this.state.res, mode: this.state.mode }))
+                    )
+                );
+            }
         }
     }]);
 

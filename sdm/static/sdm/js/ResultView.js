@@ -28,7 +28,7 @@ var ResultView = function (_React$Component) {
                     for (key in this.props.results) {
                         table_content.push(React.createElement(
                             React.Fragment,
-                            null,
+                            { key: key },
                             React.createElement(
                                 'tr',
                                 null,
@@ -98,7 +98,7 @@ var ResultView = function (_React$Component) {
                         var _loop = function _loop(i, n) {
                             table_content.push(React.createElement(
                                 React.Fragment,
-                                null,
+                                { key: i },
                                 React.createElement(
                                     'div',
                                     { className: 'table-responsive text-nowrap' },
@@ -127,7 +127,7 @@ var ResultView = function (_React$Component) {
                                                 for (var _key in _this2.props.results[(i + 1).toString()]) {
                                                     row_content.push(React.createElement(
                                                         React.Fragment,
-                                                        null,
+                                                        { key: _key },
                                                         React.createElement(
                                                             'tr',
                                                             null,

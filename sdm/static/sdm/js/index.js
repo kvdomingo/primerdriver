@@ -25,13 +25,13 @@ function parseEscapedJson(s) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    $(window).scroll(function () {
-        if ($(this).scrollTop() < 50) {
-            $('.navbar').css('opacity', 0.0);
-        } else {
-            $('.navbar').css('opacity', 1.0);
-        }
-    });
+    // $(window).scroll(function() {
+    //     if ($(this).scrollTop() < 50) {
+    //         $('.navbar').css('opacity', 0.0)
+    //     } else {
+    //         $('.navbar').css('opacity', 1.0)
+    //     }
+    // });
 
     expressionList = JSON.parse(parseEscapedJson($('#expression-systems').data('list')));
     parseEscapedJson($('#expression-systems').data('list'));

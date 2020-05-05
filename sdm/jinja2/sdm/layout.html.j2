@@ -6,29 +6,7 @@
     <meta name="description" content="PrimerDriver: Automated design of mutagenic primers for site-directed mutagenesis" />
     <meta name="author" content="Kenneth V. Domingo, Nomer Gutierrez">
     <meta name="keywords" content="PrimerDriver, site-directed mutagenesis, PCR, primer design, mutagenic" />
-    <link rel="shortcut icon" type="image/png" href="https://res.cloudinary.com/kdphotography-assets/image/upload/v1/primerdriver/favicon.png"/>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/css/mdb.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Oxygen&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/js/mdb.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cloudinary-core/2.8.2/cloudinary-core.min.js"></script>
-
-    {% if DEBUG %}
-        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-    {% else %}
-        <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
-    {% endif %}
-
-    <script src="https://unpkg.com/react-transition-group/dist/react-transition-group.js"></script>
+    <title>{% block title %}{% endblock %} | PrimerDriver</title>
 
     {% if not DEBUG and ON_HEROKU %}
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162676656-3"></script>
@@ -53,17 +31,38 @@
         <meta name="twitter:image:alt" content="PrimerDriver" />
     {% endif %}
 
+    <link rel="shortcut icon" type="image/png" href="https://res.cloudinary.com/kdphotography-assets/image/upload/v1/primerdriver/favicon.png"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/css/mdb.min.css" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css?family=Oxygen&display=swap" rel="stylesheet" /> -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.16.0/js/mdb.min.js"></script>
 
-    <title>{% block title %}{% endblock %} | PrimerDriver</title>
-    <style>
-        body {
-            font-family: "Oxygen", sans-serif;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.15/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cloudinary-core/2.8.2/cloudinary-core.min.js"></script>
+
+    {% if settings.DEBUG %}
+        <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    {% else %}
+        <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>
+    {% endif %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.7.2/prop-types.min.js"></script>
+    <script src="https://unpkg.com/react-transition-group/dist/react-transition-group.min.js"></script>
+
+    <link rel="stylesheet" href="{{ static('sdm/css/layout.css') }}" />
 </head>
 
 <body>
 
+{#
     <nav class="navbar navbar-expand-lg navbar-light py-2 {{ 'fixed-top' if active_page == 'index' else 'sticky-top' }}" style="background: rgba(255, 255, 255, 0.90); box-shadow: none; opacity: 0.0; transition: opacity 0.25s;">
         <a class="navbar-brand" href="{{ url('index') }}">
             <img src="https://res.cloudinary.com/kdphotography-assets/image/upload/v1/primerdriver/PrimerDriver_logo.png" height="50" class="pb-1" />
@@ -85,10 +84,34 @@
             </ul>
         </div>
     </nav>
+#}
 
     {% block body %}{% endblock %}
 
     <footer class="page-footer font-small bg-dark">
+        <div class="container text-center text-md-left pt-5 pb-4">
+            <div class="row">
+                <div class="col-md-6 mt-md-0 mt-3">
+                    <a href="{{ url('index') }}">
+                        <img src="https://res.cloudinary.com/kdphotography-assets/image/upload/v1/primerdriver/PrimerDriver_logo.png" height="50" class="pb-1" />
+                    </a>
+                    <p>Automated design of mutagenic PCR primers</p>
+                </div>
+                <div class="col-md-3 mb-md-0 mb-3"></div>
+                <hr class="clearfix w-100 d-md-none pb-3" />
+                <div class="col-md-3 mb-md-0 mb-3">
+                    <h5 class="text-uppercase">Links</h5>
+                    <ul class="list-unstyled">
+                        <li>
+                            <a href="https://github.com/kvdomingo/primerdriver/releases" target="_blank">Download</a>
+                        </li>
+                        <li>
+                            <a href="https://kvdomingo.github.io/primerdriver/" target="_blank">Documentation</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div class="footer-copyright text-center py-3 px-3">
             PrimerDriver v{{ program_version }} {{ web_version }} &copy; {{ now.year }} <a href="mailto:kvdomingo@up.edu.ph">Kenneth Domingo</a> &amp; <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>
         </div>

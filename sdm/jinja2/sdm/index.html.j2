@@ -7,7 +7,6 @@
 
 {% block body %}
 
-<!-- Landing -->
 <div class="container text-md-center py-md-5" style="box-shadow: none;">
     <img class="cld-responsive img-fluid" data-src="https://res.cloudinary.com/kdphotography-assets/image/upload/c_scale,w_auto,dpr_auto/v1/primerdriver/PrimerDriver_logo.png" class="img-fluid" />
     <div class="my-4">
@@ -22,8 +21,8 @@
 </div>
 
 <div class="container">
-    <div class='jumbotron my-5 border border-light' id="app" style="box-shadow: none;"></div>
-    <div id='expression-systems' data-list='{{ expression }}' hidden></div>
+    <div class='jumbotron my-5 border border-light' id="app" style="box-shadow: none; overflow: hidden;"></div>
+    <div id='expression-systems' data-list='{{ expression }}' hidden readonly></div>
 </div>
 
 <script src="{{ static('sdm/js/MutationCodeLayout.js') }}"></script>
