@@ -201,7 +201,7 @@ var DnaView = function (_React$Component) {
                     ),
                     React.createElement(
                         'h2',
-                        { className: 'text-md-center py-2 mx-md-2 h2-responsive' },
+                        { className: 'text-md-center py-2 mx-md-2 h2-responsive d-md-inline' },
                         'DNA-based Primer Design'
                     ),
                     React.createElement(

@@ -1,21 +1,45 @@
 body {
-    font-family: 'Oxygen', sans-serif;
+  font-family: "Rubik", sans-serif;
 }
 
-.fade-enter {
-    opacity: 0.01;
+.fade-appear, .fade-enter {
+  opacity: 0;
 }
 
-.fade-enter-active {
-    opacity: 1;
-    transition: all 300ms;
+.fade-appear-active, .fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms linear;
 }
 
 .fade-exit {
-    opacity: 1;
+  opacity: 1;
 }
 
 .fade-exit-active {
-    opacity: 0.01;
-    transition: all 300ms;
+  opacity: 0;
+  transition: opacity 300ms linear;
 }
+
+.fade-exit-done {
+  opacity: 0;
+}
+
+.slide-enter, .slide-appear {
+  transform: translate(100%);
+}
+
+.slide-enter-active, .slide-appear-active {
+  transform: translate(0%);
+  transition: transform 300ms ease-in-out;
+}
+
+.slide-exit {
+  transform: translate(0%);
+}
+
+.slide-exit-active {
+  transform: translate(-100%);
+  transition: transform 300ms ease-in-out;
+}
+
+/*# sourceMappingURL=layout.css.map */

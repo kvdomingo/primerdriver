@@ -1,7 +1,7 @@
 {
   "name": "primerx",
-  "version": "1.0.0",
-  "description": "![PrimerDriver](https://raw.githubusercontent.com/kvdomingo/primerdriver/master/sdm/static/sdm/media/private/PrimerDriver_logo.png) [![Build Status](https://travis-ci.com/kvdomingo/primerdriver.svg?branch=master)](https://travis-ci.com/kvdomingo/primerdriver) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT?style=flat-square) ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)",
+  "version": "1.1.0",
+  "description": "Automated design of mutagenic PCR primers",
   "main": "index.js",
   "directories": {
     "doc": "docs"
@@ -14,8 +14,8 @@
     "url": "git+https://github.com/kvdomingo/primerdriver.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Kenneth V. Domingo, Numeriano Amer E. Gutierrez",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/kvdomingo/primerdriver/issues"
   },

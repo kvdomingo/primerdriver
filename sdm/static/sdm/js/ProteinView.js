@@ -202,7 +202,7 @@ var ProteinView = function (_React$Component) {
                     ),
                     React.createElement(
                         'h2',
-                        { className: 'text-md-center py-2 mx-md-2 h2-responsive' },
+                        { className: 'text-md-center py-2 mx-md-2 h2-responsive d-md-inline' },
                         'Protein-based Primer Design'
                     ),
                     React.createElement(
@@ -210,6 +210,7 @@ var ProteinView = function (_React$Component) {
                         {
                             id: 'form',
                             onChange: this.formValidator,
+                            onKeyUp: this.formValidator,
                             onSubmit: this.submitHandler,
                             autoComplete: 'off'
                         },

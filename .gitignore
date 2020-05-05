@@ -235,6 +235,3 @@ dist
 
 # VScode
 .vscode
-
-# JSX source files
-jsx/

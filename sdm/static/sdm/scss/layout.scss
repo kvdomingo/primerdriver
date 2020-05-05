@@ -1,0 +1,64 @@
+body {
+    font-family: 'Rubik', sans-serif;
+}
+
+$fade-speed: 300ms;
+
+.fade-appear {
+    opacity: 0;
+}
+
+.fade-appear-active {
+    opacity: 1;
+    transition: opacity $fade-speed linear;
+}
+
+.fade-exit {
+    opacity: 1;
+}
+
+.fade-exit-active {
+    opacity: 0;
+    transition: opacity $fade-speed linear;
+}
+
+.fade-exit-done {
+    opacity: 0;
+}
+
+.fade-enter {
+    @extend .fade-appear;
+}
+
+.fade-enter-active {
+    @extend .fade-appear-active;
+}
+
+
+$slide-speed: 300ms;
+
+.slide-enter {
+    transform: translate(100%);
+}
+
+.slide-appear {
+    @extend .slide-enter
+}
+
+.slide-enter-active {
+    transform: translate(0%);
+    transition: transform $slide-speed ease-in-out;
+}
+
+.slide-appear-active {
+    @extend .slide-enter-active
+}
+
+.slide-exit {
+    transform: translate(0%);
+}
+
+.slide-exit-active {
+    transform: translate(-100%);
+    transition: transform $slide-speed ease-in-out;
+}
