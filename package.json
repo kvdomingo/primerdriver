@@ -1,31 +1,47 @@
 {
-  "name": "primerx",
+  "name": "primerdriver",
   "version": "1.1.0",
-  "description": "Automated design of mutagenic PCR primers",
-  "main": "index.js",
-  "directories": {
-    "doc": "docs"
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "mdbreact": "^4.26.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1",
+    "react-transition-group": "^4.4.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "postinstall": "npm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kvdomingo/primerdriver.git"
+  "engines": {
+    "node": "12.16.1",
+    "npm": "6.14.5"
   },
-  "keywords": [],
-  "author": "Kenneth V. Domingo, Numeriano Amer E. Gutierrez",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/kvdomingo/primerdriver/issues"
+  "eslintConfig": {
+    "extends": "react-app"
   },
-  "homepage": "https://github.com/kvdomingo/primerdriver#readme",
-  "dependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-react-app": "^3.1.2"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
     "@percy/agent": "^0.26.2",
-    "@percy/script": "^1.0.3"
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
+    "serve": "^11.3.0"
   }
 }

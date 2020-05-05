@@ -235,3 +235,6 @@ dist
 
 # VScode
 .vscode
+
+# IDEA
+.idea
