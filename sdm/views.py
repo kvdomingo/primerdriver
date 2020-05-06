@@ -1,4 +1,4 @@
-from os import listdir
+from os import listdir, environ
 from json import loads, dumps
 from pandas import concat
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
@@ -10,6 +10,7 @@ from django.conf import settings
 from django.utils.html import escapejs
 from pdcli.primerclass import PrimerDesign
 from pdcli.checks import PrimerChecks
+from pdcli.version import __version__
 
 
 def index(request):
@@ -49,3 +50,21 @@ def api(request):
         return JsonResponse(out)
     else:
         return HttpResponseForbidden(f'{request.method} not allowed on /api')
+
+
+def api_version(request):
+    if request.method == 'GET':
+        return JsonResponse({
+            'program_version': str(__version__),
+            'web_version': f'(web {os.environ["HEROKU_RELEASE_VERSION"]})' if settings.ON_HEROKU else '',
+        })
+    else:
+        return HttpResponseForbidden(f'{request.method} not allowed on /version')
+
+def api_expressions(request):
+    if request.method == 'GET':
+        return JsonResponse({
+            "data": sorted([''.join(f.split('.')[:-1]).strip() for f in listdir(f'{settings.BASE_DIR}/pdcli/expression system')])
+        })
+    else:
+        return HttpResponseForbidden(f'{request.method} not allowed on /expressionsys')

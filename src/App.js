@@ -1,33 +1,38 @@
 import React, { Component } from 'react';
 import './App.css';
+import Landing from './Landing';
+import Footer from './Footer';
+import Station from './Station';
 import 'mdbreact';
 
 
 export default class App extends Component {
 	constructor(props) {
-		super(props)
+		super(props);
 		this.state = {
-			res: null,
-			pageId: 0,
-			mode: null,
-			transitionSpeed: 300,
-			transitionName: 'fade',
-		}
+			currentDateTime: new Date(),
+			program_version: '',
+			web_version: '',
+		};
+
+		this.get_versions = this.get_versions.bind(this);
+		this.get_versions();
 	}
 
-	changeView = (e, pageId) => {
-		e.preventDefault()
-		this.setState({ pageId })
+	get_versions() {
+		fetch('/version')
+			.then(res => res.json())
+			.then((res) => {
+				this.setState({ ...res })
+			});
 	}
-
-	responseCatcher = (e, res, mode) => {
-        this.setState({ res: res, mode: mode })
-    }
 
 	render() {
 		return (
-			<div className='container py-3'>
-				<a href='!#' className='btn btn-primary'>Primary</a>
+			<div>
+				<Landing />
+				<Station />
+				<Footer { ...this.state } />
 			</div>
 		);
 	}

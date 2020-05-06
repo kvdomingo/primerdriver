@@ -1,38 +1,49 @@
-.App {
-    text-align: center;
+.transition-group {
+    position: relative;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.route-section {
+    left: 0;
+    position: absolute;
+    top: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.fade-appear, .fade-enter {
+  opacity: 0;
 }
 
-.App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.fade-appear-active, .fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in-out;
 }
 
-.App-link {
-    color: #61dafb;
+.fade-exit {
+  opacity: 1;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+.fade-exit-done {
+  opacity: 0;
+}
+
+.slide-enter, .slide-appear {
+  transform: translate(100%);
+}
+
+.slide-enter-active, .slide-appear-active {
+  transform: translate(0%);
+  transition: transform 300ms ease-in-out;
+}
+
+.slide-exit {
+  transform: translate(0%);
+}
+
+.slide-exit-active {
+  transform: translate(-100%);
+  transition: transform 300ms ease-in-out;
 }
