@@ -42,6 +42,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'sdm.apps.SdmConfig',
+    'frontend.apps.FrontendConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,12 +50,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'webpack_loader',
     'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -72,7 +73,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [
             os.path.join(PROJECT_DIR, 'jinjatemplates'),
-            os.path.join(BASE_DIR, 'build'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -145,12 +145,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': False,
+        'BUNDLE_DIR_NAME': 'frontend/bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'build', 'static'),
-]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 ON_CI = bool(int(os.environ['ON_CI']))
 

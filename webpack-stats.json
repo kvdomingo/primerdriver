@@ -1,0 +1,27 @@
+{
+    "status": "done",
+    "publicPath": "/static/frontend/bundles/",
+    "chunks": {
+        "main": [
+            {
+                "name": "main.324e6380be3272e0129a.css",
+                "publicPath": "/static/frontend/bundles/main.324e6380be3272e0129a.css",
+                "path": "D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\bundles\\main.324e6380be3272e0129a.css"
+            },
+            {
+                "name": "main.324e6380be3272e0129a.js",
+                "publicPath": "/static/frontend/bundles/main.324e6380be3272e0129a.js",
+                "path": "D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\bundles\\main.324e6380be3272e0129a.js"
+            }
+        ],
+        "null": [
+            {
+                "name": "2.main.324e6380be3272e0129a.js",
+                "publicPath": "/static/frontend/bundles/2.main.324e6380be3272e0129a.js",
+                "path": "D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\bundles\\2.main.324e6380be3272e0129a.js"
+            }
+        ]
+    },
+    "error": "ModuleBuildError",
+    "message": "Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\js\\components\\Result.js: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (9:16)\n\n   7 |             Object.keys(this.props).map((key, i) => (\n   8 |                 <h2>Henlo</h2>\n>  9 |                 <p>{key}: {this.props[key]}</p>\n     |                 ^\n  10 |             ))\n  11 |         );\n  12 |     }\n    at Object._raise (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:742:17)\n    at Object.raiseWithData (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:735:17)\n    at Object.raise (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:729:17)\n    at Object.jsxParseElementAt (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:4604:18)\n    at Object.jsxParseElement (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:4614:17)\n    at Object.parseExprAtom (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:4621:19)\n    at Object.parseExprSubscripts (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9624:23)\n    at Object.parseMaybeUnary (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9604:21)\n    at Object.parseExprOps (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9474:23)\n    at Object.parseMaybeConditional (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9447:23)\n    at Object.parseMaybeAssign (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9402:21)\n    at Object.parseParenAndDistinguishExpression (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:10215:28)\n    at Object.parseExprAtom (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9969:21)\n    at Object.parseExprAtom (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:4626:20)\n    at Object.parseExprSubscripts (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9624:23)\n    at Object.parseMaybeUnary (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9604:21)\n    at Object.parseExprOps (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9474:23)\n    at Object.parseMaybeConditional (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9447:23)\n    at Object.parseMaybeAssign (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9402:21)\n    at Object.parseFunctionBody (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:10649:24)\n    at Object.parseArrowExpression (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:10625:10)\n    at Object.parseParenAndDistinguishExpression (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:10243:12)\n    at Object.parseExprAtom (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9969:21)\n    at Object.parseExprAtom (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:4626:20)\n    at Object.parseExprSubscripts (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9624:23)\n    at Object.parseMaybeUnary (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9604:21)\n    at Object.parseExprOps (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9474:23)\n    at Object.parseMaybeConditional (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9447:23)\n    at Object.parseMaybeAssign (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:9402:21)\n    at Object.parseExprListItem (D:\\Kenneth\\Documents\\primerx\\primerx\\node_modules\\@babel\\parser\\lib\\index.js:10740:18)"
+}

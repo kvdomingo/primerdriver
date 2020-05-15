@@ -3,7 +3,6 @@ import './App.css';
 import Landing from './Landing';
 import Footer from './Footer';
 import Station from './Station';
-import 'mdbreact';
 
 
 export default class App extends Component {
@@ -14,13 +13,10 @@ export default class App extends Component {
 			program_version: '',
 			web_version: '',
 		};
-
-		this.get_versions = this.get_versions.bind(this);
-		this.get_versions();
 	}
 
-	get_versions() {
-		fetch('/version')
+	componentDidMount() {
+		fetch('/api/version')
 			.then(res => res.json())
 			.then((res) => {
 				this.setState({ ...res })
@@ -31,7 +27,7 @@ export default class App extends Component {
 		return (
 			<div>
 				<Landing />
-				<Station />
+				<Station id='app' />
 				<Footer { ...this.state } />
 			</div>
 		);
