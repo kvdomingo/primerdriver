@@ -38,11 +38,11 @@ ALLOWED_HOSTS = [
     'testserver',
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
     'sdm.apps.SdmConfig',
+    'frontend.apps.FrontendConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'webpack_loader',
     'corsheaders',
 ]
 
@@ -70,7 +71,9 @@ ROOT_URLCONF = 'primerx.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': ['%s/jinjatemplates/' %(PROJECT_DIR)],
+        'DIRS': [
+            os.path.join(PROJECT_DIR, 'jinjatemplates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'environment': 'primerx.jinja2.environment',
@@ -141,6 +144,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': False,
+        'BUNDLE_DIR_NAME': 'frontend/bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')

@@ -17,6 +17,7 @@ eggs/
 lib/
 lib64/
 parts/
+staticfiles/
 sdist/
 var/
 wheels/
@@ -235,3 +236,9 @@ dist
 
 # VScode
 .vscode
+
+# IDEA
+.idea
+
+# Local bundles
+bundles/

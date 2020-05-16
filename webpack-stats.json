@@ -1,0 +1,34 @@
+{
+    "status": "done",
+    "publicPath": "/static/frontend/bundles/",
+    "chunks": {
+        "null": [
+            {
+                "name": "7.main.2f40cdcbeb10c712fff5.js",
+                "publicPath": "/static/frontend/bundles/7.main.2f40cdcbeb10c712fff5.js",
+                "path": "D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\bundles\\7.main.2f40cdcbeb10c712fff5.js"
+            }
+        ],
+        "main": [
+            {
+                "name": "main.2f40cdcbeb10c712fff5.css",
+                "publicPath": "/static/frontend/bundles/main.2f40cdcbeb10c712fff5.css",
+                "path": "D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\bundles\\main.2f40cdcbeb10c712fff5.css"
+            },
+            {
+                "name": "main.2f40cdcbeb10c712fff5.js",
+                "publicPath": "/static/frontend/bundles/main.2f40cdcbeb10c712fff5.js",
+                "path": "D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\bundles\\main.2f40cdcbeb10c712fff5.js"
+            }
+        ],
+        "undefined": [
+            {
+                "name": "2.main.2f40cdcbeb10c712fff5.js",
+                "publicPath": "/static/frontend/bundles/2.main.2f40cdcbeb10c712fff5.js",
+                "path": "D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\bundles\\2.main.2f40cdcbeb10c712fff5.js"
+            }
+        ]
+    },
+    "error": "ModuleBuildError",
+    "message": "Module build failed (from ./node_modules/babel-loader/lib/index.js):\nError: ENOENT: no such file or directory, open 'D:\\Kenneth\\Documents\\primerx\\primerx\\frontend\\static\\frontend\\js\\components\\ProteinView.js'"
+}

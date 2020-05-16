@@ -32,35 +32,25 @@ class WebTestCase(StaticLiveServerTestCase):
         percySnapshot(browser=self.selenium, name='homepage', widths=PERCY_BS_WIDTHS)
 
     def test_characterize_view(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('characterize')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/characterize')
         percySnapshot(browser=self.selenium, name='characterize', widths=PERCY_BS_WIDTHS)
 
     def test_dna_view(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('dna-based')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/dna')
         percySnapshot(browser=self.selenium, name='dna', widths=PERCY_BS_WIDTHS)
 
     def test_protein_view(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('protein-based')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/protein')
         percySnapshot(browser=self.selenium, name='protein', widths=PERCY_BS_WIDTHS)
 
     def test_characterize_submit_disabled_on_characterize_landing(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('characterize')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/characterize')
         submit_button = self.selenium.find_element_by_id('submit')
         submit_disabled = submit_button.get_attribute('disabled')
         self.assertEqual(submit_disabled, 'true')
 
     def test_characterize_submit_disabled_on_type_sequence(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('characterize')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/characterize')
         textarea = self.selenium.find_element_by_id('sequence')
         textarea.send_keys('GATTACA')
         submit_button = self.selenium.find_element_by_id('submit')
@@ -68,9 +58,7 @@ class WebTestCase(StaticLiveServerTestCase):
         self.assertEqual(submit_disabled, 'true')
 
     def test_characterize_submit_disabled_on_set_mismatch(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('characterize')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/characterize')
         textarea = self.selenium.find_element_by_id('sequence')
         textarea.send_keys('GATTACA')
         mismatch = self.selenium.find_element_by_id('mismatched_bases')
@@ -80,9 +68,7 @@ class WebTestCase(StaticLiveServerTestCase):
         self.assertEqual(submit_disabled, 'true')
 
     def test_characterize_submit_enabled_on_set_mutation(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('characterize')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/characterize')
         textarea = self.selenium.find_element_by_id('sequence')
         textarea.send_keys('GATTACA')
         mismatch = self.selenium.find_element_by_id('mismatched_bases')
@@ -94,9 +80,7 @@ class WebTestCase(StaticLiveServerTestCase):
         self.assertEqual(submit_disabled, None)
 
     def test_characterize_submit_disabled_on_form_reset(self):
-        self.selenium.get(self.live_server_url)
-        goto_char = self.selenium.find_element_by_id('characterize')
-        goto_char.click()
+        self.selenium.get(f'{self.live_server_url}/characterize')
         textarea = self.selenium.find_element_by_id('sequence')
         textarea.send_keys('GATTACA')
         mismatch = self.selenium.find_element_by_id('mismatched_bases')
