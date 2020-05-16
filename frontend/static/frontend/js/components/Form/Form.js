@@ -35,13 +35,14 @@ export default class Form extends Component {
     						className='btn btn-warning text-dark'
     						value='Reset'
     						/>
-                        <Link
-                            to='/results'
+                        <input
+    						type='submit'
     						id='submit'
-                            className={`btn btn-primary ${(!this.props.isValid)? 'disabled': null}`}
-    						>
-                            Submit
-                        </Link>
+                            onClick={this.props.handleSubmit}
+    						className='btn btn-primary'
+    						value='Submit'
+                            disabled={!this.props.isValid}
+    						/>
     				</div>
                 </form>
             </Container>

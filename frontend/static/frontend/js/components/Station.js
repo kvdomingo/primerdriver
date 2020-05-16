@@ -13,8 +13,15 @@ export default class Station extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			formData: [],
+			res: [],
+			mode: '',
 		};
+
+		this.responseCatcher = this.responseCatcher.bind(this);
+	}
+
+	responseCatcher(res, mode) {
+		this.setState({ res, mode });
 	}
 
 	render() {
@@ -23,7 +30,7 @@ export default class Station extends Component {
 				<Jumbotron className='my-5 px-md-5 border border-light' style={styles.appContainer}>
 					<Suspense fallback={<Loading />}>
 						<Router>
-							{Routes}
+							<Routes responseCatcher={this.responseCatcher} {...this.state} />
 						</Router>
 					</Suspense>
 				</Jumbotron>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import LoadingScreen from './LoadingScreen';
-import Result from './Result';
 import Form from './Form/Form';
 import SequenceInput from './Form/DnaSequenceInput';
 import NumberMismatch from './Form/NumberMismatch';
@@ -11,11 +11,12 @@ import {
 } from 'mdbreact';
 
 
-export default class Characterize extends Component {
+export default withRouter(class Characterize extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
+			formData: {},
 			sequence: '',
             mismatched_bases: 0,
             mutation_type: '',
@@ -28,6 +29,7 @@ export default class Characterize extends Component {
         this.formDefaults = { ...this.state };
 
 		this.handleChange = this.handleChange.bind(this);
+		this.handleChangeInt = this.handleChangeInt.bind(this);
 		this.handleReset = this.handleReset.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.validateForm = this.validateForm.bind(this);
@@ -49,10 +51,14 @@ export default class Characterize extends Component {
 	        });
 		} else {
 			let { name, value } = e.target;
-			if (name === 'mismatched_bases') value = parseInt(value);
 			this.setState({ [name]: value });
 		}
 	}
+
+	handleChangeInt(e) {
+        let { name, value } = e.target;
+        this.setState({ [name]: parseInt(value) })
+    }
 
 	handleReset(e) {
 		this.setState({ ...this.formDefaults });
@@ -60,6 +66,24 @@ export default class Characterize extends Component {
 
 	handleSubmit(e) {
 		this.setState({ loading: true });
+		const xhr = new XMLHttpRequest();
+		xhr.open('POST', '/api');
+		xhr.onload = () => {
+			if (xhr.status === 200) {
+				var res = JSON.parse(xhr.responseText);
+			} else {
+				res = 'Request failed. Please try again later.'
+			}
+			this.props.responseCatcher(res, this.state.mode);
+			let { history } = this.props;
+			history.push('/results');
+		};
+		const data = new FormData();
+		Object.keys(this.formData).map((key, i) => (
+			data.append(key, this.formData[key])
+		));
+		xhr.send(data);
+		e.preventDefault();
 	}
 
 	validateForm(e) {
@@ -83,7 +107,7 @@ export default class Characterize extends Component {
 				<SequenceInput handleChange={this.handleChange} {...this.state} />
 				<Row className='row-cols-1 row-cols-md-2'>
 					<Col>
-						<NumberMismatch handleChange={this.handleChange} {...this.state} />
+						<NumberMismatch handleChangeInt={this.handleChangeInt} {...this.state} />
 					</Col>
 					<Col>
 						<MutationType handleChange={this.handleChange} {...this.state} />
@@ -92,4 +116,4 @@ export default class Characterize extends Component {
 			</Form>
 		);
 	}
-}
+})

@@ -17,11 +17,15 @@ export default class MutationType extends Component {
                     id='mutation_type'
                     name='mutation_type'
                     onChange={this.props.handleChange}
+                    onMouseUp={(e) => {
+                        e.target.name = 'mutation_type';
+                        this.props.handleChange(e);
+                    }}
                     placeholder='Select mutation type'
                     required
                     value={this.props.mutation_type}
                     >
-                    <option value='' disabled>Select mutation type</option>
+                    <option name='' value=''>Select mutation type</option>
                     <option value='sub'>Substitution</option>
                     <option value='ins'>Insertion</option>
                     <option value='del'>Deletion</option>

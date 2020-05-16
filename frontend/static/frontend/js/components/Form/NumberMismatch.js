@@ -19,7 +19,7 @@ export default class NumberMismatch extends Component {
                     id='mismatched_bases'
                     name='mismatched_bases'
                     value={this.props.mismatched_bases}
-                    onChange={this.props.handleChange}
+                    onChange={this.props.handleChangeInt}
                     required
                     />
             </div>

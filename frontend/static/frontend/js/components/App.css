@@ -69,3 +69,11 @@ body {
   transform: translate(-100%);
   transition: transform 300ms ease-in-out;
 }
+
+select[name="expression_system"] {
+    font-style: italic;
+}
+
+select[name="expression_system"] option {
+    font-style: italic;
+}
