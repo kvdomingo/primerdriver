@@ -242,3 +242,4 @@ dist
 
 # Local bundles
 bundles/
+webpack-stats.json
