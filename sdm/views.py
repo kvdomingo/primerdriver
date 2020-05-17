@@ -56,7 +56,7 @@ def api_version(request):
     if request.method == 'GET':
         return JsonResponse({
             'program_version': str(__version__),
-            'web_version': f'(web {os.environ["HEROKU_RELEASE_VERSION"]})' if settings.ON_HEROKU else '',
+            'web_version': f'(web {environ["HEROKU_RELEASE_VERSION"]})' if settings.ON_HEROKU else '',
         })
     else:
         return HttpResponseForbidden(f'{request.method} not allowed on /version')
