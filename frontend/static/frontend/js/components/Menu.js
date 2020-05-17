@@ -25,7 +25,7 @@ export default class Menu extends Component {
 
 	render() {
 		return (
-			<Row className='row-cols-3'>
+			<Row className='row-cols-1 row-cols-md-3'>
 				{menu_data.map((item, i) => (
 					<Col key={i}>
 						<Card className='mb-4'>
