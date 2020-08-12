@@ -1,18 +1,18 @@
 # PrimerDriver: Automated design of mutagenic PCR primers
 ![PrimerDriver](https://raw.githubusercontent.com/kvdomingo/primerdriver/master/sdm/static/sdm/media/private/PrimerDriver_logo.png)
-[![CircleCI](https://circleci.com/gh/kvdomingo/primerdriver.svg?style=svg)](https://circleci.com/gh/kvdomingo/primerdriver)
-[![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Kenneth-V-Domingo/primerdriver)
-[![codecov](https://codecov.io/gh/kvdomingo/primerdriver/branch/master/graph/badge.svg)](https://codecov.io/gh/kvdomingo/primerdriver)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT?style=flat-square)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
 
+[![CircleCI](https://circleci.com/gh/kvdomingo/primerdriver.svg?style=svg)](https://circleci.com/gh/kvdomingo/primerdriver?style=for-the-badge)
+[![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Kenneth-V-Domingo/primerdriver?style=for-the-badge)
+[![codecov](https://codecov.io/gh/kvdomingo/primerdriver/branch/master/graph/badge.svg)](https://codecov.io/gh/kvdomingo/primerdriver?style=for-the-badge)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT?style=for-the-badge)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases&style=for-the-badge)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django?style=for-the-badge)
 
 ## CLI
 
 ### Prerequisites
-- Python 3.6.5 and above
-- [`requirements.txt`](./requirements.txt)
+- Python 3.6.8 and above
+- Node.js LTS 10 and above
 
 You can access and download the CLI from the [releases page](https://github.com/kvdomingo/primerdriver/releases). Extract the files to your local machine and run the program via
 
