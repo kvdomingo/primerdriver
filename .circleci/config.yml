@@ -30,7 +30,7 @@ jobs:
                       - "/usr/local/bin"
                       - "/usr/local/lib/python3.7/site-packages"
             - run:
-                command: npx percy exec -- pipenv run python -m coverage run --source='.' manage.py test
+                command: pipenv run python -m coverage run --source='.' manage.py test
                 name: Run test and generate coverage report
             - run:
                 command: pipenv run python -m codecov
