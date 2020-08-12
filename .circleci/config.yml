@@ -3,32 +3,37 @@ version: 2.1
 orbs:
     python: circleci/python@0.2.1
     heroku: circleci/heroku@0.0.10
-    browser-tools: circleci/browser-tools@1.0.0
     percy: percy/agent@0.1.2
 
 jobs:
     build-and-test:
         working_directory: ~/app
         docker:
-            - image: jiripuc/circleci-python-node:stretch-python-3.6.8-node-10.14.2
+            - image: circleci/python:3.7.8-node-browsers
         steps:
             - checkout
             - run:
                 command: npm i
                 name: Install Node.js dependencies
-            - python/load-cache
-            - python/install-deps
-            - python/save-cache
-            - browser-tools/install-firefox
-            - browser-tools/install-geckodriver
+            - run: sudo chown -R circleci:circleci /usr/local/bin
+            - run: sudo chown -R circleci:circleci /usr/local/lib/python3.7/site-packages
+            - restore_cache:
+                  key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
             - run:
-                command: sudo apt-get install libasound2
-                name: Fix chromium build issue
+                command: |
+                      sudo pip install pipenv
+                      pipenv install
+                name: Install Python dependencies
+            - save_cache:
+                  key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+                  paths:
+                      - "/usr/local/bin"
+                      - "/usr/local/lib/python3.7/site-packages"
             - run:
-                command: npx percy exec -- python -m coverage run --source='.' manage.py test
+                command: npx percy exec -- pipenv run python -m coverage run --source='.' manage.py test
                 name: Run test and generate coverage report
             - run:
-                command: python -m codecov
+                command: pipenv run python -m codecov
                 name: Upload coverage report
 
 workflows:
