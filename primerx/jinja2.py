@@ -17,6 +17,7 @@ def environment(**options):
         'now': datetime.now(),
         'program_version': __version__,
         'render_bundle': render_bundle,
+        'settings': settings,
         'static': static,
         'url': reverse,
         'web_version': f'(web {os.environ["HEROKU_RELEASE_VERSION"]})' if settings.ON_HEROKU else '',
