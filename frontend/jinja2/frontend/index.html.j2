@@ -8,7 +8,7 @@
     <meta name="keywords" content="PrimerDriver, site-directed mutagenesis, PCR, primer design, mutagenic" />
     <title>PrimerDriver</title>
 
-    {% if not DEBUG and ON_HEROKU %}
+    {% if not settings.DEBUG and settings.ON_HEROKU %}
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-162676656-3"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
