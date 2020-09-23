@@ -12,7 +12,7 @@
     "@testing-library/user-event": "^7.2.1",
     "aos": "^2.3.4",
     "bootstrap-css-only": "^4.4.1",
-    "cloudinary-core": "^2.8.2",
+    "cloudinary-core": "^2.11.2",
     "cloudinary-react": "^1.5.0",
     "mdbreact": "^4.26.0",
     "react": "^16.13.1",
