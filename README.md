@@ -5,8 +5,9 @@
 [![This project is using Percy.io for visual regression testing.](https://percy.io/static/images/percy-badge.svg)](https://percy.io/Kenneth-V-Domingo/primerdriver?style=for-the-badge)
 [![codecov](https://codecov.io/gh/kvdomingo/primerdriver/branch/master/graph/badge.svg)](https://codecov.io/gh/kvdomingo/primerdriver?style=for-the-badge)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT?style=for-the-badge)
-![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases&style=for-the-badge)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django?style=for-the-badge)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
+![node-lts](https://img.shields.io/node/v-lts/react)
 
 ## CLI
 
