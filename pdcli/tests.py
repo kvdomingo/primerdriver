@@ -8,7 +8,7 @@ from .primerclass import *
 class CommandLineTestCase(TestCase):
     def test_return_help_on_no_arguments(self):
         proc = subprocess.run(
-            ['python', 'pdcli.py'],
+            ['python', 'primerdriver.py'],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
@@ -16,7 +16,7 @@ class CommandLineTestCase(TestCase):
 
     def test_no_exception_on_help(self):
         proc = subprocess.run(
-            ['python', 'pdcli.py', '-h'],
+            ['python', 'primerdriver.py', '-h'],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
