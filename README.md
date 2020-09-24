@@ -18,10 +18,10 @@
 You can access and download the CLI from the [releases page](https://github.com/kvdomingo/primerdriver/releases). Extract the files to your local machine and run the program via
 
 ```shell
-> python pdcli.py
+> pipenv run python primerdriver.py
 ```
 
-This will automatically run the help program, which can also be accessed by passing a `-h` flag. For first-time users, the program can be run in interactive mode by passing the `-i` flag. This will walk you through each option step-by-step. Batch design can be performed by including [`pdcli.py`](./pdcli.py) as part of a shell script.
+This will automatically run the help program, which can also be accessed by passing a `-h` flag. For first-time users, the program can be run in interactive mode by passing the `-i` flag. This will walk you through each option step-by-step. Batch design can be performed by including [`primerdriver.py`](./primerdriver.py) as part of a shell script.
 
 ## Web application
 For a more interactive experience, the updated web application can be accessed via https://primerdriver.herokuapp.com/.
