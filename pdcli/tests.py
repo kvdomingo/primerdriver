@@ -1,32 +1,15 @@
-import io, subprocess
+import io
 from pandas import DataFrame
 from contextlib import redirect_stdout
 from django.test import TestCase
 from .primerclass import *
 
 
-class CommandLineTestCase(TestCase):
-    def test_return_help_on_no_arguments(self):
-        proc = subprocess.run(
-            ['python', 'primerdriver.py'],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        self.assertEqual(proc.returncode, 0)
-
-    def test_no_exception_on_help(self):
-        proc = subprocess.run(
-            ['python', 'primerdriver.py', '-h'],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
-        self.assertEqual(proc.returncode, 0)
-
-
 class CharacterizeTestCase(TestCase):
     pd = PrimerDesign('char', 'GATTACA', 'sub', 1, 'T', 'A', 4)
 
     def test_gc_content(self):
+        """Calculate GC content"""
         self.assertAlmostEqual(
             self.pd.calculate_gc_content(self.pd.sequence),
             0.286,
@@ -34,24 +17,28 @@ class CharacterizeTestCase(TestCase):
         )
 
     def test_calculate_mismatch(self):
+        """Calculate percent mismatch"""
         self.assertAlmostEqual(
             self.pd.calculate_mismatch(self.pd.sequence, self.pd.mismatched_bases),
             1/7
         )
 
     def test_reverse_complement(self):
+        """Calculate reverse complement"""
         self.assertEqual(
             self.pd.get_reverse_complement(self.pd.sequence),
             list('TGTAATC')
         )
 
     def test_gc_end(self):
+        """Check if sequence ends in G/C"""
         self.assertEqual(
             self.pd.is_gc_end(self.pd.sequence),
             False
         )
 
     def test_calculate_Tm(self):
+        """Calculate melting temperature"""
         self.assertAlmostEqual(
             self.pd.calculate_Tm(
                 self.pd.sequence,
@@ -65,6 +52,7 @@ class CharacterizeTestCase(TestCase):
         )
 
     def test_characterization_is_dataframe(self):
+        """Check if output is a DataFrame"""
         out_catch = io.StringIO()
         with redirect_stdout(out_catch):
             out = self.pd.characterize_primer(

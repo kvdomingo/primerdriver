@@ -1,6 +1,6 @@
 {
   "name": "primerdriver",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "author": "Kenneth V. Domingo and Numeriano Amer E. Gutierrez",
   "license": "MIT",
@@ -12,12 +12,13 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "aos": "^2.3.4",
+    "axios": "^0.20.0",
     "bootstrap-css-only": "^4.4.1",
     "cloudinary-core": "^2.11.2",
     "cloudinary-react": "^1.6.6",
     "mdbreact": "^4.27.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
     "react-fontawesome": "^1.7.1",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^5.2.0",
@@ -25,7 +26,7 @@
     "react-transition-group": "^4.4.1"
   },
   "scripts": {
-    "dev": "webpack --config webpack.dev.js",
+    "start": "webpack-dev-server --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "watch": "webpack --config webpack.dev.js --watch"
   },
@@ -46,6 +47,17 @@
   "engines": {
     "node": "12.16.1",
     "npm": "6.14.5"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "jsxSingleQuote": false,
+    "printWidth": 120,
+    "quoteProps": "consistent",
+    "semi": true,
+    "singleQuote": false,
+    "tabWidth": 2,
+    "trailingComma": "all"
   },
   "browserslist": {
     "production": [
@@ -82,13 +94,14 @@
     "eslint-plugin-flowtype": "^4.7.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-react": "^7.21.1",
+    "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-react-hooks": "^2.5.1",
     "file-loader": "^6.1.0",
     "html-webpack-plugin": "^4.5.0",
-    "mini-css-extract-plugin": "^0.11.0",
+    "mini-css-extract-plugin": "^0.11.3",
     "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
+    "prettier": "^2.1.2",
     "react-router-sitemap": "^1.2.0",
     "robotstxt-webpack-plugin": "^7.0.0",
     "sass": "^1.26.11",

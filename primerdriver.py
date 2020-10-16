@@ -1,6 +1,4 @@
-import os
 import sys
-from datetime import datetime
 from argparse import ArgumentParser
 from pdcli.input_handler import *
 from pdcli.output_handler import *
@@ -8,7 +6,12 @@ from pdcli.output_handler import *
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('-M', '--mode', help="Choose between 'dna' (DNA), 'pro' (protein), or 'char' (primer characterization) mode", type=str)
+    parser.add_argument(
+        '-M',
+        '--mode',
+        help="Choose between 'dna' (DNA), 'pro' (protein), or 'char' (primer characterization) mode",
+        type=str
+    )
     parser.add_argument('-s', '--sequence', help='Template DNA sequence', type=str)
     parser.add_argument('-m', '--mutation-type', help='Mutation type', type=str)
     parser.add_argument('-t', '--target', help='Target base', type=str)
@@ -17,9 +20,9 @@ def main():
     parser.add_argument('-i', '--interactive', help='Interactive mode', action='store_true')
     parser.add_argument('--save', help='Filename to save to', type=str)
 
-    if len(sys.argv) < 2:
+    if len(sys.argv) <   2:
         parser.print_help(sys.stderr)
-        sys.exit(0)
+        return 0
 
     args = parser.parse_args()
 
@@ -36,7 +39,6 @@ def main():
             [1],
             args_dict['mismatched_bases']
         )
-        df = res.df
     else:
         res.main()
 
