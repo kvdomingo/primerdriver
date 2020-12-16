@@ -107,7 +107,7 @@
     "sass": "^1.26.11",
     "sass-loader": "^8.0.2",
     "serve": "^11.3.2",
-    "style-loader": "^1.2.1",
+    "style-loader": "^2.0.0",
     "ttf-loader": "^1.0.2",
     "url-loader": "^4.1.0",
     "webpack": "^4.44.2",
