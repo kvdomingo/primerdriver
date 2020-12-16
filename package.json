@@ -15,7 +15,7 @@
     "axios": "^0.20.0",
     "bootstrap-css-only": "^4.4.1",
     "cloudinary-core": "^2.11.2",
-    "cloudinary-react": "^1.6.6",
+    "cloudinary-react": "^1.6.8",
     "mdbreact": "^4.27.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
