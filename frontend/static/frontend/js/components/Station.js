@@ -1,9 +1,9 @@
 import React, { Component, Suspense } from "react";
 import "../App.css";
-import Loading from "./LoadingScreen";
-import Routes from "./Routes";
+import Loading from "./shared/LoadingScreen";
+import Routes from "../Routes";
 import { BrowserRouter as Router } from "react-router-dom";
-import { Row, Col, Card } from "@geist-ui/react";
+import { MDBContainer as Container, MDBJumbotron as Jumbotron } from "mdbreact";
 
 export default class Station extends Component {
   constructor(props) {
@@ -12,25 +12,32 @@ export default class Station extends Component {
       res: [],
       mode: "",
     };
+
+    this.responseCatcher = this.responseCatcher.bind(this);
   }
 
-  responseCatcher = (res, mode) => {
+  responseCatcher(res, mode) {
     this.setState({ res, mode });
-  };
+  }
 
   render() {
     return (
-      <Row justify="center">
-        <Col span={18}>
-          <Card>
-            <Suspense fallback={<Loading />}>
-              <Router>
-                <Routes responseCatcher={this.responseCatcher} {...this.state} />
-              </Router>
-            </Suspense>
-          </Card>
-        </Col>
-      </Row>
+      <Container>
+        <Jumbotron className="my-5 px-md-5 border border-light" style={styles.appContainer}>
+          <Suspense fallback={<Loading />}>
+            <Router>
+              <Routes responseCatcher={this.responseCatcher} {...this.state} />
+            </Router>
+          </Suspense>
+        </Jumbotron>
+      </Container>
     );
   }
 }
+
+const styles = {
+  appContainer: {
+    boxShadow: "none",
+    overflow: "hidden",
+  },
+};

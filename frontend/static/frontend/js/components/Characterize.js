@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import LoadingScreen from "./LoadingScreen";
-import { Form, DnaSequenceInput, NumberMismatch, MutationType } from "./Form";
-import { MDBRow, MDBCol } from "mdbreact";
-import { Row, Col, Button } from "@geist-ui/react";
+import LoadingScreen from "./shared/LoadingScreen";
+import { Form, DnaSequenceInput, NumberMismatch, MutationType } from "./form";
+import { MDBRow as Row, MDBCol as Col } from "mdbreact";
 
 class Characterize extends Component {
   state = {
@@ -96,7 +95,7 @@ class Characterize extends Component {
           {...this.state}
         >
           <DnaSequenceInput handleChange={this.handleChange} {...this.state} />
-          <Row>
+          <Row className="row-cols-1 row-cols-md-2">
             <Col>
               <NumberMismatch handleChangeInt={this.handleChangeInt} {...this.state} />
             </Col>

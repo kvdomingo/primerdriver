@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
-import LoadingScreen from "./LoadingScreen";
-import { Form, ProteinSequenceInput, MutationSelector, MutationType, AdvancedSettings } from "./Form";
+import LoadingScreen from "./shared/LoadingScreen";
+import { Form, ProteinSequenceInput, MutationSelector, MutationType, AdvancedSettings } from "./form";
 
 class ProteinView extends Component {
   state = {
@@ -45,7 +45,7 @@ class ProteinView extends Component {
       });
   }
 
-  handleChange(e) {
+  handleChange = e => {
     let { name, value } = e.target;
     if (name === "sequence" || name === "target" || name === "replacement") {
       let sequence = value.toUpperCase().split("");
@@ -95,14 +95,14 @@ class ProteinView extends Component {
       }
       this.setState({ [name]: value });
     }
-  }
+  };
 
-  handleChangeInt(e) {
+  handleChangeInt = e => {
     let { name, value } = e.target;
     this.setState({ [name]: parseInt(value) });
-  }
+  };
 
-  handleChangeFloat(e) {
+  handleChangeFloat = e => {
     let { name, value } = e.target;
 
     if (name === "Tm_range_min" && value >= this.state.Tm_range_max) return;
@@ -111,18 +111,18 @@ class ProteinView extends Component {
     if (name === "gc_range_max" && value <= this.state.gc_range_min) return;
 
     this.setState({ [name]: parseFloat(value) });
-  }
+  };
 
-  handleChangeChecked(e) {
+  handleChangeChecked = e => {
     let { name, checked } = e.target;
     this.setState({ [name]: checked });
-  }
+  };
 
   handleReset = () => {
     this.setState({ ...this.formDefaults });
   };
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     this.setState({ loading: true });
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/api");
@@ -142,9 +142,9 @@ class ProteinView extends Component {
     data.append("settings", JSON.stringify(this.formSettings));
     xhr.send(data);
     e.preventDefault();
-  }
+  };
 
-  validateForm(e) {
+  validateForm = e => {
     let validSequence = this.state.sequenceLength > 0;
     let validMutation = this.state.mutation_type !== "";
     let validMutationCode =
@@ -177,7 +177,7 @@ class ProteinView extends Component {
     ];
     this.formSettings = {};
     advSettings.map(item => (this.formSettings[item] = this.state[item]));
-  }
+  };
 
   render() {
     if (this.state.loading) return <LoadingScreen />;

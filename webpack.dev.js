@@ -12,7 +12,7 @@ module.exports = merge(common, {
     path: path.resolve(__dirname, "frontend/static/frontend/bundles/"),
     publicPath: "/static/frontend/bundles/",
     filename: "bundle.js",
-    chunkFilename: "name.[chunk].js",
+    chunkFilename: "[name].chunk.js",
     crossOriginLoading: "anonymous",
   },
   devtool: "inline-source-map",
@@ -32,7 +32,7 @@ module.exports = merge(common, {
     new BundleTracker({
       path: __dirname,
       filename: "webpack-stats.json",
-      indent: 4,
+      indent: 2,
     }),
   ],
 });

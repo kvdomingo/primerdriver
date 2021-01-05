@@ -1,8 +1,8 @@
 import React from "react";
-import { Image as CloudImage } from "cloudinary-react";
+import { Image } from "cloudinary-react";
 import { Link } from "react-router-dom";
 import { PropTypes } from "prop-types";
-import { Grid, Card, Row, Button } from "@geist-ui/react";
+import { MDBRow as Row, MDBCol as Col, MDBCard as Card, MDBCardBody as CardBody } from "mdbreact";
 
 const menu_data = [
   {
@@ -10,32 +10,32 @@ const menu_data = [
     name: "Characterization",
     publicId: "primerdriver/characterize",
     href: "/characterize",
-    color: "error",
+    color: "danger",
   },
   {
     key: 1,
     name: "DNA-based",
     publicId: "primerdriver/dna",
     href: "/dna",
-    color: "success",
+    color: "primary",
   },
   {
     key: 2,
     name: "Protein-based",
     publicId: "primerdriver/protein.png",
     href: "/protein",
-    color: "cyan",
+    color: "success",
   },
 ];
 
 function Menu() {
   return (
-    <Grid.Container gap={3} justify="center">
+    <Row className="row-cols-1 row-cols-md-3">
       {menu_data.map((item, i) => (
-        <Grid key={i} xs={24} md={6}>
-          <Card hoverable>
-            <Link id={item.href.slice(1)} to={item.href}>
-              <CloudImage
+        <Col key={i}>
+          <Card className="mb-4">
+            <div className="view overlay">
+              <Image
                 className="img-fluid"
                 cloudName="kdphotography-assets"
                 publicId={item.publicId}
@@ -46,20 +46,19 @@ function Menu() {
                 width="auto"
                 crop="scale"
               />
-            </Link>
-            <Card.Content>
-              <Row justify="center">
-                <Link id={item.href.slice(1)} to={item.href}>
-                  <Button type={item.color} ghost>
-                    {item.name}
-                  </Button>
-                </Link>
-              </Row>
-            </Card.Content>
+              <Link to={item.href}>
+                <div className="mask rgba-black-slight" />
+              </Link>
+            </div>
+            <CardBody className="text-center">
+              <Link id={item.href.slice(1)} to={item.href} className={`btn btn-${item.color} btn-md`}>
+                {item.name}
+              </Link>
+            </CardBody>
           </Card>
-        </Grid>
+        </Col>
       ))}
-    </Grid.Container>
+    </Row>
   );
 }
 

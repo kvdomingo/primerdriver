@@ -4,8 +4,7 @@ const path = require("path"),
   CompressionPlugin = require("compression-webpack-plugin"),
   MiniCssExtractPlugin = require("mini-css-extract-plugin"),
   BundleTracker = require("webpack-bundle-tracker"),
-  webpack = require("webpack"),
-  BrotliPlugin = require("brotli-webpack-plugin");
+  webpack = require("webpack");
 
 module.exports = merge(common, {
   context: __dirname,
@@ -40,14 +39,17 @@ module.exports = merge(common, {
       algorithm: "gzip",
       test: /\.(js|css|html)$/,
       threshold: 10240,
-      minRatio: 0.7,
+      minRatio: 0.8,
     }),
-    new BrotliPlugin({
+    new CompressionPlugin({
       filename: "[path].br[query]",
       algorithm: "brotliCompress",
       test: /\.(js|css|html|svg)$/,
+      compressionOptions: {
+        level: 11,
+      },
       threshold: 10240,
-      minRatio: 0.7,
+      minRatio: 0.8,
     }),
   ],
 });

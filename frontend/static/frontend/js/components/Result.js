@@ -9,7 +9,7 @@ import {
 } from "mdbreact";
 
 export default class Result extends Component {
-  header() {
+  header = () => {
     return (
       <div>
         <Link to="/" className="btn btn-blue-grey mb-4 mr-3" id="back">
@@ -26,7 +26,7 @@ export default class Result extends Component {
         </Typography>
       </div>
     );
-  }
+  };
 
   render() {
     if (typeof this.props.results === "object") {

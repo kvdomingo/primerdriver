@@ -1,12 +1,12 @@
 import React, { lazy } from "react";
 import { Route, Switch } from "react-router-dom";
-import Menu from "./Menu";
-import "../App.css";
+import Menu from "./components/Menu";
+import "./App.css";
 
-const Characterize = lazy(() => import("./Characterize"));
-const Dna = lazy(() => import("./DnaView"));
-const Protein = lazy(() => import("./ProteinView"));
-const Results = lazy(() => import("./Result"));
+const Characterize = lazy(() => import("./components/Characterize"));
+const Dna = lazy(() => import("./components/DnaView"));
+const Protein = lazy(() => import("./components/ProteinView"));
+const Results = lazy(() => import("./components/Result"));
 
 export default function Routes(props) {
   return (
