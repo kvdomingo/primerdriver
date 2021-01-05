@@ -53,7 +53,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "frontend/jinja2/frontend/index.html.j2"),
+      template: path.resolve(__dirname, "frontend/jinja2/frontend/index.html"),
       filename: "index.html",
     }),
   ],

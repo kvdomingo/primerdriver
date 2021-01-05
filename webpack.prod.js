@@ -13,8 +13,8 @@ module.exports = merge(common, {
   output: {
     path: path.resolve(__dirname, "frontend/static/frontend/bundles/"),
     publicPath: "/static/frontend/bundles/",
-    filename: "main.js",
-    chunkFilename: "[id].main.js",
+    filename: "[name].[contenthash:8].js",
+    chunkFilename: "[name].[contenthash:8].chunk.js",
     crossOriginLoading: "anonymous",
   },
   plugins: [

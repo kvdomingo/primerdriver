@@ -1,46 +1,56 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { MDBContainer as Container, MDBTypography as Typography, MDBIcon as Icon } from "mdbreact";
+import { Row, Text, Button, Spacer, Grid } from "@geist-ui/react";
+import * as Icon from "@geist-ui/react-icons";
 
 export class Form extends Component {
   render() {
     return (
-      <Container className="mb-5">
-        <Link className="btn btn-blue-grey btn-rounded mb-4" to="/" id="back">
-          <Icon fas icon="arrow-left" className="mr-2" /> main menu
-        </Link>
-        <Typography tag="h2" variant="h2-responsive" className="text-md-center py-2 ml-md-4 d-md-inline">
-          {this.props.title}
-        </Typography>
-        <form
-          id="form"
-          className="form"
-          onChange={this.props.handleValidate}
-          onMouseUp={this.props.handleValidate}
-          onKeyUp={this.props.handleValidate}
-          onSubmit={this.props.handleSubmit}
-        >
-          {this.props.children}
+      <>
+        <Row>
+          <Link to="/" id="back">
+            <Button type="secondary-light" icon={<Icon.ChevronLeftCircle />}>
+              main menu
+            </Button>
+          </Link>
+          <Spacer x={1} />
+          <Text h2>{this.props.title}</Text>
+        </Row>
 
-          <div className="text-center my-3">
-            <input
-              type="reset"
-              id="reset"
-              onClick={this.props.handleReset}
-              className="btn btn-warning text-dark"
-              value="Reset"
-            />
-            <input
-              type="submit"
-              id="submit"
-              onClick={this.props.handleSubmit}
-              className="btn btn-primary"
-              value="Submit"
-              disabled={!this.props.isValid}
-            />
-          </div>
-        </form>
-      </Container>
+        <Spacer y={1} />
+
+        <Row justify="center">
+          <form
+            id="form"
+            className="form"
+            onChange={this.props.handleValidate}
+            onMouseUp={this.props.handleValidate}
+            onKeyUp={this.props.handleValidate}
+            onSubmit={this.props.handleSubmit}
+            style={{ width: "100%" }}
+          >
+            {this.props.children}
+
+            <Spacer y={1} />
+
+            <Row>
+              <Button type="warning" htmlType="reset" id="reset" onClick={this.props.handleReset}>
+                Reset
+              </Button>
+              <Spacer x={0.5} />
+              <Button
+                type="success"
+                htmlType="submit"
+                id="submit"
+                onClick={this.props.handleSubmit}
+                disabled={!this.props.isValid}
+              >
+                Submit
+              </Button>
+            </Row>
+          </form>
+        </Row>
+      </>
     );
   }
 }

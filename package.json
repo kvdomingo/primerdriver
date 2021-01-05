@@ -7,6 +7,8 @@
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.11.5",
     "@fortawesome/fontawesome-free": "^5.14.0",
+    "@geist-ui/react": "^2.1.0-canary.1",
+    "@geist-ui/react-icons": "^1.0.0",
     "@loadable/component": "^5.13.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
@@ -102,6 +104,7 @@
     "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
     "prettier": "^2.1.2",
+    "prop-types": "^15.7.2",
     "react-router-sitemap": "^1.2.0",
     "robotstxt-webpack-plugin": "^7.0.0",
     "sass": "^1.26.11",

@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.test import TestCase, LiveServerTestCase
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options

@@ -3,7 +3,7 @@ import "../App.css";
 import Loading from "./LoadingScreen";
 import Routes from "./Routes";
 import { BrowserRouter as Router } from "react-router-dom";
-import { MDBContainer as Container, MDBJumbotron as Jumbotron } from "mdbreact";
+import { Row, Col, Card } from "@geist-ui/react";
 
 export default class Station extends Component {
   constructor(props) {
@@ -12,32 +12,25 @@ export default class Station extends Component {
       res: [],
       mode: "",
     };
-
-    this.responseCatcher = this.responseCatcher.bind(this);
   }
 
-  responseCatcher(res, mode) {
+  responseCatcher = (res, mode) => {
     this.setState({ res, mode });
-  }
+  };
 
   render() {
     return (
-      <Container>
-        <Jumbotron className="my-5 px-md-5 border border-light" style={styles.appContainer}>
-          <Suspense fallback={<Loading />}>
-            <Router>
-              <Routes responseCatcher={this.responseCatcher} {...this.state} />
-            </Router>
-          </Suspense>
-        </Jumbotron>
-      </Container>
+      <Row justify="center">
+        <Col span={18}>
+          <Card>
+            <Suspense fallback={<Loading />}>
+              <Router>
+                <Routes responseCatcher={this.responseCatcher} {...this.state} />
+              </Router>
+            </Suspense>
+          </Card>
+        </Col>
+      </Row>
     );
   }
 }
-
-const styles = {
-  appContainer: {
-    boxShadow: "none",
-    overflow: "hidden",
-  },
-};

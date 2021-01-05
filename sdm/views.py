@@ -23,7 +23,7 @@ def index(request):
         "expression": escapejs(dumps(exp_systems)),
         "settings": settings,
     }
-    return render(request, "sdm/index.html.j2", context)
+    return render(request, "sdm/index.html", context)
 
 
 def api(request):

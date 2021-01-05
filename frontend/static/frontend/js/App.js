@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import { GeistProvider, CssBaseline } from "@geist-ui/react";
 import Landing from "./components/Landing";
 import Footer from "./components/Footer";
 import Station from "./components/Station";
@@ -18,10 +19,11 @@ export default function App() {
   }, [program_version, web_version]);
 
   return (
-    <div>
+    <GeistProvider>
+      <CssBaseline />
       <Landing />
       <Station id="app" />
       <Footer program_version={program_version} web_version={web_version} />
-    </div>
+    </GeistProvider>
   );
 }

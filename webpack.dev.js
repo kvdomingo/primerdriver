@@ -11,21 +11,23 @@ module.exports = merge(common, {
   output: {
     path: path.resolve(__dirname, "frontend/static/frontend/bundles/"),
     publicPath: "/static/frontend/bundles/",
-    filename: "main.[hash].js",
-    chunkFilename: "[id].main.[hash].js",
+    filename: "bundle.js",
+    chunkFilename: "name.[chunk].js",
     crossOriginLoading: "anonymous",
   },
   devtool: "inline-source-map",
   devServer: {
     compress: true,
     hot: true,
+    overlay: false,
+    quiet: true,
     writeToDisk: true,
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new MiniCssExtractPlugin({
-      filename: "main.[hash].css",
-      chunkFilename: "[id].main.[hash].css",
+      filename: "[name].[contenthash:8].css",
+      chunkFilename: "[name].[contenthash:8].chunk.css",
     }),
     new BundleTracker({
       path: __dirname,

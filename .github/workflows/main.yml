@@ -26,12 +26,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Setup Python environment
-        run: python -m pip install -U pipenv
+        run: python -m pip install -U pip
 
       - name: Install Python dependencies
         run: |
-          pipenv install
-          pipenv install coverage
+          pip install -r requirements.txt
+          pip install coverage
 
       - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
@@ -45,7 +45,7 @@ jobs:
         run: npm run build --if-present
 
       - name: Test PrimerDriver CLI
-        run: pipenv run python manage.py test pdcli
+        run: python manage.py test pdcli
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DEBUG: ${{ secrets.DEBUG }}
