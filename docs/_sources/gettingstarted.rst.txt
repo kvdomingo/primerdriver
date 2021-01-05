@@ -36,17 +36,17 @@ Quickstart
 To make sure everything is in working order, run the following commands::
 
     > python --version
-    > python pdcli.py -h
+    > python primerdriver.py -h
 
 If no errors occur, then you are good to go. The PrimerDriver CLI can cater to first-time users by providing an interactive mode which allows the user to go through the settings step-by-step. This is triggered by passing the ``-i`` flag when running the program with no additional arguments::
 
-    > python pdcli.py -i
+    > python primerdriver.py -i
 
 The user is greeted with a customized header and the first question::
 
                     ---.   .------------.
                     ||||\ /||||||||||||||\
-                  Primer · Driver v1.0.0
+                  Primer · Driver v1.1.1
             \|||||||||||/ \|||||||
              `---------`   `------
 
@@ -58,7 +58,7 @@ Here, the user is asked for the desired mode, from DNA-based design (``dna``), p
 
                     ---.   .------------.
                     ||||\ /||||||||||||||\
-                  Primer · Driver v1.0.0
+                  Primer · Driver v1.1.1
             \|||||||||||/ \|||||||
              `---------`   `------
 
@@ -94,7 +94,7 @@ In the last line, the user is asked whether or not the characterization should b
 
     Enter filename: _
 
-In this case, the program will automatically detect the file extension and save to that format. Supported file formats are ``.csv``, ``.txt``, ``.html``, and ``.fasta``. (*Note*: Primer characterizations cannot be saved as FASTA). Aside from manually entering a DNA sequence at the prompt, the user can instead provide the filename of a FASTA file containing the sequence, provided that the correct relative location is entered. By default, PrimerDriver will look in the same directory as ``pdcli.py``.
+In this case, the program will automatically detect the file extension and save to that format. Supported file formats are ``.csv``, ``.txt``, ``.html``, and ``.fasta``. (*Note*: Primer characterizations cannot be saved as FASTA). Aside from manually entering a DNA sequence at the prompt, the user can instead provide the filename of a FASTA file containing the sequence, provided that the correct relative location is entered. By default, PrimerDriver will look in the same directory as ``primerdriver.py``.
 
 Let's try another example. Suppose we have a FASTA file named ``read.fasta`` in the root directory. The content of the file is as follows::
 
@@ -106,7 +106,7 @@ Enter the following at the interactive CLI::
 
                     ---.   .------------.
                     ||||\ /||||||||||||||\
-                  Primer · Driver v1.0.0
+                  Primer · Driver v1.1.1
             \|||||||||||/ \|||||||
              `---------`   `------
 
@@ -467,10 +467,16 @@ The output should yield::
 
 Notice that the output is silenced if the number of potential primers exceed 20. In this case, the exceeding primers are still stored and can be accessed by saving the results. The above example can be run in single command mode via::
 
-    > python pdcli.py --mode dna --sequence read.fasta --mutation-type sub --target C --position 25 --replacement G --save primers.fasta
+    > python primerdriver.py --mode dna --sequence read.fasta --mutation-type sub --target C --position 25 --replacement G --save primers.fasta
 
 or in shorthand form via::
 
-    > python pdcli.py -M dna -s read.fasta -m sub -t C -p 25 -r G --save primers.fasta
+    > python primerdriver.py -M dna -s read.fasta -m sub -t C -p 25 -r G --save primers.fasta
 
 The ``--save`` argument is optional and can be omitted if the first 20 primers suffice for the user. As you can see, this can become a powerful tool especially when batch designing primers, by including it as part of a shell script.
+
+Protein-based design works similarly and uses *Homo sapiens* expression system by default::
+
+    > python primerdriver.py --mode pro --sequence CAISBVAIVBAIVBCAICBASCBAVQVFEWQEPFQEHVSDBVSKZDBNCSD --mutation-type sub -t Q -p 26 -r R
+
+

@@ -58,17 +58,17 @@
 <span id="id3"></span><h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
 <p>To make sure everything is in working order, run the following commands:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="o">--</span><span class="n">version</span>
-<span class="o">&gt;</span> <span class="n">python</span> <span class="n">pdcli</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">h</span>
+<span class="o">&gt;</span> <span class="n">python</span> <span class="n">primerdriver</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">h</span>
 </pre></div>
 </div>
 <p>If no errors occur, then you are good to go. The PrimerDriver CLI can cater to first-time users by providing an interactive mode which allows the user to go through the settings step-by-step. This is triggered by passing the <code class="docutils literal notranslate"><span class="pre">-i</span></code> flag when running the program with no additional arguments:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">pdcli</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">i</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">primerdriver</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">i</span>
 </pre></div>
 </div>
 <p>The user is greeted with a customized header and the first question:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                ---.   .------------.
                 ||||\ /||||||||||||||\
-              Primer · Driver v1.0.0
+              Primer · Driver v1.1.1
         \|||||||||||/ \|||||||
          `---------`   `------
 
@@ -80,7 +80,7 @@ Enter primer mode [dna/pro/char]: _
 <p>Here, the user is asked for the desired mode, from DNA-based design (<code class="docutils literal notranslate"><span class="pre">dna</span></code>), protein-based design (<code class="docutils literal notranslate"><span class="pre">pro</span></code>), or characterization of a user-provided sequence (<code class="docutils literal notranslate"><span class="pre">char</span></code>). Try going through all the questions with some example answers as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                ---.   .------------.
                 ||||\ /||||||||||||||\
-              Primer · Driver v1.0.0
+              Primer · Driver v1.1.1
         \|||||||||||/ \|||||||
          `---------`   `------
 
@@ -117,7 +117,7 @@ Save? [y/n] _
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Enter</span> <span class="n">filename</span><span class="p">:</span> <span class="n">_</span>
 </pre></div>
 </div>
-<p>In this case, the program will automatically detect the file extension and save to that format. Supported file formats are <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, and <code class="docutils literal notranslate"><span class="pre">.fasta</span></code>. (<em>Note</em>: Primer characterizations cannot be saved as FASTA). Aside from manually entering a DNA sequence at the prompt, the user can instead provide the filename of a FASTA file containing the sequence, provided that the correct relative location is entered. By default, PrimerDriver will look in the same directory as <code class="docutils literal notranslate"><span class="pre">pdcli.py</span></code>.</p>
+<p>In this case, the program will automatically detect the file extension and save to that format. Supported file formats are <code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, and <code class="docutils literal notranslate"><span class="pre">.fasta</span></code>. (<em>Note</em>: Primer characterizations cannot be saved as FASTA). Aside from manually entering a DNA sequence at the prompt, the user can instead provide the filename of a FASTA file containing the sequence, provided that the correct relative location is entered. By default, PrimerDriver will look in the same directory as <code class="docutils literal notranslate"><span class="pre">primerdriver.py</span></code>.</p>
 <p>Let’s try another example. Suppose we have a FASTA file named <code class="docutils literal notranslate"><span class="pre">read.fasta</span></code> in the root directory. The content of the file is as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="n">Seq1</span>
 <span class="n">CGATCGTACGGACGCAGCTCGTAGCTACGATCGATCGATCGATCGTACGTACGTACGATCGTACGATCGATCGTACG</span>
@@ -126,7 +126,7 @@ Save? [y/n] _
 <p>Enter the following at the interactive CLI:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                ---.   .------------.
                 ||||\ /||||||||||||||\
-              Primer · Driver v1.0.0
+              Primer · Driver v1.1.1
         \|||||||||||/ \|||||||
          `---------`   `------
 
@@ -487,14 +487,18 @@ Save? [y/n] _
 </pre></div>
 </div>
 <p>Notice that the output is silenced if the number of potential primers exceed 20. In this case, the exceeding primers are still stored and can be accessed by saving the results. The above example can be run in single command mode via:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">pdcli</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">mode</span> <span class="n">dna</span> <span class="o">--</span><span class="n">sequence</span> <span class="n">read</span><span class="o">.</span><span class="n">fasta</span> <span class="o">--</span><span class="n">mutation</span><span class="o">-</span><span class="nb">type</span> <span class="n">sub</span> <span class="o">--</span><span class="n">target</span> <span class="n">C</span> <span class="o">--</span><span class="n">position</span> <span class="mi">25</span> <span class="o">--</span><span class="n">replacement</span> <span class="n">G</span> <span class="o">--</span><span class="n">save</span> <span class="n">primers</span><span class="o">.</span><span class="n">fasta</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">primerdriver</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">mode</span> <span class="n">dna</span> <span class="o">--</span><span class="n">sequence</span> <span class="n">read</span><span class="o">.</span><span class="n">fasta</span> <span class="o">--</span><span class="n">mutation</span><span class="o">-</span><span class="nb">type</span> <span class="n">sub</span> <span class="o">--</span><span class="n">target</span> <span class="n">C</span> <span class="o">--</span><span class="n">position</span> <span class="mi">25</span> <span class="o">--</span><span class="n">replacement</span> <span class="n">G</span> <span class="o">--</span><span class="n">save</span> <span class="n">primers</span><span class="o">.</span><span class="n">fasta</span>
 </pre></div>
 </div>
 <p>or in shorthand form via:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">pdcli</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">M</span> <span class="n">dna</span> <span class="o">-</span><span class="n">s</span> <span class="n">read</span><span class="o">.</span><span class="n">fasta</span> <span class="o">-</span><span class="n">m</span> <span class="n">sub</span> <span class="o">-</span><span class="n">t</span> <span class="n">C</span> <span class="o">-</span><span class="n">p</span> <span class="mi">25</span> <span class="o">-</span><span class="n">r</span> <span class="n">G</span> <span class="o">--</span><span class="n">save</span> <span class="n">primers</span><span class="o">.</span><span class="n">fasta</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">primerdriver</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">M</span> <span class="n">dna</span> <span class="o">-</span><span class="n">s</span> <span class="n">read</span><span class="o">.</span><span class="n">fasta</span> <span class="o">-</span><span class="n">m</span> <span class="n">sub</span> <span class="o">-</span><span class="n">t</span> <span class="n">C</span> <span class="o">-</span><span class="n">p</span> <span class="mi">25</span> <span class="o">-</span><span class="n">r</span> <span class="n">G</span> <span class="o">--</span><span class="n">save</span> <span class="n">primers</span><span class="o">.</span><span class="n">fasta</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">--save</span></code> argument is optional and can be omitted if the first 20 primers suffice for the user. As you can see, this can become a powerful tool especially when batch designing primers, by including it as part of a shell script.</p>
+<p>Protein-based design works similarly and uses <em>Homo sapiens</em> expression system by default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">primerdriver</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">mode</span> <span class="n">pro</span> <span class="o">--</span><span class="n">sequence</span> <span class="n">CAISBVAIVBAIVBCAICBASCBAVQVFEWQEPFQEHVSDBVSKZDBNCSD</span> <span class="o">--</span><span class="n">mutation</span><span class="o">-</span><span class="nb">type</span> <span class="n">sub</span> <span class="o">-</span><span class="n">t</span> <span class="n">Q</span> <span class="o">-</span><span class="n">p</span> <span class="mi">26</span> <span class="o">-</span><span class="n">r</span> <span class="n">R</span>
+</pre></div>
+</div>
 </div>
 </div>
 
