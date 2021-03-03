@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x]
         python-version: [3.7]
 
     steps:
@@ -32,22 +31,3 @@ jobs:
         run: |
           pip install -r requirements.txt
           pip install coverage
-
-      - name: Install Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install Node.js dependencies
-        run: npm ci
-
-      - name: Build React app
-        run: npm run build --if-present
-
-      - name: Test PrimerDriver CLI
-        run: python manage.py test pdcli
-        env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DEBUG: ${{ secrets.DEBUG }}
-          ON_HEROKU: ${{ secrets.ON_HEROKU }}
-          ON_CI: ${{ secrets.ON_CI }}
