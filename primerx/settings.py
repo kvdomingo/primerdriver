@@ -25,11 +25,14 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ['DEBUG']))
+DEBUG = bool(int(os.environ.get('DEBUG')))
+
 DEBUG_PROPAGATE_EXCEPTIONS = True
+
+PYTHON_ENV = os.environ.get('PYTHON_ENV')
 
 ALLOWED_HOSTS = [
     '.herokuapp.com',
@@ -42,7 +45,6 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'sdm.apps.SdmConfig',
-    'frontend.apps.FrontendConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,7 +52,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'webpack_loader',
     'corsheaders',
 ]
 
@@ -65,7 +66,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = PYTHON_ENV == 'development'
+
+CORS_ORIGIN_WHITELIST = []
+
 ROOT_URLCONF = 'primerx.urls'
 
 TEMPLATES = [
@@ -101,12 +105,7 @@ WSGI_APPLICATION = 'primerx.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+DATABASES = {}
 
 
 # Password validation
@@ -145,18 +144,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'CACHE': False,
-        'BUNDLE_DIR_NAME': 'frontend/bundles/',
-        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
-    }
-}
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-ON_CI = bool(int(os.environ['ON_CI']))
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 ON_HEROKU = bool(int(os.environ['ON_HEROKU']))
 
