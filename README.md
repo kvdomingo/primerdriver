@@ -4,7 +4,6 @@
 ![GitHub](https://img.shields.io/github/license/kvdomingo/primerdriver)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
-![node-lts](https://img.shields.io/node/v-lts/react)
 
 ## CLI
 
@@ -20,7 +19,7 @@ You can access and download the CLI from the [releases page](https://github.com/
 This will automatically run the help program, which can also be accessed by passing a `-h` flag. For first-time users, the program can be run in interactive mode by passing the `-i` flag. This will walk you through each option step-by-step. Batch design can be performed by including [`primerdriver.py`](./primerdriver.py) as part of a shell script.
 
 ## Web application
-For a more interactive experience, the updated web application can be accessed via https://primerdriver.herokuapp.com/.
+For a more interactive experience, the updated web application can be accessed via https://primerdriver.vercel.app.
 
 ## Documentation
 The documentation is available at https://kvdomingo.github.io/primerdriver/.
