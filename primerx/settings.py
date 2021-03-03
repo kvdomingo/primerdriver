@@ -68,7 +68,9 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = PYTHON_ENV == 'development'
 
-CORS_ORIGIN_WHITELIST = []
+CORS_ORIGIN_WHITELIST = [
+	'https://primerdriver.vercel.app',
+]
 
 ROOT_URLCONF = 'primerx.urls'
 
