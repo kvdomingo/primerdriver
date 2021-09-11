@@ -1,36 +1,19 @@
-from os import listdir, environ
-from json import loads, dumps
+import os
 from pandas import concat
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseForbidden
-from django.core.files import File
-from django.shortcuts import render
-from django.templatetags.static import static
-from django.urls import reverse
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from django.conf import settings
-from django.utils.html import escapejs
 from pdcli.primerclass import PrimerDesign
 from pdcli.checks import PrimerChecks
 from pdcli.version import __version__
 
-
-def index(request):
-    exp_systems = {
-        "data": sorted([''.join(f.split('.')[:-1]).strip() for f in listdir(f'{settings.BASE_DIR}/pdcli/expression system')])
-    }
-    context = {
-        "html_title": "Home",
-        "active_page": "index",
-        "expression": escapejs(dumps(exp_systems)),
-        "settings": settings,
-    }
-    return render(request, "sdm/index.html", context)
+BASE_DIR = settings.BASE_DIR
 
 
-def api(request):
-    if request.method == 'POST':
-        data = dict()
-        for k, v in request.POST.items():
-            data[k] = v
+class PrimerDriverAPIView(APIView):
+    def post(self, request):
+        data = request.data
         checks = PrimerChecks(data['sequence'])
         if data['mode'] == 'PRO':
             data['sequence'] = checks.check_valid_protein()
@@ -47,24 +30,21 @@ def api(request):
         else:
             df = res.df
             out = df.to_dict()
-        return JsonResponse(out)
-    else:
-        return HttpResponseForbidden(f'{request.method} not allowed on /api')
+        return Response(data=out, status=status.HTTP_200_OK)
 
 
-def api_version(request):
-    if request.method == 'GET':
-        return JsonResponse({
+class VersionView(APIView):
+    def get(self, request):
+        return Response(data={
             'program_version': str(__version__),
-            'web_version': f'(web {environ["HEROKU_RELEASE_VERSION"]})' if settings.ON_HEROKU else '',
+            'web_version': f'(web {os.environ.get("HEROKU_RELEASE_VERSION")})' if settings.ON_HEROKU else '',
         })
-    else:
-        return HttpResponseForbidden(f'{request.method} not allowed on /version')
 
-def api_expressions(request):
-    if request.method == 'GET':
-        return JsonResponse({
-            "data": sorted([''.join(f.split('.')[:-1]).strip() for f in listdir(f'{settings.BASE_DIR}/pdcli/expression system')])
+
+class ExpressionSystemsView(APIView):
+    def get(self, request):
+        return Response({
+            "data": sorted([
+                ''.join(f.split('.')[:-1]).strip() for f in os.listdir(BASE_DIR / 'pdcli' / 'expression system')
+            ])
         })
-    else:
-        return HttpResponseForbidden(f'{request.method} not allowed on /expressionsys')

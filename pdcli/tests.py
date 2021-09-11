@@ -1,5 +1,4 @@
 import io
-from pandas import DataFrame
 from contextlib import redirect_stdout
 from django.test import TestCase
 from .primerclass import *

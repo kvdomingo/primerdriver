@@ -3,7 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.api, name='api'),
-    path("version", views.api_version, name='version'),
-    path("expressionsys", views.api_expressions, name='expressions'),
+    path("", views.PrimerDriverAPIView.as_view(), name='api'),
+    path("version", views.VersionView.as_view(), name='version'),
+    path("expressionsys", views.ExpressionSystemsView.as_view(), name='expressions'),
 ]
