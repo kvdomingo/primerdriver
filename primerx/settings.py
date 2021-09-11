@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_DIR = Path(__file__).resolve().parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get('DEBUG')))
+DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
-PYTHON_ENV = os.environ.get('PYTHON_ENV')
+PYTHON_ENV = os.environ.get('PYTHON_ENV', "production")
 
 ALLOWED_HOSTS = ['*']
 

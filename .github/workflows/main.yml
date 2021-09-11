@@ -16,11 +16,14 @@ jobs:
           python-version: '3.8'
           architecture: 'x64'
 
-      - name: Setup Python environment
-        run: python -m pip install -U pip
-
       - name: Install Python dependencies
         run: pip install -r requirements.txt
 
       - name: Run tests
         run: python manage.py test pdcli
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: ${{ secrets.DEBUG }}
+          ON_CI: ${{ secrets.ON_CI }}
+          ON_HEROKU: ${{ secrets.ON_HEROKU }}
+
