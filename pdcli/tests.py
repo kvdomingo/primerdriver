@@ -1,11 +1,11 @@
 import io
-from pandas import DataFrame
 from contextlib import redirect_stdout
 from django.test import TestCase
 from .primerclass import *
 
 
 class CharacterizeTestCase(TestCase):
+    databases = []
     pd = PrimerDesign('char', 'GATTACA', 'sub', 1, 'T', 'A', 4)
 
     def test_gc_content(self):
@@ -32,10 +32,7 @@ class CharacterizeTestCase(TestCase):
 
     def test_gc_end(self):
         """Check if sequence ends in G/C"""
-        self.assertEqual(
-            self.pd.is_gc_end(self.pd.sequence),
-            False
-        )
+        self.assertFalse(self.pd.is_gc_end(self.pd.sequence))
 
     def test_calculate_Tm(self):
         """Calculate melting temperature"""
@@ -61,4 +58,4 @@ class CharacterizeTestCase(TestCase):
                 self.pd.replacement,
                 self.pd.mismatched_bases
             )
-        self.assertEqual(isinstance(out, DataFrame), True)
+        self.assertTrue(isinstance(out, DataFrame))
