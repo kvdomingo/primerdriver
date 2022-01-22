@@ -33,8 +33,8 @@ function Station() {
         className="border border-light mx-0 my-0 py-0 scrollbar scrollbar-primary thin"
         style={styles.appContainer}
       >
-        <Suspense fallback={<Loading />}>
-          <Router>
+        <Router>
+          <Suspense fallback={<Loading />}>
             <Switch>
               <Route exact path="/" component={Menu} />
               <Route path="/characterize" render={() => <Characterize key={key} handleReset={handleReset} />} />
@@ -42,8 +42,8 @@ function Station() {
               <Route path="/protein" render={() => <Protein key={key} handleReset={handleReset} />} />
               <Route path="/results" component={Results} />
             </Switch>
-          </Router>
-        </Suspense>
+          </Suspense>
+        </Router>
       </Jumbotron>
     </Container>
   );

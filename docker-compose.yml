@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  apiserver:
+    build:
+      context: .
+      target: dev
+    image: kvdomingo/primerdriver-api:latest
+    env_file: .env
+    ports:
+      - ${PORT}:${PORT}
+    volumes:
+      - .:/primerdriver
+
+  frontend:
+    build:
+      context: ./web/app
+      target: dev
+    image: kvdomingo/primerdriver-app:latest
+    env_file: ./web/app/.env
+    volumes:
+      - ./web:/web

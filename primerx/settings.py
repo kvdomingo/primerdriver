@@ -8,13 +8,13 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-PROJECT_DIR = Path(__file__).resolve().parent
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", default=get_random_secret_key())
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", False))
+
+DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 
 PYTHON_ENV = os.environ.get("PYTHON_ENV", "production")
 
@@ -38,8 +38,9 @@ if PYTHON_ENV == "development":
     INSTALLED_APPS.append("revproxy")
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -60,7 +61,8 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.jinja2.Jinja2",
         "DIRS": [
-            os.path.join(PROJECT_DIR, "jinjatemplates"),
+            BASE_DIR / "jinjatemplates",
+            BASE_DIR / "web" / "app",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -130,9 +132,6 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "static"
 
-ON_HEROKU = bool(int(os.environ["ON_HEROKU"]))
+STATICFILES_DIRS = [BASE_DIR / "web" / "app" / "static"]
 
-if ON_HEROKU:
-    import django_heroku
-
-    django_heroku.settings(locals())
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
