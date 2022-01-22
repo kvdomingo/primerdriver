@@ -1,7 +1,7 @@
 import sys
 from argparse import ArgumentParser
-from pdcli.input_handler import *
-from pdcli.output_handler import *
+from .input_handler import *
+from .output_handler import *
 
 
 def main():

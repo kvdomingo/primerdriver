@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
-from pdcli.primerclass import PrimerDesign
-from pdcli.checks import PrimerChecks
-from pdcli.version import __version__
+from primerdriver.primerclass import PrimerDesign
+from primerdriver.checks import PrimerChecks
+from primerdriver.version import __version__
 
 BASE_DIR = settings.BASE_DIR
 
@@ -48,7 +48,10 @@ class ExpressionSystemsView(APIView):
         return Response(
             {
                 "data": sorted(
-                    ["".join(f.split(".")[:-1]).strip() for f in os.listdir(BASE_DIR / "pdcli" / "expression system")]
+                    [
+                        "".join(f.split(".")[:-1]).strip()
+                        for f in os.listdir(BASE_DIR / "primerdriver" / "expression system")
+                    ]
                 )
             }
         )

@@ -18,7 +18,7 @@ class PrimerDesign:
         replacement=None,
         position=None,
         savename=None,
-        settings="pdcli/settings.json",
+        settings="primerdriver/settings.json",
         print_buffer=20,
         **kwargs,
     ):
@@ -49,9 +49,9 @@ class PrimerDesign:
         self.print_buffer = print_buffer
         self.expression_name = settings["expression_system"]
         self.savename = savename
-        with open("pdcli/lut.json", "r", encoding="utf-8") as f:
+        with open("primerdriver/lut.json", "r", encoding="utf-8") as f:
             self.lut = load(f)
-        with open(f"pdcli/expression system/{self.expression_name}.json", "r") as f:
+        with open(f"primerdriver/expression system/{self.expression_name}.json", "r") as f:
             self.expression_system = load(f)
 
     def calculate_gc_content(self, seq):

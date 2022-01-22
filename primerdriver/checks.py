@@ -18,7 +18,7 @@ class PrimerChecks:
 
     def check_valid_protein(self):
         unique_prots = set(list(self.sequence.upper()))
-        with open("pdcli/AAcompressed.json", "r") as f:
+        with open("primerdriver/AAcompressed.json", "r") as f:
             true_prots = load(f)
         invalid_prots = unique_prots.difference(true_prots.keys())
         if len(invalid_prots) != 0:

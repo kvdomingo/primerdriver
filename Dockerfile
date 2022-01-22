@@ -36,10 +36,12 @@ FROM base as prod
 
 WORKDIR /primerdriver
 
-COPY ./pdcli/ ./pdcli/
+COPY primerdriver/ ./pdcli/
 COPY ./primerx/ ./primerx/
 COPY ./sdm/ ./sdm/
 COPY --from=build /web/build ./web/app/
 COPY ./*.py ./
+
+RUN python manage.py collectstatic --noinput
 
 ENTRYPOINT gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file -

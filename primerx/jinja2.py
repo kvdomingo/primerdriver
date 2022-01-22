@@ -2,7 +2,7 @@ import os
 from django.templatetags.static import static
 from django.urls import reverse
 from django.conf import settings
-from pdcli.version import __version__
+from primerdriver.version import __version__
 from jinja2 import Environment
 from datetime import datetime
 from dotenv import load_dotenv
