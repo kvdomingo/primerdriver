@@ -24,16 +24,16 @@ def interactive_saver(df):
                 for i, seq in enumerate(df):
                     seq_list.append(
                         SeqRecord(
-                            Seq(df[i]['Forward'].values[0], IUPAC.unambiguous_dna),
+                            Seq(df[i]["Forward"].values[0], IUPAC.unambiguous_dna),
                             id=f"{datetime.now()}",
-                            description=f"Primer {i+1} forward strand, {df[i]['Fwd GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Fwd melting temp'].values[0]:.2s} C, {df[i]['Fwd length'].values[0]}"
+                            description=f"Primer {i+1} forward strand, {df[i]['Fwd GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Fwd melting temp'].values[0]:.2s} C, {df[i]['Fwd length'].values[0]}",
                         )
                     )
                     seq_list.append(
                         SeqRecord(
-                            Seq(df[i]['Reverse'].values[0], IUPAC.unambiguous_dna),
+                            Seq(df[i]["Reverse"].values[0], IUPAC.unambiguous_dna),
                             id=f"{datetime.now()}",
-                            description=f"Primer {i+1} reverse strand, {df[i]['Rev GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Rev melting temp'].values[0]:.2s} C, {df[i]['Rev length'].values[0]}"
+                            description=f"Primer {i+1} reverse strand, {df[i]['Rev GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Rev melting temp'].values[0]:.2s} C, {df[i]['Rev length'].values[0]}",
                         )
                     )
                 with open(savename, "w") as f:
@@ -44,6 +44,7 @@ def interactive_saver(df):
                 df.to_json(savename, indent=4)
             else:
                 print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
+
 
 def singleCommand_saver(res, df, savename):
     if savename.endswith(".csv"):
@@ -59,16 +60,16 @@ def singleCommand_saver(res, df, savename):
         for i, seq in enumerate(df):
             seq_list.append(
                 SeqRecord(
-                    Seq(df[i]['Forward'].values[0], IUPAC.unambiguous_dna),
+                    Seq(df[i]["Forward"].values[0], IUPAC.unambiguous_dna),
                     id=f"{datetime.now()}",
-                    description=f"Primer {i+1} forward strand, {df[i]['Fwd GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Fwd melting temp'].values[0]:.2s} C, {df[i]['Fwd length'].values[0]}"
+                    description=f"Primer {i+1} forward strand, {df[i]['Fwd GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Fwd melting temp'].values[0]:.2s} C, {df[i]['Fwd length'].values[0]}",
                 )
             )
             seq_list.append(
                 SeqRecord(
-                    Seq(df[i]['Reverse'].values[0], IUPAC.unambiguous_dna),
+                    Seq(df[i]["Reverse"].values[0], IUPAC.unambiguous_dna),
                     id=f"{datetime.now()}",
-                    description=f"Primer {i+1} reverse strand, {df[i]['Rev GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Rev melting temp'].values[0]:.2s} C, {df[i]['Rev length'].values[0]}"
+                    description=f"Primer {i+1} reverse strand, {df[i]['Rev GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Rev melting temp'].values[0]:.2s} C, {df[i]['Rev length'].values[0]}",
                 )
             )
         with open(savename, "w") as f:

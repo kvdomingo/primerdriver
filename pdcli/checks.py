@@ -8,7 +8,7 @@ class PrimerChecks:
 
     def check_valid_base(self):
         unique_bases = set(list(self.sequence.upper()))
-        true_bases = {'A', 'C', 'T', 'G'}
+        true_bases = {"A", "C", "T", "G"}
         invalid_bases = unique_bases.difference(true_bases)
         if len(invalid_bases) != 0:
             warn("Sequence contains invalid bases. Automatically removing...", Warning)
@@ -29,17 +29,17 @@ class PrimerChecks:
 
     def check_sequence_length(self):
         if len(self.sequence) < 40:
-            warn('DNA sequence is too short', Warning)
+            warn("DNA sequence is too short", Warning)
         elif len(self.sequence) > 8000:
-            warn('DNA sequence is too long', Warning)
+            warn("DNA sequence is too long", Warning)
 
     def check_gc_content(self):
         seq = list(self.sequence)
-        gc = (seq.count('C') + seq.count('G'))/len(seq)
+        gc = (seq.count("C") + seq.count("G")) / len(seq)
         if gc < 0.40:
             warn("GC content is less than 40%", Warning)
         elif gc > 0.60:
-            warn('GC content is greater than 60%', Warning)
+            warn("GC content is greater than 60%", Warning)
 
 
 class SequenceChecks:
@@ -54,7 +54,7 @@ class SequenceChecks:
 
     def check_gc_content(self, gc_range):
         seq = list(self.sequence)
-        gc = (seq.count('C') + seq.count('G'))/len(seq) * 100
+        gc = (seq.count("C") + seq.count("G")) / len(seq) * 100
         if gc < gc_range[0] or gc > gc_range[1]:
             return False
         else:
@@ -73,7 +73,7 @@ class SequenceChecks:
             return False
 
     def check_ends_gc(self, terminate_gc):
-        if not terminate_gc or (self.sequence[0] in ['C', 'G'] and self.sequence[-1] in ['C', 'G']):
+        if not terminate_gc or (self.sequence[0] in ["C", "G"] and self.sequence[-1] in ["C", "G"]):
             return True
         else:
             return False
