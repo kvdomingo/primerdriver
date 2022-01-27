@@ -1,5 +1,5 @@
 # PrimerDriver: Automated design of mutagenic PCR primers
-![PrimerDriver](https://raw.githubusercontent.com/kvdomingo/primerdriver-api/master/sdm/static/sdm/media/private/PrimerDriver_logo.png)
+![PrimerDriver](https://res.cloudinary.com/kdphotography-assets/image/upload/v1587460290/primerdriver/PrimerDriver_logo.png)
 
 ![GitHub](https://img.shields.io/github/license/kvdomingo/primerdriver)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
