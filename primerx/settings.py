@@ -1,5 +1,7 @@
 import os
 import jinja2
+import urllib
+import dj_database_url
 from django.core.management.utils import get_random_secret_key
 from pathlib import Path
 from dotenv import load_dotenv
@@ -18,7 +20,10 @@ DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 
 PYTHON_ENV = os.environ.get("PYTHON_ENV", "production")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [".kvdstudio.app"]
+
+if PYTHON_ENV == "development":
+    ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -91,12 +96,18 @@ WSGI_APPLICATION = "primerx.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if PYTHON_ENV == "development":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    _database_url = os.environ.get("DATABASE_URL")
+    _database_config = dj_database_url.parse(_database_url)
+    _database_config["HOST"] = urllib.parse.unquote(_database_config["HOST"])
+    DATABASES = {"default": _database_config}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
