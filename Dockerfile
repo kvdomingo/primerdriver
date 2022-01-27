@@ -52,12 +52,11 @@ FROM base as prod
 
 WORKDIR /primerdriver
 
-COPY primerdriver/ ./pdcli/
+COPY ./primerdriver/ ./primerdriver/
 COPY ./primerx/ ./primerx/
 COPY ./sdm/ ./sdm/
+COPY ./manage.py ./manage.py
+COPY ./runserver.sh ./runserver.sh
 COPY --from=build /web/build ./web/app/
-COPY ./*.py ./
 
-RUN python manage.py collectstatic --noinput
-
-ENTRYPOINT python manage.py collectstatic && python manage.py migrate && gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file -
+ENTRYPOINT [ "sh", "runserver.sh" ]

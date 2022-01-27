@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const { NODE_ENV } = process.env;
-
-const baseURL = NODE_ENV === "production" ? "https://primerdriver.herokuapp.com/api/" : "http://localhost:8000/api/";
+const baseURL = "/api/";
 
 const axiosInstance = axios.create({ baseURL });
 
