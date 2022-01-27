@@ -20,3 +20,11 @@ services:
     env_file: ./web/app/.env
     volumes:
       - ./web:/web
+
+  make-linux:
+    build:
+      context: .
+      target: make-linux
+    image: kvdomingo/primerdriver-makelinux:latest
+    volumes:
+      - .:/primerdriver

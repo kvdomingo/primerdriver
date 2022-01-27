@@ -11,7 +11,7 @@ import Results from "./menu/Result";
 const styles = {
   appContainer: {
     boxShadow: "none",
-    overflow: "scroll",
+    overflow: "auto",
     height: "100vh",
   },
 };

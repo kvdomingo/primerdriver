@@ -1,7 +1,7 @@
 import io
 from contextlib import redirect_stdout
 from django.test import TestCase
-from .primerclass import *
+from .primer_design import *
 
 
 class CharacterizeTestCase(TestCase):

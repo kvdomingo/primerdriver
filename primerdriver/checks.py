@@ -47,7 +47,7 @@ class SequenceChecks:
         self.sequence = sequence.upper()
 
     def check_sequence_length(self, length_range):
-        if len(self.sequence) >= length_range[0] and len(self.sequence) <= length_range[1]:
+        if length_range[0] <= len(self.sequence) <= length_range[1]:
             return True
         else:
             return False

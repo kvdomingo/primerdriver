@@ -1,3 +1,4 @@
+from loguru import logger
 from pandas import concat
 from datetime import datetime
 from Bio import SeqIO
@@ -43,10 +44,10 @@ def interactive_saver(df):
                 df = concat([*df])
                 df.to_json(savename, indent=4)
             else:
-                print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
+                logger.error("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
 
 
-def singleCommand_saver(res, df, savename):
+def single_command_saver(res, df, savename):
     if savename.endswith(".csv"):
         df = concat([*df])
         df.to_csv(savename)
@@ -78,5 +79,5 @@ def singleCommand_saver(res, df, savename):
         df = concat([*df])
         df.to_json(savename, indent=4)
     else:
-        print("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
+        logger.error("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
         return 1

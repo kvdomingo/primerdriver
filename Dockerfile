@@ -20,7 +20,23 @@ RUN sed -i "s/'_headers'/'headers'/" /usr/local/lib/python3.9/site-packages/revp
 
 WORKDIR /primerdriver
 
-ENTRYPOINT gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file - --reload
+ENTRYPOINT python manage.py migrate && gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file - --reload
+
+FROM base as make-linux
+
+RUN apt-get update
+RUN apt-get install upx-ucl libgfortran-10-dev libquadmath0 -y
+
+ENV PYTHONDONTWRITEBYTECODE 1
+
+COPY requirements.dev.txt /tmp/requirements.dev.txt
+COPY requirements.txt /tmp/requirements.txt
+
+RUN pip install --no-cache-dir -r /tmp/requirements.dev.txt
+
+WORKDIR /primerdriver
+
+ENTRYPOINT [ "sh", "build.sh" ]
 
 FROM node:16-alpine as build
 

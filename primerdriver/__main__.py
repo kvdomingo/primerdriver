@@ -4,8 +4,22 @@ from .input_handler import *
 from .output_handler import *
 
 
+@logger.catch
 def main():
-    parser = ArgumentParser()
+    print(
+        f"""
+        ---.   .------------.
+        ||||\\ /||||||||||||||\\    
+      Primer · Driver
+\\|||||||||||/ \\|||||||              
+ `---------`   `------
+     
+PrimerDriver v{version}
+(c) 2020 Kenneth V. Domingo & Numeriano Amer E. Gutierrez
+    """
+    )
+
+    parser = ArgumentParser(prog="primerdriver")
     parser.add_argument(
         "-M",
         "--mode",
@@ -29,7 +43,7 @@ def main():
     if args.interactive:
         args_dict = interactive_handler()
     else:
-        args_dict = singleCommand_handler(args)
+        args_dict = single_command_handler(args)
 
     res = PrimerDesign(**args_dict)
     if args_dict["mode"].upper() == "CHAR":
@@ -41,7 +55,7 @@ def main():
         interactive_saver(res.df)
     else:
         if res.savename is not None:
-            singleCommand_saver(res, res.df, res.savename)
+            single_command_saver(res, res.df, res.savename)
 
     return 0
 

@@ -1,15 +1,11 @@
-from .primerclass import *
+from .primer_design import *
 from .version import __version__
 from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
-from Bio.SeqRecord import SeqRecord
-
 
 version = str(__version__)
 
 
-def singleCommand_handler(args):
+def single_command_handler(args):
     args_dict = dict()
     args_dict["mode"] = args.mode
     if args.save:
@@ -67,14 +63,6 @@ def singleCommand_handler(args):
 
 def interactive_handler():
     args_dict = dict()
-    print("")
-    print("                ---.   .------------.")
-    print("                ||||\ /||||||||||||||\    ")
-    print("              Primer · Driver")
-    print("        \|||||||||||/ \|||||||              ")
-    print("         `---------`   `------" "\n")
-    print(f"PrimerDriver v{version}")
-    print("(c) 2020 Kenneth V. Domingo & Numeriano Amer E. Gutierrez\n")
     args_dict["mode"] = input("Enter primer mode [dna/pro/char]: ")
     if args_dict["mode"].upper() == "DNA":
         args_dict["sequence"] = input("Enter DNA sequence: ")

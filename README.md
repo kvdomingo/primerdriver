@@ -9,20 +9,24 @@
 
 You can access and download the CLI from the 
 [releases page](https://github.com/kvdomingo/primerdriver/releases). 
-Extract the files to your local machine and run the program via
+Run the program in a terminal using
 ```shell
-python -m primerdriver
+primerdriver -h
 ```
 
-This will automatically run the help program, which can also be accessed 
-by passing a `-h` flag. For first-time users, the program can be run in 
-interactive mode by passing the `-i` flag. This will walk you through 
-each option step-by-step. Batch design can be performed by 
-including [`primerdriver.py`](pdcli/primerdriver.py) as part of a shell script.
+This will run the help program. For first-time users, the program can be run in 
+interactive mode by passing the `-i` flag:
+```shell
+primerdriver -i
+```
+
+This will walk you through each option step-by-step.
+Batch design can be performed by including
+[`primerdriver`](primerdriver/__main__.py) as part of a shell script.
 
 ## Web application
-For a more interactive experience, the updated web application can be 
-accessed via https://primerdriver.vercel.app.
+For a more interactive experience, visit the 
+[web application](https://primerdriver.kvdstudio.app).
 
 ## Documentation
 The documentation is available at https://kvdomingo.github.io/primerdriver/.
@@ -44,7 +48,7 @@ A step by step series of examples that tell you how to get a
 development environment running
    
 1. Clone and extract the repo.
-2. Install backend dependencies:
+2. Create a virtual environment and install backend dependencies:
 ```shell
 pip install -r requirements.dev.txt
 ```
@@ -59,14 +63,20 @@ docker compose up --build
 Wait a few minutes for all the containers to start, then access the 
 local server in your browser at http://localhost:8000.
 
-### Deployment
-```bash
-> git add .
-> git commit -m <DESCRIPTIVE_COMMIT_MESSAGE>
-> git push origin <GITHUB_BRANCH>
+### Building from source
+Run the script:
+```shell
+./build.sh
 ```
 
-where `GITHUB_BRANCH` should summarize the changes you are implementing 
+### Deployment
+```shell
+git add .
+git commit -m "DESCRIPTIVE_COMMIT_MESSAGE"
+git push origin your_feature_branch
+```
+
+where `your_feature_branch` should summarize the changes you are implementing 
 (e.g., `feature/implementing-xxxx-feature`, `bugfix/crush-critical-yyyy-bug`).
 
 
@@ -77,7 +87,7 @@ where `GITHUB_BRANCH` should summarize the changes you are implementing
 - **Carlo M. Lapid** - Project Adviser - [Email](mailto:cmlapid@up.edu.ph)
 
 ## Versioning
-This project complies with [SemVer](https://semver.org) for versioning. Fo
+This project complies with [SemVer](https://semver.org) for versioning. For
 all available versions, see 
 [tags](https://github.com/kvdomingo/primerdriver/tags).
 

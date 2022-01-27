@@ -1,9 +1,8 @@
-from warnings import warn
-from json import load, loads
+from loguru import logger
+from json import loads
 from pandas import DataFrame
 from tabulate import tabulate
 from numpy import array
-from Bio.Seq import Seq
 from .checks import *
 
 
@@ -153,7 +152,7 @@ class PrimerDesign:
         if index - 1 < self.print_buffer:
             print("\n", tabulate(array([col, dat]).T, headers=[f"Primer {index}"], tablefmt="orgtbl"), sep="")
         elif index - 1 == self.print_buffer:
-            print("\nToo many results; truncating output...")
+            logger.info("Too many results; truncating output...")
         dat = array([dat])
         df = DataFrame(data=dat, columns=col, index=[index])
         self.df = df

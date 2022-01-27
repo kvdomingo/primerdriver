@@ -1,4 +1,3 @@
-import os
 from django.templatetags.static import static
 from django.urls import reverse
 from django.conf import settings
@@ -20,7 +19,7 @@ def environment(**options):
             "settings": settings,
             "static": static,
             "url": reverse,
-            "web_version": f'(web {os.environ["HEROKU_RELEASE_VERSION"]})' if settings.ON_HEROKU else "",
+            "web_version": __version__,
         }
     )
     return env
