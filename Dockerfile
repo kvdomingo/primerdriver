@@ -58,6 +58,4 @@ COPY ./sdm/ ./sdm/
 COPY --from=build /web/build ./web/app/
 COPY ./*.py ./
 
-RUN python manage.py collectstatic --noinput
-
-ENTRYPOINT python manage.py collectstatic && python manage.py migrate && gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file -
+ENTRYPOINT [ "sh", "runserver.sh" ]
