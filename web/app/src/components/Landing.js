@@ -44,7 +44,7 @@ function Landing() {
         </p>
         <div className="text-center py-3">
           <a
-            href="https://github.com/kvdomingo/primerdriver-api/releases"
+            href="https://github.com/kvdomingo/primerdriver/releases"
             target="_blank"
             rel="noopener noreferrer"
             className="px-2"
@@ -53,7 +53,7 @@ function Landing() {
           </a>
           {" | "}
           <a
-            href="https://kvdomingo.github.io/primerdriver-api/"
+            href="https://kvdomingo.github.io/primerdriver/"
             target="_blank"
             rel="noopener noreferrer"
             className="px-2"
@@ -62,7 +62,7 @@ function Landing() {
           </a>
         </div>
         <div className="text-center py-3 px-3">
-          PrimerDriver v{programVersion} {webVersion}
+          PrimerDriver v{programVersion} ({webVersion})
           <br />
           &copy; {copyYear} <a href="mailto:hello@kvdomingo.xyz">Kenneth Domingo</a> &amp;{" "}
           <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>

@@ -1,3 +1,5 @@
+import os
+
 from django.templatetags.static import static
 from django.urls import reverse
 from django.conf import settings
@@ -6,8 +8,9 @@ from jinja2 import Environment
 from datetime import datetime
 from dotenv import load_dotenv
 
-
 load_dotenv()
+
+_SHORT_SHA = os.environ.get("SHORT_SHA")
 
 
 def environment(**options):
@@ -19,7 +22,7 @@ def environment(**options):
             "settings": settings,
             "static": static,
             "url": reverse,
-            "web_version": __version__,
+            "web_version": _SHORT_SHA if _SHORT_SHA else __version__,
         }
     )
     return env

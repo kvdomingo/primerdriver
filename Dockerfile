@@ -20,7 +20,8 @@ RUN sed -i "s/'_headers'/'headers'/" /usr/local/lib/python3.9/site-packages/revp
 
 WORKDIR /primerdriver
 
-ENTRYPOINT python manage.py migrate && gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file - --reload
+ENTRYPOINT python manage.py migrate \
+    && SHORT_SHA=$(git show --format="%h" --no-patch) gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file - --reload
 
 FROM base as make-linux
 
@@ -58,5 +59,9 @@ COPY ./sdm/ ./sdm/
 COPY ./manage.py ./manage.py
 COPY ./runserver.sh ./runserver.sh
 COPY --from=build /web/build ./web/app/
+
+ARG SHORT_SHA=$SHORT_SHA
+
+ENV SHORT_SHA $SHORT_SHA
 
 ENTRYPOINT [ "sh", "runserver.sh" ]
