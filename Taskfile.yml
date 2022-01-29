@@ -11,7 +11,7 @@ tasks:
 
   make-builder:
     cmds:
-      - docker build -t kvdomingo/primerdriver-makelinux:latest -f Dockerfile.build
+      - docker build -t kvdomingo/primerdriver-makelinux:latest -f Dockerfile.build .
 
   build-linux:
     cmds:

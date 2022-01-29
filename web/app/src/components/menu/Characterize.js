@@ -53,6 +53,10 @@ function Characterize(props) {
       })
       .finally(() => {
         PDDispatch({
+          type: "updateLoadedResults",
+          payload: true,
+        });
+        PDDispatch({
           type: "updateResults",
           payload: {
             data,

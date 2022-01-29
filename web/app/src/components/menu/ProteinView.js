@@ -98,12 +98,18 @@ function ProteinView(props) {
     let data;
     api.data
       .primerDriver(formData)
-      .then(res => (data = res.data))
+      .then(res => {
+        data = res.data;
+      })
       .catch(err => {
         console.log(err.message);
         data = "Request failed. Please try again later.";
       })
       .finally(() => {
+        PDDispatch({
+          type: "updateLoadedResults",
+          payload: true,
+        });
         PDDispatch({
           type: "updateResults",
           payload: {

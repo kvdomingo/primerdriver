@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import {
   MDBTable as Table,
   MDBTableHead as TableHead,
@@ -22,7 +22,16 @@ function Result() {
   const [mode, setMode] = useState("");
   const [results, setResults] = useState({});
   const [viewLimit, setViewLimit] = useState(10);
-  const { PDState } = usePrimerDriverContext();
+  const { PDState, PDDispatch } = usePrimerDriverContext();
+
+  useEffect(() => {
+    return () => {
+      PDDispatch({
+        type: "updateLoadedResults",
+        payload: false,
+      });
+    };
+  }, []);
 
   useEffect(() => {
     if (PDState.results.loaded) {
@@ -54,87 +63,91 @@ function Result() {
     );
   }
 
-  if (typeof results === "object") {
-    if (mode === "CHAR")
+  if (!PDState.loadedResultsFromModule) {
+    return <Redirect to="/" />;
+  } else {
+    if (typeof results === "object") {
+      if (mode === "CHAR")
+        return (
+          <div>
+            <Header />
+            <Table responsive bordered size="sm" hover className="text-nowrap">
+              <TableBody>
+                {Object.keys(results).map((key, i) => (
+                  <tr key={i}>
+                    <th scope="row">{key}</th>
+                    <td>{results[key]["1"]}</td>
+                  </tr>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        );
+      else {
+        if (Object.keys(results).length >= 1) {
+          return (
+            <div>
+              <Header />
+              <Typography tag="h2" variant="h2-responsive" className="mx-md-2 my-4">
+                {Object.keys(results).length} result{Object.keys(results).length !== 1 && "s"}
+              </Typography>
+              {Object.keys(results).map(
+                (item, i) =>
+                  i < viewLimit && (
+                    <Fragment key={i}>
+                      <Table responsive className="text-nowrap" size="sm" bordered hover>
+                        <TableHead>
+                          <tr>
+                            <th scope="col" />
+                            <th scope="col">{`Primer ${i + 1}`}</th>
+                          </tr>
+                        </TableHead>
+                        <TableBody>
+                          {Object.keys(results[(i + 1).toString()]).map((key, j) => (
+                            <tr key={j}>
+                              <th scope="row">{key}</th>
+                              <td>{results[(i + 1).toString()][key]}</td>
+                            </tr>
+                          ))}
+                        </TableBody>
+                      </Table>
+                      {i + 1 === viewLimit && i + 1 < Object.keys(results).length && (
+                        <div className="text-center mt-4 mb-5">
+                          <button className="btn btn-info" onClick={handleViewMore}>
+                            View more...
+                          </button>
+                        </div>
+                      )}
+                    </Fragment>
+                  ),
+              )}
+            </div>
+          );
+        } else {
+          return (
+            <div>
+              <Header />
+              <Typography tag="h2" variant="h2-responsive" className="mx-md-2 my-4 text-center">
+                {results.data}
+              </Typography>
+            </div>
+          );
+        }
+      }
+    } else {
       return (
-        <div>
+        <div className="text-center">
           <Header />
-          <Table responsive bordered size="sm" hover className="text-nowrap">
-            <TableBody>
-              {Object.keys(results).map((key, i) => (
-                <tr key={i}>
-                  <th scope="row">{key}</th>
-                  <td>{results[key]["1"]}</td>
-                </tr>
-              ))}
-            </TableBody>
-          </Table>
+          <p>
+            Oops! Something went wrong on the server. Please try again later, or{" "}
+            <a href="https://github.com/kvdomingo/primerdriver-api/issues" target="_blank" rel="noopener noreferrer">
+              report an issue
+            </a>
+            .
+          </p>
         </div>
       );
-    else {
-      if (Object.keys(results).length >= 1) {
-        return (
-          <div>
-            <Header />
-            <Typography tag="h2" variant="h2-responsive" className="mx-md-2 my-4">
-              {Object.keys(results).length} result{Object.keys(results).length !== 1 && "s"}
-            </Typography>
-            {Object.keys(results).map(
-              (item, i) =>
-                i < viewLimit && (
-                  <Fragment key={i}>
-                    <Table responsive className="text-nowrap" size="sm" bordered hover>
-                      <TableHead>
-                        <tr>
-                          <th scope="col" />
-                          <th scope="col">{`Primer ${i + 1}`}</th>
-                        </tr>
-                      </TableHead>
-                      <TableBody>
-                        {Object.keys(results[(i + 1).toString()]).map((key, j) => (
-                          <tr key={j}>
-                            <th scope="row">{key}</th>
-                            <td>{results[(i + 1).toString()][key]}</td>
-                          </tr>
-                        ))}
-                      </TableBody>
-                    </Table>
-                    {i + 1 === viewLimit && i + 1 < Object.keys(results).length && (
-                      <div className="text-center mt-4 mb-5">
-                        <button className="btn btn-info" onClick={handleViewMore}>
-                          View more...
-                        </button>
-                      </div>
-                    )}
-                  </Fragment>
-                ),
-            )}
-          </div>
-        );
-      } else {
-        return (
-          <div>
-            <Header />
-            <Typography tag="h2" variant="h2-responsive" className="mx-md-2 my-4 text-center">
-              {results.data}
-            </Typography>
-          </div>
-        );
-      }
     }
-  } else {
-    return (
-      <div className="text-center">
-        <Header />
-        <p>
-          Oops! Something went wrong on the server. Please try again later, or{" "}
-          <a href="https://github.com/kvdomingo/primerdriver-api/issues" target="_blank" rel="noopener noreferrer">
-            report an issue
-          </a>
-          .
-        </p>
-      </div>
-    );
   }
 }
 
