@@ -40,10 +40,11 @@ class VersionView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        _short_sha = os.environ.get("SHORT_SHA")
         return Response(
             data={
                 "program_version": str(__version__),
-                "web_version": str(__version__),
+                "web_version": f"web {_short_sha if _short_sha else str(__version__)}",
             }
         )
 

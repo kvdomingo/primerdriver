@@ -18,7 +18,13 @@ RUN pip install --no-cache-dir -r /tmp/requirements.dev.txt
 WORKDIR /primerdriver
 
 ENTRYPOINT python manage.py migrate && \
-            gunicorn primerx.wsgi -b 0.0.0.0:5000 --workers 2 --threads 4 --log-file - --capture-output --reload
+            SHORT_SHA=$(git show --format="%h" --no-patch) gunicorn primerx.wsgi \
+            -b 0.0.0.0:5000 \
+            --workers 2 \
+            --threads 4 \
+            --log-file - \
+            --capture-output \
+            --reload
 
 FROM node:16-alpine as build
 
@@ -40,6 +46,10 @@ COPY ./sdm/ ./sdm/
 COPY ./manage.py ./manage.py
 COPY ./runserver.sh ./runserver.sh
 COPY --from=build /web/build ./web/app/
+
+ARG SHORT_SHA=$SHORT_SHA
+
+ENV SHORT_SHA $SHORT_SHA
 
 ENTRYPOINT python manage.py collectstatic --noinput \
             python manage.py migrate \
