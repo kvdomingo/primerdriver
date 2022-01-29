@@ -15,29 +15,16 @@ COPY requirements.txt /tmp/requirements.txt
 
 RUN pip install --no-cache-dir -r /tmp/requirements.dev.txt
 
-RUN sed -i "s/'_headers'/'headers'/" /usr/local/lib/python3.9/site-packages/revproxy/utils.py
-RUN sed -i "s/'_headers'/'headers'/" /usr/local/lib/python3.9/site-packages/revproxy/response.py
-
 WORKDIR /primerdriver
 
-ENTRYPOINT python manage.py migrate \
-    && SHORT_SHA=$(git show --format="%h" --no-patch) gunicorn primerx.wsgi -b 0.0.0.0:$PORT --log-file - --reload
-
-FROM base as make-linux
-
-RUN apt-get update
-RUN apt-get install upx-ucl libgfortran-10-dev libquadmath0 -y
-
-ENV PYTHONDONTWRITEBYTECODE 1
-
-COPY requirements.dev.txt /tmp/requirements.dev.txt
-COPY requirements.txt /tmp/requirements.txt
-
-RUN pip install --no-cache-dir -r /tmp/requirements.dev.txt
-
-WORKDIR /primerdriver
-
-ENTRYPOINT [ "sh", "build.sh" ]
+ENTRYPOINT python manage.py migrate && \
+            SHORT_SHA=$(git show --format="%h" --no-patch) gunicorn primerx.wsgi \
+            -b 0.0.0.0:5000 \
+            --workers 2 \
+            --threads 4 \
+            --log-file - \
+            --capture-output \
+            --reload
 
 FROM node:16-alpine as build
 
@@ -57,11 +44,12 @@ COPY ./primerdriver/ ./primerdriver/
 COPY ./primerx/ ./primerx/
 COPY ./sdm/ ./sdm/
 COPY ./manage.py ./manage.py
-COPY ./runserver.sh ./runserver.sh
 COPY --from=build /web/build ./web/app/
 
 ARG SHORT_SHA=$SHORT_SHA
 
 ENV SHORT_SHA $SHORT_SHA
 
-ENTRYPOINT [ "sh", "runserver.sh" ]
+ENTRYPOINT python manage.py collectstatic --noinput && \
+            python manage.py migrate && \
+            gunicorn primerx.wsgi -b 0.0.0.0:$PORT --workers 1 --threads 2 --log-file -

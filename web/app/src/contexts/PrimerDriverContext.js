@@ -3,6 +3,7 @@ import { createContext, useReducer, useContext } from "react";
 let PrimerDriverContext = createContext();
 
 let initialState = {
+  loadedResultsFromModule: false,
   results: {
     loaded: false,
     data: [],
@@ -12,6 +13,12 @@ let initialState = {
 
 let reducer = (state, action) => {
   switch (action.type) {
+    case "updateLoadedResults": {
+      return {
+        ...state,
+        loadedResultsFromModule: action.payload,
+      };
+    }
     case "updateResults": {
       return {
         ...state,

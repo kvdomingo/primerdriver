@@ -1,0 +1,42 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - docker compose up -d --build --remove-orphans
+
+  logs:
+    cmds:
+      - docker compose logs --follow
+
+  make-builder:
+    cmds:
+      - docker build -t kvdomingo/primerdriver-makelinux:latest -f Dockerfile.build .
+
+  publish-builder:
+    cmds:
+        - docker push kvdomingo/primerdriver-makelinux:latest
+
+  build-linux:
+    cmds:
+      - docker run -v "$(pwd)":/primerdriver --rm --name primerdriver-makelinux kvdomingo/primerdriver-makelinux:latest
+
+  build:
+    cmds:
+      - pyinstaller --clean -F --name primerdriver setup.py
+
+  shutdown:
+    cmds:
+      - docker compose stop
+
+  restart:
+    cmds:
+      - docker compose restart
+
+  restart-proxy:
+    cmds:
+      - docker compose restart proxy
+
+  clean:
+    cmds:
+      - docker compose down -v --remove-orphans

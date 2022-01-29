@@ -7,6 +7,7 @@ import Characterize from "./menu/Characterize";
 import Dna from "./menu/DnaView";
 import Protein from "./menu/ProteinView";
 import Results from "./menu/Result";
+import ErrorBoundary from "../utils/ErrorBoundary";
 
 const styles = {
   appContainer: {
@@ -40,7 +41,14 @@ function Station() {
               <Route path="/characterize" render={() => <Characterize key={key} handleReset={handleReset} />} />
               <Route path="/dna" render={() => <Dna key={key} handleReset={handleReset} />} />
               <Route path="/protein" render={() => <Protein key={key} handleReset={handleReset} />} />
-              <Route path="/results" component={Results} />
+              <Route
+                path="/results"
+                render={() => (
+                  <ErrorBoundary>
+                    <Results />
+                  </ErrorBoundary>
+                )}
+              />
             </Switch>
           </Suspense>
         </Router>

@@ -7,8 +7,6 @@ services:
       target: dev
     image: kvdomingo/primerdriver-api:latest
     env_file: .env
-    ports:
-      - ${PORT}:${PORT}
     volumes:
       - .:/primerdriver
 
@@ -21,10 +19,16 @@ services:
     volumes:
       - ./web:/web
 
-  make-linux:
-    build:
-      context: .
-      target: make-linux
-    image: kvdomingo/primerdriver-makelinux:latest
+  proxy:
+    image: nginx:latest
+    ports:
+      - 8000:8000
+    command:
+      - nginx
+      - "-g"
+      - daemon off;
     volumes:
-      - .:/primerdriver
+      - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - apiserver
+    restart: unless-stopped
