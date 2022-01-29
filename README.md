@@ -70,10 +70,10 @@ local server in your browser at http://localhost:8000.
 ### Building from source
 Run the script:
 ```shell
-# Windows
-task build-windows
+# Build for Windows on a Windows machine / for Linux on a Linux machine 
+task build
 
-# Linux
+# Build for Linux on a Windows machine with Docker
 task build-linux
 ```
 

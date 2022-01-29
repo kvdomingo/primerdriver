@@ -13,11 +13,15 @@ tasks:
     cmds:
       - docker build -t kvdomingo/primerdriver-makelinux:latest -f Dockerfile.build .
 
+  publish-builder:
+    cmds:
+        - docker push kvdomingo/primerdriver-makelinux:latest
+
   build-linux:
     cmds:
-      - docker run -v .:/primerdriver --rm kvdomingo/primerdriver-makelinux:latest
+      - docker run -v "$(pwd)":/primerdriver --rm --name primerdriver-makelinux kvdomingo/primerdriver-makelinux:latest
 
-  build-windows:
+  build:
     cmds:
       - pyinstaller --clean -F --name primerdriver setup.py
 
