@@ -39,9 +39,10 @@ You may also email Nomer or Kenneth, depending on the nature of the issue.
 ## Developing locally
 
 ### Prerequisites
-- Python 3.9 or above
-- Node.js LTS 14 or above
-- Docker
+- [Python](https://www.python.org/downloads/) 3.9 or above
+- [Node.js](https://nodejs.org/en/download/) LTS 14 or above
+- [Docker](https://www.docker.com/get-started)
+- [Task](https://taskfile.dev/#/installation)
 
 ### Installing
 A step by step series of examples that tell you how to get a 
@@ -57,7 +58,10 @@ pip install -r requirements.dev.txt
 
 Setup the Docker containers:
 ```shell
-docker compose up --build
+task
+
+# To see log stream
+task logs
 ```
 
 Wait a few minutes for all the containers to start, then access the 
@@ -66,7 +70,11 @@ local server in your browser at http://localhost:8000.
 ### Building from source
 Run the script:
 ```shell
-./build.sh
+# Windows
+task build-windows
+
+# Linux
+task build-linux
 ```
 
 ### Deployment

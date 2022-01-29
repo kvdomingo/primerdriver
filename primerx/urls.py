@@ -8,9 +8,5 @@ urlpatterns = [
     path("api/", include("sdm.urls")),
 ]
 
-if settings.PYTHON_ENV == "development":
-    from revproxy.views import ProxyView
-
-    urlpatterns.append(re_path(r"^(?P<path>.*)$", ProxyView.as_view(upstream="http://frontend:3000")))
-else:
+if settings.PYTHON_ENV == "production":
     urlpatterns.append(re_path(r"^.*/?$", lambda req: render(req, "index.html")))

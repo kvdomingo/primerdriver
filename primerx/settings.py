@@ -39,9 +39,6 @@ INSTALLED_APPS = [
     "rest_framework",
 ]
 
-if PYTHON_ENV == "development":
-    INSTALLED_APPS.append("revproxy")
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
