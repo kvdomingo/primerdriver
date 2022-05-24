@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext";
 import { Form, DnaSequenceInput, MutationType, MutationSelector, AdvancedSettings } from "../form";
 import LoadingScreen from "../shared/LoadingScreen";
@@ -29,7 +29,7 @@ function DnaView(props) {
   const [primerMode, setPrimerMode] = useState("complementary");
   const [expressionSystem, setExpressionSystem] = useState("Homo sapiens");
   const { PDDispatch } = usePrimerDriverContext();
-  const history = useHistory();
+  const navigate = useNavigate();
   const mode = "DNA";
 
   useEffect(() => {
@@ -87,7 +87,7 @@ function DnaView(props) {
             loaded: true,
           },
         });
-        history.push("/results");
+        navigate("/results");
       });
   }
 

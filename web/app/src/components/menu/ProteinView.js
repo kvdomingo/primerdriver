@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext";
 import LoadingScreen from "../shared/LoadingScreen";
 import { Form, ProteinSequenceInput, MutationSelector, MutationType, AdvancedSettings } from "../form";
@@ -30,7 +30,7 @@ function ProteinView(props) {
   const [expressionSystem, setExpressionSystem] = useState("Homo sapiens");
   const [expressionList, setExpressionList] = useState([]);
   const { PDDispatch } = usePrimerDriverContext();
-  const history = useHistory();
+  const navigate = useNavigate();
   const mode = "PRO";
 
   useEffect(() => {
@@ -117,7 +117,7 @@ function ProteinView(props) {
             loaded: true,
           },
         });
-        history.push("/results");
+        navigate("/results");
       });
   }
 

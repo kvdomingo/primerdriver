@@ -1,19 +1,25 @@
 from json import load
-from warnings import warn
+from primerx.log import logger
+from .exceptions import PrimerCheckError
 
 
+@logger.catch
 class PrimerChecks:
-    def __init__(self, sequence):
+    def __init__(self, sequence, no_interaction=False):
         self.sequence = sequence
+        self.no_interaction = no_interaction
 
     def check_valid_base(self):
         unique_bases = set(list(self.sequence.upper()))
         true_bases = {"A", "C", "T", "G"}
         invalid_bases = unique_bases.difference(true_bases)
         if len(invalid_bases) != 0:
-            warn("Sequence contains invalid bases. Automatically removing...", Warning)
-            for b in invalid_bases:
-                self.sequence = self.sequence.upper().replace(b, "")
+            if self.no_interaction:
+                logger.warning("Sequence contains invalid bases. Automatically removing...")
+                for b in invalid_bases:
+                    self.sequence = self.sequence.upper().replace(b, "")
+            else:
+                raise PrimerCheckError(f"Sequence contains invalid bases: {', '.join(list(invalid_bases))}")
         return self.sequence
 
     def check_valid_protein(self):
@@ -22,24 +28,45 @@ class PrimerChecks:
             true_prots = load(f)
         invalid_prots = unique_prots.difference(true_prots.keys())
         if len(invalid_prots) != 0:
-            warn("Sequence contains invalid proteins. Automatically removing...", Warning)
-            for b in invalid_prots:
-                self.sequence = self.sequence.upper().replace(b, "")
+            if self.no_interaction:
+                logger.warning("Sequence contains invalid proteins. Automatically removing...")
+                for b in invalid_prots:
+                    self.sequence = self.sequence.upper().replace(b, "")
+            else:
+                raise PrimerCheckError(f"Sequence contains invalid proteins: {', '.join(list(invalid_prots))}")
         return self.sequence
 
     def check_sequence_length(self):
         if len(self.sequence) < 40:
-            warn("DNA sequence is too short", Warning)
+            error_message = "DNA sequence is too short"
+            if self.no_interaction:
+                logger.warning(error_message)
+            else:
+                raise PrimerCheckError(error_message)
         elif len(self.sequence) > 8000:
-            warn("DNA sequence is too long", Warning)
+            error_message = "DNA sequence is too long"
+            if self.no_interaction:
+                logger.warning(error_message)
+            else:
+                raise PrimerCheckError(error_message)
+        else:
+            pass
 
     def check_gc_content(self):
         seq = list(self.sequence)
         gc = (seq.count("C") + seq.count("G")) / len(seq)
         if gc < 0.40:
-            warn("GC content is less than 40%", Warning)
+            error_message = "GC content is less than 40%"
+            if self.no_interaction:
+                logger.warning(error_message)
+            else:
+                raise PrimerCheckError(error_message)
         elif gc > 0.60:
-            warn("GC content is greater than 60%", Warning)
+            error_message = "GC content is greater than 60%"
+            if self.no_interaction:
+                logger.warning(error_message)
+            else:
+                raise PrimerCheckError(error_message)
 
 
 class SequenceChecks:

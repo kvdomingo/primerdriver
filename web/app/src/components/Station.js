@@ -1,5 +1,5 @@
 import { Suspense, useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { MDBContainer as Container, MDBJumbotron as Jumbotron } from "mdbreact";
 import Loading from "./shared/LoadingScreen";
 import Menu from "./menu/Menu";
@@ -36,20 +36,20 @@ function Station() {
       >
         <Router>
           <Suspense fallback={<Loading />}>
-            <Switch>
-              <Route exact path="/" component={Menu} />
-              <Route path="/characterize" render={() => <Characterize key={key} handleReset={handleReset} />} />
-              <Route path="/dna" render={() => <Dna key={key} handleReset={handleReset} />} />
-              <Route path="/protein" render={() => <Protein key={key} handleReset={handleReset} />} />
+            <Routes>
+              <Route exact path="/" element={<Menu />} />
+              <Route path="/characterize" element={<Characterize key={key} handleReset={handleReset} />} />
+              <Route path="/dna" element={<Dna key={key} handleReset={handleReset} />} />
+              <Route path="/protein" element={<Protein key={key} handleReset={handleReset} />} />
               <Route
                 path="/results"
-                render={() => (
+                element={
                   <ErrorBoundary>
                     <Results />
                   </ErrorBoundary>
-                )}
+                }
               />
-            </Switch>
+            </Routes>
           </Suspense>
         </Router>
       </Jumbotron>

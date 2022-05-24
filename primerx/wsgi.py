@@ -1,15 +1,11 @@
-"""
-WSGI config for primerx project.
+from .app import app as application
+from .log import logger
 
-It exposes the WSGI callable as a module-level variable named ``application``.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
-"""
+@logger.catch
+def main():
+    application.run()
 
-import os
-from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "primerx.settings")
-
-application = get_wsgi_application()
+if __name__ == "__main__":
+    main()

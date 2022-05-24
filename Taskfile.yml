@@ -1,13 +1,18 @@
 version: '3'
 
+env:
+  NAME: primerdriver-dev
+  SHORT_SHA:
+    sh: git show --format="%h" --no-patch
+
 tasks:
   default:
     cmds:
-      - docker compose up -d --build --remove-orphans
+      - docker compose -p $NAME up -d --build --remove-orphans {{.CLI_ARGS}}
 
   logs:
     cmds:
-      - docker compose logs --follow
+      - docker compose -p $NAME logs --follow {{.CLI_ARGS}}
 
   make-builder:
     cmds:
@@ -27,16 +32,16 @@ tasks:
 
   shutdown:
     cmds:
-      - docker compose stop
+      - docker compose -p $NAME stop {{.CLI_ARGS}}
 
   restart:
     cmds:
-      - docker compose restart
+      - docker compose -p $NAME restart {{.CLI_ARGS}}
 
-  restart-proxy:
+  reload-proxy:
     cmds:
-      - docker compose restart proxy
+      - docker compose -p $NAME exec -- proxy nginx -s reload
 
   clean:
     cmds:
-      - docker compose down -v --remove-orphans
+      - docker compose -p $NAME down -v --remove-orphans

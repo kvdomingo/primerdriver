@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { MDBRow as Row, MDBCol as Col } from "mdbreact";
 import LoadingScreen from "../shared/LoadingScreen";
@@ -16,7 +16,7 @@ function Characterize(props) {
   const [sequenceLength, setSequenceLength] = useState(0);
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { PDDispatch } = usePrimerDriverContext();
   const mode = "CHAR";
 
@@ -63,7 +63,7 @@ function Characterize(props) {
             loaded: true,
           },
         });
-        history.push("/results");
+        navigate("/results");
       });
   }
 
