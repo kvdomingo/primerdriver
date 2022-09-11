@@ -1,13 +1,15 @@
-from loguru import logger
-from pandas import concat
 from datetime import datetime
+from os import PathLike
+
 from Bio import SeqIO
-from Bio.Seq import Seq
 from Bio.Alphabet import IUPAC
+from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
+from loguru import logger
+from pandas import DataFrame, concat
 
 
-def interactive_saver(df):
+def interactive_saver(df: DataFrame) -> None:
     save = input("\nSave? [y/n] ")
     if save.upper() == "Y":
         while True:
@@ -47,15 +49,13 @@ def interactive_saver(df):
                 logger.error("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
 
 
-def single_command_saver(res, df, savename):
+def single_command_saver(df: DataFrame, savename: str | PathLike):
     if savename.endswith(".csv"):
         df = concat([*df])
         df.to_csv(savename)
-        return 0
     elif savename.endswith(".html"):
         df = concat([*df])
         df.to_html(savename)
-        return 0
     elif savename.endswith(".fasta"):
         seq_list = []
         for i, seq in enumerate(df):
@@ -79,5 +79,4 @@ def single_command_saver(res, df, savename):
         df = concat([*df])
         df.to_json(savename, indent=4)
     else:
-        logger.error("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
-        return 1
+        raise ValueError("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")

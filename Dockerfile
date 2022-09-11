@@ -1,55 +1,51 @@
-FROM python:3.9.7-bullseye as base
+FROM python:3.10-bullseye as base
 
 ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV POETRY_VERSION 1.1.12
 
-COPY requirements.txt /tmp/requirements.txt
-
-RUN python -m pip install -U pip setuptools
-
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN pip install poetry==$POETRY_VERSION
 
 FROM base as dev
 
-COPY requirements.dev.txt /tmp/requirements.dev.txt
-COPY requirements.txt /tmp/requirements.txt
-
-RUN pip install --no-cache-dir -r /tmp/requirements.dev.txt
-
 WORKDIR /primerdriver
 
-ENTRYPOINT python manage.py migrate && \
-            SHORT_SHA=$(git show --format="%h" --no-patch) gunicorn primerx.wsgi \
-            -b 0.0.0.0:5000 \
-            --workers 2 \
-            --threads 4 \
-            --log-file - \
-            --capture-output \
-            --reload
+COPY pyproject.toml poetry.lock ./
 
-FROM node:16-alpine as build
+RUN poetry install
+
+ENTRYPOINT ["poetry", "run", "flask", "run", "-h", "0.0.0.0", "-p", "5000", "--reload"]
+
+FROM node:16-alpine as web_build
 
 WORKDIR /web
 
-COPY ./web/app/ ./
+COPY ./web/app/public ./public
+COPY ./web/app/src ./src
+COPY ./web/app/package.json ./web/app/yarn.lock ./
 
-RUN yarn install --prod
-
-RUN yarn build
+RUN yarn install && yarn build
 
 FROM base as prod
+
+ARG SHORT_SHA=$SHORT_SHA
+ENV SHORT_SHA $SHORT_SHA
+
+WORKDIR /tmp
+
+COPY pyproject.toml poetry.lock ./
+
+RUN poetry export -f requirements.txt | pip install --no-cache-dir -r /dev/stdin
 
 WORKDIR /primerdriver
 
 COPY ./primerdriver/ ./primerdriver/
 COPY ./primerx/ ./primerx/
 COPY ./sdm/ ./sdm/
-COPY ./manage.py ./manage.py
-COPY --from=build /web/build ./web/app/
+COPY ./*.py ./
+COPY ./*.sh ./
+COPY --from=web_build /web/build ./web/app/
 
-ARG SHORT_SHA=$SHORT_SHA
+EXPOSE $PORT
 
-ENV SHORT_SHA $SHORT_SHA
-
-ENTRYPOINT python manage.py collectstatic --noinput && \
-            python manage.py migrate && \
-            gunicorn primerx.wsgi -b 0.0.0.0:$PORT --workers 1 --threads 2 --log-file -
+ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:$PORT", "-c", "./gunicorn.conf.py" ]

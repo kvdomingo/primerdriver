@@ -1,5 +1,5 @@
+import { MDBCol as Col, MDBIcon as Icon, MDBRow as Row, MDBTooltip as Tooltip } from "mdbreact";
 import PropTypes from "prop-types";
-import { MDBIcon as Icon, MDBTooltip as Tooltip, MDBRow as Row, MDBCol as Col } from "mdbreact";
 
 function DnaSequenceInput(props) {
   return (

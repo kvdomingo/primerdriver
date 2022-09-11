@@ -4,19 +4,19 @@ body {
 
 @media (min-width: 576px) {
   html {
-    font-size: 0.9rem
+    font-size: 0.9rem;
   }
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 0.95rem
+    font-size: 0.95rem;
   }
 }
 
 @media (min-width: 992px) {
   html {
-    font-size: 1rem
+    font-size: 1rem;
   }
 }
 
@@ -30,11 +30,13 @@ body {
   top: 0;
 }
 
-.fade-appear, .fade-enter {
+.fade-appear,
+.fade-enter {
   opacity: 0;
 }
 
-.fade-appear-active, .fade-enter-active {
+.fade-appear-active,
+.fade-enter-active {
   opacity: 1;
   transition: opacity 300ms ease-in-out;
 }
@@ -52,11 +54,13 @@ body {
   opacity: 0;
 }
 
-.slide-enter, .slide-appear {
+.slide-enter,
+.slide-appear {
   transform: translate(100%);
 }
 
-.slide-enter-active, .slide-appear-active {
+.slide-enter-active,
+.slide-appear-active {
   transform: translate(0%);
   transition: transform 300ms ease-in-out;
 }

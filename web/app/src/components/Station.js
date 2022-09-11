@@ -1,13 +1,14 @@
-import { Suspense, useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { MDBContainer as Container, MDBJumbotron as Jumbotron } from "mdbreact";
-import Loading from "./shared/LoadingScreen";
-import Menu from "./menu/Menu";
+import { Suspense, useState } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import ErrorBoundary from "../utils/ErrorBoundary";
+import GAUtil from "../utils/GAUtil";
 import Characterize from "./menu/Characterize";
 import Dna from "./menu/DnaView";
+import Menu from "./menu/Menu";
 import Protein from "./menu/ProteinView";
 import Results from "./menu/Result";
-import ErrorBoundary from "../utils/ErrorBoundary";
+import Loading from "./shared/LoadingScreen";
 
 const styles = {
   appContainer: {
@@ -35,21 +36,22 @@ function Station() {
         style={styles.appContainer}
       >
         <Router>
+          <GAUtil />
           <Suspense fallback={<Loading />}>
-            <Switch>
-              <Route exact path="/" component={Menu} />
-              <Route path="/characterize" render={() => <Characterize key={key} handleReset={handleReset} />} />
-              <Route path="/dna" render={() => <Dna key={key} handleReset={handleReset} />} />
-              <Route path="/protein" render={() => <Protein key={key} handleReset={handleReset} />} />
+            <Routes>
+              <Route exact path="/" element={<Menu />} />
+              <Route path="/characterize" element={<Characterize key={key} handleReset={handleReset} />} />
+              <Route path="/dna" element={<Dna key={key} handleReset={handleReset} />} />
+              <Route path="/protein" element={<Protein key={key} handleReset={handleReset} />} />
               <Route
                 path="/results"
-                render={() => (
+                element={
                   <ErrorBoundary>
                     <Results />
                   </ErrorBoundary>
-                )}
+                }
               />
-            </Switch>
+            </Routes>
           </Suspense>
         </Router>
       </Jumbotron>

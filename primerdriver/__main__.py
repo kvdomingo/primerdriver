@@ -1,7 +1,12 @@
 import sys
 from argparse import ArgumentParser
-from .input_handler import *
-from .output_handler import *
+
+from primerx.log import logger
+
+from .input_handler import interactive_handler, single_command_handler
+from .output_handler import interactive_saver, single_command_saver
+from .primer_design import MutationType, OperationMode, PrimerDesign
+from .version import __version__
 
 
 @logger.catch
@@ -10,11 +15,11 @@ def main():
         f"""
         ---.   .------------.
         ||||\\ /||||||||||||||\\    
-      Primer · Driver
+       Primer · Driver
 \\|||||||||||/ \\|||||||              
  `---------`   `------
      
-PrimerDriver v{version}
+PrimerDriver v{__version__}
 (c) 2020 Kenneth V. Domingo & Numeriano Amer E. Gutierrez
     """
     )
@@ -23,11 +28,16 @@ PrimerDriver v{version}
     parser.add_argument(
         "-M",
         "--mode",
-        help="Choose between 'dna' (DNA), 'pro' (protein), or 'char' (primer characterization) mode",
+        help="Operation mode. Choose between 'dna' (DNA), 'pro' (protein), or 'char' (primer characterization) mode",
         type=str,
     )
     parser.add_argument("-s", "--sequence", help="Template DNA sequence", type=str)
-    parser.add_argument("-m", "--mutation-type", help="Mutation type", type=str)
+    parser.add_argument(
+        "-m",
+        "--mutation-type",
+        help="Mutation type. Choose between 'S' (substitution), 'I' (insertion), or 'D' (deletion)",
+        type=str,
+    )
     parser.add_argument("-t", "--target", help="Target base", type=str)
     parser.add_argument("-r", "--replacement", help="Replacement for target base", type=str)
     parser.add_argument("-p", "--position", help="Target base position", type=int)
@@ -46,8 +56,13 @@ PrimerDriver v{version}
         args_dict = single_command_handler(args)
 
     res = PrimerDesign(**args_dict)
-    if args_dict["mode"].upper() == "CHAR":
-        res.characterize_primer(args_dict["sequence"], args_dict["mutation_type"], [1], args_dict["mismatched_bases"])
+    if OperationMode(args_dict["mode"].upper()) == OperationMode.CHARACTERIZATION:
+        res.characterize_primer(
+            sequence=args_dict["sequence"],
+            mutation_type=MutationType(args_dict["mutation_type"].upper()),
+            mismatched_bases=args_dict["mismatched_bases"],
+            replacement=None,
+        )
     else:
         res.main()
 
@@ -55,9 +70,7 @@ PrimerDriver v{version}
         interactive_saver(res.df)
     else:
         if res.savename is not None:
-            single_command_saver(res, res.df, res.savename)
-
-    return 0
+            single_command_saver(res.df, res.savename)
 
 
 if __name__ == "__main__":

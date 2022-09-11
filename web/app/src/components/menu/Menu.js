@@ -1,8 +1,8 @@
+import { Image } from "cloudinary-react";
+import { MDBCard as Card, MDBCardBody as CardBody, MDBCol as Col, MDBRow as Row } from "mdbreact";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Image } from "cloudinary-react";
-import { MDBRow as Row, MDBCol as Col, MDBCard as Card, MDBCardBody as CardBody } from "mdbreact";
 import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext";
 
 const menu_data = [

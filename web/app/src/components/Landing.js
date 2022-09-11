@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { Image } from "cloudinary-react";
 import { MDBContainer as Container } from "mdbreact";
-import api from "../utils/Endpoints";
+import { useEffect, useState } from "react";
+import api from "../api";
 
 function Landing() {
   const [programVersion, setProgramVersion] = useState("");

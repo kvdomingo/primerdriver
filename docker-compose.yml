@@ -1,7 +1,11 @@
 version: "3.8"
 
+networks:
+  gateway:
+    external: true
+
 services:
-  apiserver:
+  backend:
     build:
       context: .
       target: dev
@@ -15,20 +19,29 @@ services:
       context: ./web/app
       target: dev
     image: kvdomingo/primerdriver-app:latest
-    env_file: ./web/app/.env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - TSC_WATCHFILE=UseFsEventsWithFallbackDynamicPolling
+      - WDS_SOCKET_PORT=0
     volumes:
       - ./web:/web
 
   proxy:
-    image: nginx:latest
-    ports:
-      - 8000:8000
-    command:
-      - nginx
-      - "-g"
-      - daemon off;
+    image: bitnami/nginx:1.21.6
+    environment:
+      - NGINX_HTTP_PORT_NUMBER=8000
     volumes:
-      - ./proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - apiserver
+      - ./proxy/nginx.conf:/opt/bitnami/nginx/conf/server_blocks/primerdriver.conf:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.primerdriver.rule=Host(`primerdriver.localhost`)"
+      - "traefik.http.routers.primerdriver.entrypoints=http"
+      - "traefik.docker.network=gateway"
+      - "traefik.http.services.primerdriver.loadbalancer.server.port=8000"
     restart: unless-stopped
+    networks:
+      - default
+      - gateway

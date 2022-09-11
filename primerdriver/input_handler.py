@@ -1,6 +1,7 @@
-from .primer_design import *
-from .version import __version__
 from Bio import SeqIO
+
+from .checks import PrimerChecks
+from .version import __version__
 
 version = str(__version__)
 
