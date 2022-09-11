@@ -1,7 +1,7 @@
 version: "3.8"
 
 networks:
-  dev:
+  gateway:
     external: true
 
 services:
@@ -38,10 +38,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.primerdriver.rule=Host(`primerdriver.localhost`)"
-      - "traefik.http.routers.primerdriver.entrypoints=web"
-      - "traefik.docker.network=dev"
+      - "traefik.http.routers.primerdriver.entrypoints=http"
+      - "traefik.docker.network=gateway"
       - "traefik.http.services.primerdriver.loadbalancer.server.port=8000"
     restart: unless-stopped
     networks:
       - default
-      - dev
+      - gateway

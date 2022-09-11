@@ -1,14 +1,17 @@
-import os
 import json
-from flask import Flask, request, Response, send_from_directory, jsonify
+import os
 from http import HTTPStatus as status
+
+from flask import Flask, Response, jsonify, request, send_from_directory
 from pandas import concat
+
 from primerdriver import __version__
 from primerdriver.checks import PrimerChecks
 from primerdriver.exceptions import PrimerCheckError
 from primerdriver.primer_design import PrimerDesign
+
 from .cache import cache
-from .config import BASE_DIR, SHORT_SHA, PYTHON_ENV
+from .config import BASE_DIR, PYTHON_ENV, SHORT_SHA
 from .log import logger
 from .tasks import on_ready
 

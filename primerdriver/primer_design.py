@@ -1,8 +1,10 @@
-from loguru import logger
 from json import loads
+
+from loguru import logger
+from numpy import array
 from pandas import DataFrame
 from tabulate import tabulate
-from numpy import array
+
 from .checks import *
 
 

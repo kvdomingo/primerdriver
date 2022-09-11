@@ -1,4 +1,5 @@
 from flask_caching import Cache
+
 from ..config import PYTHON_ENV
 
 cache = Cache(

@@ -1,6 +1,7 @@
 import io
 from contextlib import redirect_stdout
-from django.test import TestCase
+from unittest import TestCase
+
 from .primer_design import *
 
 

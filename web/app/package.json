@@ -20,7 +20,8 @@
     "web-vitals": "^2.1.0"
   },
   "devDependencies": {
-    "prettier": "^2.4.0",
+    "@trivago/prettier-plugin-sort-imports": "^3.3.0",
+    "prettier": "^2.7.1",
     "prop-types": "^15.7.2"
   },
   "scripts": {
@@ -50,6 +51,15 @@
   "prettier": {
     "arrowParens": "avoid",
     "bracketSpacing": true,
+    "importOrder": [
+      "react",
+      "react-dom",
+      "^react(.*)$",
+      "<THIRD_PARTY_MODULES>",
+      "^[./]"
+    ],
+    "importOrderSeparation": false,
+    "importOrderSortSpecifiers": true,
     "jsxSingleQuote": false,
     "printWidth": 120,
     "quoteProps": "consistent",

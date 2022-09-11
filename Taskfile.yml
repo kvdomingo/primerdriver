@@ -9,10 +9,15 @@ tasks:
   default:
     cmds:
       - docker compose -p $NAME up -d --build --remove-orphans {{.CLI_ARGS}}
+      - task logs
 
   logs:
     cmds:
       - docker compose -p $NAME logs --follow {{.CLI_ARGS}}
+
+  test:
+    cmds:
+      - poetry run python -m unittest
 
   make-builder:
     cmds:

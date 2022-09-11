@@ -20,14 +20,11 @@ FROM node:16-alpine as web_build
 
 WORKDIR /web
 
-COPY ./web/app/package.json ./web/app/yarn.lock ./
-
-RUN yarn
-
 COPY ./web/app/public ./public
 COPY ./web/app/src ./src
+COPY ./web/app/package.json ./web/app/yarn.lock ./
 
-RUN yarn build
+RUN yarn install && yarn build
 
 FROM base as prod
 
@@ -51,4 +48,4 @@ COPY --from=web_build /web/build ./web/app/
 
 EXPOSE $PORT
 
-ENTRYPOINT ["gunicorn", "primerx.wsgi", "-b", "0.0.0.0:$PORT", "-c", "./gunicorn.conf.py"]
+ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:$PORT", "-c", "./gunicorn.conf.py" ]

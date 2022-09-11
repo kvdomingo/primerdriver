@@ -1,10 +1,11 @@
+from datetime import datetime
+
+from Bio import SeqIO
+from Bio.Alphabet import IUPAC
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
 from loguru import logger
 from pandas import concat
-from datetime import datetime
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.Alphabet import IUPAC
-from Bio.SeqRecord import SeqRecord
 
 
 def interactive_saver(df):
