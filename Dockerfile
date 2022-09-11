@@ -41,7 +41,6 @@ WORKDIR /primerdriver
 
 COPY ./primerdriver/ ./primerdriver/
 COPY ./primerx/ ./primerx/
-COPY ./sdm/ ./sdm/
 COPY ./*.py ./
 COPY ./*.sh ./
 COPY --from=web_build /web/build ./web/app/
