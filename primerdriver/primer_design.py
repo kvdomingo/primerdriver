@@ -11,7 +11,7 @@ from primerx.log import logger
 from .checks import SequenceChecks
 
 
-class ModeEnum(Enum):
+class OperationMode(Enum):
     CHARACTERIZATION = "CHAR"
     DNA = "DNA"
     PROTEIN = "PRO"
@@ -52,7 +52,7 @@ class PrimerDesign:
             else:
                 config_file = loads(config_file)
         self.settings: dict[str, Any] = config_file
-        self.mode = ModeEnum(mode.upper())
+        self.mode = OperationMode(mode.upper())
         self.sequence: str = sequence.upper()
         self.mutation_type = MutationType(mutation_type[0].upper())
         self.mismatched_bases: int | None = int(mismatched_bases) if mismatched_bases is not None else None
@@ -120,16 +120,17 @@ class PrimerDesign:
 
     def characterize_primer(
         self,
+        *,
         sequence: str | list[str],
         mutation_type: MutationType,
-        replacement: str | list[str],
+        replacement: str | list[str] | None,
         mismatched_bases: int,
         index: int = None,
         reverse: list[str] = None,
     ) -> DataFrame:
         mol_weight = self.lut["mol_weight"]
         seq = list(sequence)
-        if self.primer_mode == PrimerMode.COMPLEMENTARY or self.mode == ModeEnum.CHARACTERIZATION:
+        if self.primer_mode == PrimerMode.COMPLEMENTARY or self.mode == OperationMode.CHARACTERIZATION:
             rev = "".join(self.get_reverse_complement(sequence))
         else:
             rev = reverse
@@ -337,10 +338,10 @@ class PrimerDesign:
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
-                    if self.mode == ModeEnum.DNA:
+                    if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[start_position + sequence_length - 1 : start_position + sequence_length + f3]
-                    elif self.mode == ModeEnum.PROTEIN:
+                    elif self.mode == OperationMode.PROTEIN:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[
                             start_position + sequence_length * 3 - 1 : start_position + sequence_length + f3
@@ -369,7 +370,7 @@ class PrimerDesign:
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
-                    if self.mode == ModeEnum.DNA:
+                    if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[start_position + sequence_length - 1 : start_position + sequence_length + f3]
                     else:
@@ -393,9 +394,9 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
-            if self.mode == ModeEnum.DNA:
+            if self.mode == OperationMode.DNA:
                 sequence = sequence[: start_position - 1] + sequence[start_position + sequence_length - 1 :]
-            elif self.mode == ModeEnum.PROTEIN:
+            elif self.mode == OperationMode.PROTEIN:
                 sequence = sequence[: start_position - 1] + sequence[start_position + sequence_length * 3 - 1 :]
             for primers in valid_primers:
                 start = sequence.find(primers)
@@ -608,9 +609,9 @@ class PrimerDesign:
         return result
 
     def main(self):
-        if self.mode == ModeEnum.DNA:
+        if self.mode == OperationMode.DNA:
             df = self.dna_based()
-        elif self.mode == ModeEnum.PROTEIN:
+        elif self.mode == OperationMode.PROTEIN:
             df = self.protein_based()
         else:
             df = self.characterize_primer(self.sequence, self.mutation_type, self.replacement, self.mismatched_bases)
