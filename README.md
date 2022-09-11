@@ -39,8 +39,6 @@ You may also email Nomer or Kenneth, depending on the nature of the issue.
 ## Developing locally
 
 ### Prerequisites
-- [Python](https://www.python.org/downloads/) 3.9 or above
-- [Node.js](https://nodejs.org/en/download/) LTS 14 or above
 - [Docker](https://www.docker.com/get-started)
 - [Task](https://taskfile.dev/#/installation)
 
@@ -51,7 +49,7 @@ development environment running
 1. Clone and extract the repo.
 2. Create a virtual environment and install backend dependencies:
 ```shell
-pip install -r requirements.dev.txt
+poetry install
 ```
 
 ### Running local server
@@ -59,9 +57,6 @@ pip install -r requirements.dev.txt
 Setup the Docker containers:
 ```shell
 task
-
-# To see log stream
-task logs
 ```
 
 Wait a few minutes for all the containers to start, then access the 
@@ -71,10 +66,7 @@ local server in your browser at http://localhost:8000.
 Run the script:
 ```shell
 # Build for Windows on a Windows machine / for Linux on a Linux machine 
-task build
-
-# Build for Linux on a Windows machine with Docker
-task build-linux
+task build-all
 ```
 
 ### Deployment

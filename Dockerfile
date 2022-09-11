@@ -45,6 +45,8 @@ COPY ./*.py ./
 COPY ./*.sh ./
 COPY --from=web_build /web/build ./web/app/
 
+RUN chmod +x ./docker-entrypoint.sh
+
 EXPOSE $PORT
 
-ENTRYPOINT [ "gunicorn", "-b", "0.0.0.0:$PORT", "-c", "./gunicorn.conf.py" ]
+ENTRYPOINT [ "./docker-entrypoint.sh" ]
