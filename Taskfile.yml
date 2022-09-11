@@ -21,11 +21,8 @@ tasks:
 
   make-builder:
     cmds:
-      - docker build -t kvdomingo/primerdriver-makelinux:latest -f Dockerfile.build .
-
-  publish-builder:
-    cmds:
-        - docker push kvdomingo/primerdriver-makelinux:latest
+      - docker build -t kvdomingo/primerdriver-makelinux:latest -f build.Dockerfile .
+      - docker push kvdomingo/primerdriver-makelinux:latest
 
   build-linux:
     cmds:
@@ -33,7 +30,12 @@ tasks:
 
   build:
     cmds:
-      - pyinstaller --clean -F --name primerdriver setup.py
+      - poetry run pyinstaller --clean -F --name primerdriver setup.py
+
+  build-all:
+    cmds:
+      - task build
+      - task build-linux
 
   shutdown:
     cmds:

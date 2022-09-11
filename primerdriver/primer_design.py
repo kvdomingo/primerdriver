@@ -90,7 +90,7 @@ class PrimerDesign:
         return [self.lut["complement"][b] for b in seq][::-1]
 
     @staticmethod
-    def is_gc_end(sequence: list[str]) -> bool:
+    def is_gc_end(sequence: str | list[str]) -> bool:
         sequence = "".join(sequence)
         return (sequence.startswith("G") or sequence.startswith("C")) and (
             sequence.endswith("G") or sequence.endswith("C")
@@ -98,7 +98,11 @@ class PrimerDesign:
 
     @staticmethod
     def calculate_melting_temperature(
-        seq: str | list[str], mutation_type: MutationType, replacement: list[str], gc_content: float, mismatch: float
+        seq: str | list[str],
+        mutation_type: MutationType,
+        replacement: str | list[str],
+        gc_content: float,
+        mismatch: float,
     ) -> float:
         gc_content = int(gc_content * 100)
         mismatch = int(mismatch * 100)
@@ -116,9 +120,9 @@ class PrimerDesign:
 
     def characterize_primer(
         self,
-        sequence: list[str],
+        sequence: str | list[str],
         mutation_type: MutationType,
-        replacement: list[str],
+        replacement: str | list[str],
         mismatched_bases: int,
         index: int = None,
         reverse: list[str] = None,
