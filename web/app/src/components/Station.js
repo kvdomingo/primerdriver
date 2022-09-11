@@ -1,13 +1,13 @@
-import { Suspense, useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { MDBContainer as Container, MDBJumbotron as Jumbotron } from "mdbreact";
-import Loading from "./shared/LoadingScreen";
-import Menu from "./menu/Menu";
+import { Suspense, useState } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import ErrorBoundary from "../utils/ErrorBoundary";
 import Characterize from "./menu/Characterize";
 import Dna from "./menu/DnaView";
+import Menu from "./menu/Menu";
 import Protein from "./menu/ProteinView";
 import Results from "./menu/Result";
-import ErrorBoundary from "../utils/ErrorBoundary";
+import Loading from "./shared/LoadingScreen";
 
 const styles = {
   appContainer: {

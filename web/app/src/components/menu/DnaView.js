@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import api from "../../api";
 import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext";
-import { Form, DnaSequenceInput, MutationType, MutationSelector, AdvancedSettings } from "../form";
+import { AdvancedSettings, DnaSequenceInput, Form, MutationSelector, MutationType } from "../form";
 import LoadingScreen from "../shared/LoadingScreen";
-import api from "../../utils/Endpoints";
+
+const BASES = ["A", "C", "G", "T"];
 
 function DnaView(props) {
   const [formData, setFormData] = useState({});
@@ -40,12 +42,11 @@ function DnaView(props) {
   }, [PDDispatch]);
 
   function validateSequence(sequence) {
-    sequence = sequence.toUpperCase().split("");
-    let filteredSequence = [];
-    sequence.forEach(char => {
-      if (["A", "G", "T", "C"].includes(char)) filteredSequence.push(char);
-    });
-    return filteredSequence.join("");
+    return sequence
+      .toUpperCase()
+      .split("")
+      .filter(char => BASES.includes(char))
+      .join("");
   }
 
   function handleChangeSequence(e) {

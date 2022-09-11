@@ -1,13 +1,13 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
 import {
   MDBCard as Card,
-  MDBCardHeader as CardHeader,
   MDBCardBody as CardBody,
-  MDBRow as Row,
+  MDBCardHeader as CardHeader,
   MDBCol as Col,
   MDBCollapse as Collapse,
+  MDBRow as Row,
 } from "mdbreact";
+import { useState } from "react";
+import PropTypes from "prop-types";
 
 function AdvancedSettings(props) {
   const [isOpen, setIsOpen] = useState(false);

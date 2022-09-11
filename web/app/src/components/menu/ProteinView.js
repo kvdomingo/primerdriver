@@ -1,10 +1,33 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext";
-import LoadingScreen from "../shared/LoadingScreen";
-import { Form, ProteinSequenceInput, MutationSelector, MutationType, AdvancedSettings } from "../form";
-import api from "../../utils/Endpoints";
 import PropTypes from "prop-types";
+import api from "../../api";
+import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext";
+import { AdvancedSettings, Form, MutationSelector, MutationType, ProteinSequenceInput } from "../form";
+import LoadingScreen from "../shared/LoadingScreen";
+
+const AMINO_ACIDS = [
+  "A",
+  "R",
+  "N",
+  "D",
+  "C",
+  "Q",
+  "E",
+  "G",
+  "H",
+  "I",
+  "L",
+  "K",
+  "M",
+  "F",
+  "P",
+  "S",
+  "T",
+  "W",
+  "Y",
+  "V",
+];
 
 function ProteinView(props) {
   const [formData, setFormData] = useState({});
@@ -46,36 +69,11 @@ function ProteinView(props) {
   }, [PDDispatch]);
 
   function validateSequence(sequence) {
-    sequence = sequence.toUpperCase().split("");
-    let aminoAcids = [
-      "A",
-      "R",
-      "N",
-      "D",
-      "B",
-      "C",
-      "E",
-      "Q",
-      "Z",
-      "G",
-      "H",
-      "I",
-      "L",
-      "K",
-      "M",
-      "F",
-      "P",
-      "S",
-      "T",
-      "W",
-      "Y",
-      "V",
-    ];
-    let filteredSequence = [];
-    sequence.forEach(char => {
-      if (aminoAcids.includes(char)) filteredSequence.push(char);
-    });
-    return filteredSequence.join("");
+    return sequence
+      .toUpperCase()
+      .split("")
+      .filter(char => AMINO_ACIDS.includes(char))
+      .join("");
   }
 
   function handleChangeSequence(e) {

@@ -1,12 +1,12 @@
-import { Fragment, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import {
-  MDBTable as Table,
-  MDBTableHead as TableHead,
-  MDBTableBody as TableBody,
   MDBIcon as Icon,
+  MDBTable as Table,
+  MDBTableBody as TableBody,
+  MDBTableHead as TableHead,
   MDBTypography as Typography,
 } from "mdbreact";
+import { Fragment, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext";
 
 const styles = {
@@ -142,7 +142,7 @@ function Result() {
         <Header />
         <p>
           Oops! Something went wrong on the server. Please try again later, or{" "}
-          <a href="https://github.com/kvdomingo/primerdriver-api/issues" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/kvdomingo/primerdriver/issues" target="_blank" rel="noopener noreferrer">
             report an issue
           </a>
           .

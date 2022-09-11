@@ -1,5 +1,5 @@
+import { MDBCol as Col, MDBRow as Row } from "mdbreact";
 import PropTypes from "prop-types";
-import { MDBRow as Row, MDBCol as Col } from "mdbreact";
 
 function MutationSelector(props) {
   const columns = props.mutation_type === "sub" ? 3 : 2;
