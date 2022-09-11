@@ -28,7 +28,7 @@ class CharacterizeTestCase(TestCase):
     def test_calculate_Tm(self):
         """Calculate melting temperature"""
         self.assertAlmostEqual(
-            self.pd.calculate_Tm(
+            self.pd.calculate_melting_temperature(
                 self.pd.sequence, self.pd.mutation_type, self.pd.replacement, 0.286, self.pd.mismatched_bases
             ),
             -103.449,

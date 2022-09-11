@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 
 from .input_handler import *
 from .output_handler import *
+from .primer_design import PrimerDesign
 
 
 @logger.catch
@@ -56,7 +57,7 @@ PrimerDriver v{version}
         interactive_saver(res.df)
     else:
         if res.savename is not None:
-            single_command_saver(res, res.df, res.savename)
+            single_command_saver(res.df, res.savename)
 
     return 0
 

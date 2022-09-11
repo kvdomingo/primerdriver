@@ -7,11 +7,11 @@ from .exceptions import PrimerCheckError
 
 @logger.catch
 class PrimerChecks:
-    def __init__(self, sequence, no_interaction=False):
+    def __init__(self, sequence: str, no_interaction: bool = False):
         self.sequence = sequence
         self.no_interaction = no_interaction
 
-    def check_valid_base(self):
+    def check_valid_base(self) -> str:
         unique_bases = set(list(self.sequence.upper()))
         true_bases = {"A", "C", "T", "G"}
         invalid_bases = unique_bases.difference(true_bases)
@@ -24,37 +24,34 @@ class PrimerChecks:
                 raise PrimerCheckError(f"Sequence contains invalid bases: {', '.join(list(invalid_bases))}")
         return self.sequence
 
-    def check_valid_protein(self):
-        unique_prots = set(list(self.sequence.upper()))
+    def check_valid_protein(self) -> str:
+        unique_proteins = set(list(self.sequence.upper()))
         with open("primerdriver/AAcompressed.json", "r") as f:
-            true_prots = load(f)
-        invalid_prots = unique_prots.difference(true_prots.keys())
-        if len(invalid_prots) != 0:
+            true_proteins = load(f)
+        invalid_proteins = unique_proteins.difference(true_proteins.keys())
+        if len(invalid_proteins) != 0:
             if self.no_interaction:
                 logger.warning("Sequence contains invalid proteins. Automatically removing...")
-                for b in invalid_prots:
+                for b in invalid_proteins:
                     self.sequence = self.sequence.upper().replace(b, "")
             else:
-                raise PrimerCheckError(f"Sequence contains invalid proteins: {', '.join(list(invalid_prots))}")
+                raise PrimerCheckError(f"Sequence contains invalid proteins: {', '.join(list(invalid_proteins))}")
         return self.sequence
 
-    def check_sequence_length(self):
+    def check_sequence_length(self) -> None:
         if len(self.sequence) < 40:
             error_message = "DNA sequence is too short"
-            if self.no_interaction:
-                logger.warning(error_message)
-            else:
-                raise PrimerCheckError(error_message)
         elif len(self.sequence) > 8000:
             error_message = "DNA sequence is too long"
-            if self.no_interaction:
-                logger.warning(error_message)
-            else:
-                raise PrimerCheckError(error_message)
         else:
-            pass
+            return
 
-    def check_gc_content(self):
+        if self.no_interaction:
+            logger.warning(error_message)
+        else:
+            raise PrimerCheckError(error_message)
+
+    def check_gc_content(self) -> None:
         seq = list(self.sequence)
         gc = (seq.count("C") + seq.count("G")) / len(seq)
         if gc < 0.40:
@@ -72,37 +69,22 @@ class PrimerChecks:
 
 
 class SequenceChecks:
-    def __init__(self, sequence):
+    def __init__(self, sequence: str | list[str]):
         self.sequence = sequence.upper()
 
-    def check_sequence_length(self, length_range):
-        if length_range[0] <= len(self.sequence) <= length_range[1]:
-            return True
-        else:
-            return False
+    def check_sequence_length(self, length_range: tuple[int, int]) -> bool:
+        return length_range[0] <= len(self.sequence) <= length_range[1]
 
-    def check_gc_content(self, gc_range):
+    def check_gc_content(self, gc_range: [int, int]) -> bool:
         seq = list(self.sequence)
         gc = (seq.count("C") + seq.count("G")) / len(seq) * 100
-        if gc < gc_range[0] or gc > gc_range[1]:
-            return False
-        else:
-            return True
+        return not (gc < gc_range[0] or gc > gc_range[1])
 
-    def check_Tm(self, Tm, Tm_range):
-        if Tm < Tm_range[0] or Tm > Tm_range[1]:
-            return False
-        else:
-            return True
+    def check_Tm(self, Tm, Tm_range) -> bool:
+        return not (Tm < Tm_range[0] or Tm > Tm_range[1])
 
-    def check_close_Tm(self, fwd_Tm, rev_Tm):
-        if abs(fwd_Tm - rev_Tm) <= 2:
-            return True
-        else:
-            return False
+    def check_close_Tm(self, fwd_Tm, rev_Tm) -> bool:
+        return abs(fwd_Tm - rev_Tm) <= 2
 
-    def check_ends_gc(self, terminate_gc):
-        if not terminate_gc or (self.sequence[0] in ["C", "G"] and self.sequence[-1] in ["C", "G"]):
-            return True
-        else:
-            return False
+    def check_ends_gc(self, terminate_gc) -> bool:
+        return not terminate_gc or (self.sequence[0] in ["C", "G"] and self.sequence[-1] in ["C", "G"])
