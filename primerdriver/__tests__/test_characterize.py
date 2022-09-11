@@ -2,12 +2,14 @@ import io
 from contextlib import redirect_stdout
 from unittest import TestCase
 
-from .primer_design import *
+from pandas import DataFrame
+
+from primerdriver.primer_design import MutationType, PrimerDesign
 
 
 class CharacterizeTestCase(TestCase):
     databases = []
-    pd = PrimerDesign("char", "GATTACA", "sub", 1, "T", "A", 4)
+    pd = PrimerDesign("char", "GATTACA", "SUB", 1, "T", "A", 4)
 
     def test_gc_content(self):
         """Calculate GC content"""
@@ -35,11 +37,14 @@ class CharacterizeTestCase(TestCase):
             3,
         )
 
-    def test_characterization_is_dataframe(self):
+    def test_characterization_returns_dataframe(self):
         """Check if output is a DataFrame"""
         out_catch = io.StringIO()
         with redirect_stdout(out_catch):
             out = self.pd.characterize_primer(
-                self.pd.sequence, self.pd.mutation_type, self.pd.replacement, self.pd.mismatched_bases
+                sequence=self.pd.sequence,
+                mutation_type=MutationType(self.pd.mutation_type),
+                replacement=self.pd.replacement,
+                mismatched_bases=self.pd.mismatched_bases,
             )
         self.assertTrue(isinstance(out, DataFrame))

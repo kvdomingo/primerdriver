@@ -120,7 +120,6 @@ class PrimerDesign:
 
     def characterize_primer(
         self,
-        *,
         sequence: str | list[str],
         mutation_type: MutationType,
         replacement: str | list[str] | None,
