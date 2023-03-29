@@ -19,23 +19,10 @@ tasks:
     cmds:
       - poetry run python -m unittest {{.CLI_ARGS}}
 
-  make-builder:
-    cmds:
-      - docker build -t kvdomingo/primerdriver-makelinux:latest -f build.Dockerfile .
-      - docker push kvdomingo/primerdriver-makelinux:latest
-
-  build-linux:
-    cmds:
-      - docker run -v "$(pwd)":/primerdriver --rm --name primerdriver-makelinux kvdomingo/primerdriver-makelinux:latest
-
   build:
     cmds:
       - poetry run pyinstaller --clean -F --name primerdriver setup.py
-
-  build-all:
-    cmds:
-      - task build
-      - task build-linux
+      - docker run -v "$(pwd)":/build --rm --env NAME={{.NAME}} --name primerdriver --workdir /build kvdomingo/py-cli-builder:latest
 
   shutdown:
     cmds:
