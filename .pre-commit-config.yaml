@@ -1,0 +1,38 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+        language_version: python3
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ['--profile', 'black']
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.1.2
+    hooks:
+      - id: prettier
+        files: (?i)\.(json|js|jsx|ts|tsx|html|css)$
+        additional_dependencies:
+          - prettier@2.1.2
+          - '@trivago/prettier-plugin-sort-imports@3.2.0'
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.1.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=500']
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+      - id: check-merge-conflict
+      - id: check-yaml
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v7.5.0
+    hooks:
+      - id: gitleaks
+        args: ['--verbose']
