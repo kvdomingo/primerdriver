@@ -46,7 +46,9 @@ def interactive_saver(df: DataFrame) -> None:
                 df = concat([*df])
                 df.to_json(savename, indent=4)
             else:
-                logger.error("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
+                logger.error(
+                    "Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json"
+                )
 
 
 def single_command_saver(df: DataFrame, savename: str | PathLike):
@@ -79,4 +81,6 @@ def single_command_saver(df: DataFrame, savename: str | PathLike):
         df = concat([*df])
         df.to_json(savename, indent=4)
     else:
-        raise ValueError("Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json")
+        raise ValueError(
+            "Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json"
+        )

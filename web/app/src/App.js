@@ -1,8 +1,8 @@
-import { MDBRow as Row, MDBCol as Col } from "mdbreact";
+import { MDBCol as Col, MDBRow as Row } from "mdbreact";
+import "./App.css";
 import Landing from "./components/Landing";
 import Station from "./components/Station";
 import { PrimerDriverProvider } from "./contexts/PrimerDriverContext";
-import "./App.css";
 
 function App() {
   return (

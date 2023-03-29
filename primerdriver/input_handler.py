@@ -43,7 +43,9 @@ def single_command_handler(args):
         args_dict["mismatched_bases"] = args.position
     elif args.mode.upper() == "PRO":
         args_dict["sequence"] = args.sequence
-        args_dict["sequence"] = PrimerChecks(args_dict["sequence"]).check_valid_protein()
+        args_dict["sequence"] = PrimerChecks(
+            args_dict["sequence"]
+        ).check_valid_protein()
         args_dict["mutation_type"] = args.mutation_type
         if args_dict["mutation_type"].upper() in ["S", "SUB"]:
             args_dict["target"] = args.target
@@ -72,7 +74,9 @@ def interactive_handler():
                 args_dict["sequence"] = f.read().strip()
         elif args_dict["sequence"].endswith(".fasta"):
             with open(args_dict["sequence"], "r", encoding="utf-8") as f:
-                args_dict["sequence"] = str(list(SeqIO.parse(f, "fasta"))[0].seq).strip()
+                args_dict["sequence"] = str(
+                    list(SeqIO.parse(f, "fasta"))[0].seq
+                ).strip()
         PrimerChecks(args_dict["sequence"]).check_sequence_length()
         args_dict["sequence"] = PrimerChecks(args_dict["sequence"]).check_valid_base()
         args_dict["mutation_type"] = input("Enter mutation type [s/i/d]: ")
@@ -96,7 +100,9 @@ def interactive_handler():
         args_dict["mismatched_bases"] = int(input("Enter number of mismatched bases: "))
     elif args_dict["mode"].upper() == "PRO":
         args_dict["sequence"] = input("Enter protein sequence: ")
-        args_dict["sequence"] = PrimerChecks(args_dict["sequence"]).check_valid_protein()
+        args_dict["sequence"] = PrimerChecks(
+            args_dict["sequence"]
+        ).check_valid_protein()
         args_dict["mutation_type"] = input("Enter mutation type [s/i/d]: ")
         if args_dict["mutation_type"].upper() in ["S", "SUB"]:
             args_dict["target"] = input("Enter target base: ")
