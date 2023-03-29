@@ -3,10 +3,10 @@ from argparse import ArgumentParser
 
 from primerx.log import logger
 
-from .input_handler import interactive_handler, single_command_handler
-from .output_handler import interactive_saver, single_command_saver
-from .primer_design import MutationType, OperationMode, PrimerDesign
-from .version import __version__
+from primerdriver.input_handler import interactive_handler, single_command_handler
+from primerdriver.output_handler import interactive_saver, single_command_saver
+from primerdriver.primer_design import MutationType, OperationMode, PrimerDesign
+from primerdriver.version import __version__
 
 
 @logger.catch

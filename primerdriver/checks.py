@@ -2,7 +2,7 @@ from json import load
 
 from primerx.log import logger
 
-from .exceptions import PrimerCheckError
+from primerdriver.exceptions import PrimerCheckError
 
 
 @logger.catch

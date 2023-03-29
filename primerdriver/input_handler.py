@@ -1,7 +1,7 @@
 from Bio import SeqIO
 
-from .checks import PrimerChecks
-from .version import __version__
+from primerdriver.checks import PrimerChecks
+from primerdriver.version import __version__
 
 version = str(__version__)
 

@@ -8,7 +8,7 @@ from tabulate import tabulate
 
 from primerx.log import logger
 
-from .checks import SequenceChecks
+from primerdriver.checks import SequenceChecks
 
 
 class OperationMode(Enum):
