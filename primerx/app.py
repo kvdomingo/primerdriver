@@ -1,6 +1,6 @@
 import json
 import os
-from http import HTTPStatus as status
+from http import HTTPStatus
 
 from flask import Flask, Response, jsonify, request, send_from_directory
 from pandas import concat
@@ -9,11 +9,10 @@ from primerdriver import __version__
 from primerdriver.checks import PrimerChecks
 from primerdriver.exceptions import PrimerCheckError
 from primerdriver.primer_design import PrimerDesign
-
-from .cache import cache
-from .config import BASE_DIR, PYTHON_ENV, SHORT_SHA
-from .log import logger
-from .tasks import on_ready
+from primerx.cache import cache
+from primerx.config import BASE_DIR, PYTHON_ENV, SHORT_SHA
+from primerx.log import logger
+from primerx.tasks import on_ready
 
 app = Flask(__name__, static_url_path="", static_folder=BASE_DIR / "web" / "app")
 cache.init_app(app)
@@ -38,7 +37,7 @@ def api_expression_systems():
         return jsonify({"data": expression})
     except json.JSONDecodeError as e:
         logger.error(str(e))
-        return Response(status=status.INTERNAL_SERVER_ERROR)
+        return Response(status=HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 @app.route("/api", methods=["POST"])
@@ -50,13 +49,13 @@ def api():
             data["sequence"] = checks.check_valid_protein()
         except PrimerCheckError as e:
             logger.error(str(e))
-            return Response(str(e), status=status.BAD_REQUEST)
+            return Response(str(e), status=HTTPStatus.BAD_REQUEST)
     else:
         try:
             data["sequence"] = checks.check_valid_base()
         except PrimerCheckError as e:
             logger.error(str(e))
-            return Response(str(e), status=status.BAD_REQUEST)
+            return Response(str(e), status=HTTPStatus.BAD_REQUEST)
     res = PrimerDesign(**data)
     res.main()
     if data["mode"] != "CHAR":

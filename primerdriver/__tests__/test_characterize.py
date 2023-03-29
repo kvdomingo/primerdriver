@@ -17,11 +17,16 @@ class CharacterizeTestCase(TestCase):
 
     def test_calculate_mismatch(self):
         """Calculate percent mismatch"""
-        self.assertAlmostEqual(self.pd.calculate_mismatch(self.pd.sequence, self.pd.mismatched_bases), 1 / 7)
+        self.assertAlmostEqual(
+            self.pd.calculate_mismatch(self.pd.sequence, self.pd.mismatched_bases),
+            1 / 7,
+        )
 
     def test_reverse_complement(self):
         """Calculate reverse complement"""
-        self.assertEqual(self.pd.get_reverse_complement(self.pd.sequence), list("TGTAATC"))
+        self.assertEqual(
+            self.pd.get_reverse_complement(self.pd.sequence), list("TGTAATC")
+        )
 
     def test_gc_end(self):
         """Check if sequence ends in G/C"""
@@ -31,7 +36,11 @@ class CharacterizeTestCase(TestCase):
         """Calculate melting temperature"""
         self.assertAlmostEqual(
             self.pd.calculate_melting_temperature(
-                self.pd.sequence, self.pd.mutation_type, self.pd.replacement, 0.286, self.pd.mismatched_bases
+                self.pd.sequence,
+                self.pd.mutation_type,
+                self.pd.replacement,
+                0.286,
+                self.pd.mismatched_bases,
             ),
             -103.449,
             3,

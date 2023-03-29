@@ -478,5 +478,3 @@ The ``--save`` argument is optional and can be omitted if the first 20 primers s
 Protein-based design works similarly and uses *Homo sapiens* expression system by default::
 
     > python primerdriver.py --mode pro --sequence CAISBVAIVBAIVBCAICBASCBAVQVFEWQEPFQEHVSDBVSKZDBNCSD --mutation-type sub -t Q -p 26 -r R
-
-

@@ -1,12 +1,11 @@
 import sys
 from argparse import ArgumentParser
 
+from primerdriver.input_handler import interactive_handler, single_command_handler
+from primerdriver.output_handler import interactive_saver, single_command_saver
+from primerdriver.primer_design import MutationType, OperationMode, PrimerDesign
+from primerdriver.version import __version__
 from primerx.log import logger
-
-from .input_handler import interactive_handler, single_command_handler
-from .output_handler import interactive_saver, single_command_saver
-from .primer_design import MutationType, OperationMode, PrimerDesign
-from .version import __version__
 
 
 @logger.catch
@@ -14,11 +13,11 @@ def main():
     print(
         f"""
         ---.   .------------.
-        ||||\\ /||||||||||||||\\    
+        ||||\\ /||||||||||||||\\
        Primer · Driver
-\\|||||||||||/ \\|||||||              
+\\|||||||||||/ \\|||||||
  `---------`   `------
-     
+
 PrimerDriver v{__version__}
 (c) 2020 Kenneth V. Domingo & Numeriano Amer E. Gutierrez
     """
@@ -39,9 +38,13 @@ PrimerDriver v{__version__}
         type=str,
     )
     parser.add_argument("-t", "--target", help="Target base", type=str)
-    parser.add_argument("-r", "--replacement", help="Replacement for target base", type=str)
+    parser.add_argument(
+        "-r", "--replacement", help="Replacement for target base", type=str
+    )
     parser.add_argument("-p", "--position", help="Target base position", type=int)
-    parser.add_argument("-i", "--interactive", help="Interactive mode", action="store_true")
+    parser.add_argument(
+        "-i", "--interactive", help="Interactive mode", action="store_true"
+    )
     parser.add_argument("--save", help="Filename to save to", type=str)
 
     if len(sys.argv) < 2:

@@ -6,9 +6,8 @@ from numpy import array
 from pandas import DataFrame
 from tabulate import tabulate
 
+from primerdriver.checks import SequenceChecks
 from primerx.log import logger
-
-from .checks import SequenceChecks
 
 
 class OperationMode(Enum):
@@ -55,15 +54,34 @@ class PrimerDesign:
         self.mode = OperationMode(mode.upper())
         self.sequence: str = sequence.upper()
         self.mutation_type = MutationType(mutation_type[0].upper())
-        self.mismatched_bases: int | None = int(mismatched_bases) if mismatched_bases is not None else None
-        self.replacement: str | None = replacement.upper() if replacement is not None else None
+        self.mismatched_bases: int | None = (
+            int(mismatched_bases) if mismatched_bases is not None else None
+        )
+        self.replacement: str | None = (
+            replacement.upper() if replacement is not None else None
+        )
         self.position: int | None = int(position) if position is not None else None
         self.target: str | None = target.upper() if target is not None else None
-        self.Tm_range: tuple[float, float] = (self.settings["Tm_range_min"], self.settings["Tm_range_max"])
-        self.length_range: tuple[int, int] = (self.settings["length_min"], self.settings["length_max"])
-        self.gc_range: tuple[float, float] = (self.settings["gc_range_min"], self.settings["gc_range_max"])
-        self.flank5_range: tuple[int, int] = (self.settings["flank5_range_min"], self.settings["flank5_range_max"])
-        self.flank3_range: tuple[int, int] = (self.settings["flank3_range_min"], self.settings["flank3_range_max"])
+        self.Tm_range: tuple[float, float] = (
+            self.settings["Tm_range_min"],
+            self.settings["Tm_range_max"],
+        )
+        self.length_range: tuple[int, int] = (
+            self.settings["length_min"],
+            self.settings["length_max"],
+        )
+        self.gc_range: tuple[float, float] = (
+            self.settings["gc_range_min"],
+            self.settings["gc_range_max"],
+        )
+        self.flank5_range: tuple[int, int] = (
+            self.settings["flank5_range_min"],
+            self.settings["flank5_range_max"],
+        )
+        self.flank3_range: tuple[int, int] = (
+            self.settings["flank3_range_min"],
+            self.settings["flank3_range_max"],
+        )
         self.forward_overlap5: int = self.settings["forward_overlap5"]
         self.forward_overlap3: int = self.settings["forward_overlap3"]
         self.terminate_gc = bool(self.settings["terminate_gc"])
@@ -74,7 +92,9 @@ class PrimerDesign:
         self.savename = savename
         with open("primerdriver/lut.json", "r", encoding="utf-8") as f:
             self.lut: dict[str, Any] = load(f)
-        with open(f"primerdriver/expression system/{self.expression_name}.json", "r") as f:
+        with open(
+            f"primerdriver/expression system/{self.expression_name}.json", "r"
+        ) as f:
             self.expression_system: dict[str, str] = load(f)
 
     @staticmethod
@@ -129,7 +149,10 @@ class PrimerDesign:
     ) -> DataFrame:
         mol_weight = self.lut["mol_weight"]
         seq = list(sequence)
-        if self.primer_mode == PrimerMode.COMPLEMENTARY or self.mode == OperationMode.CHARACTERIZATION:
+        if (
+            self.primer_mode == PrimerMode.COMPLEMENTARY
+            or self.mode == OperationMode.CHARACTERIZATION
+        ):
             rev = "".join(self.get_reverse_complement(sequence))
         else:
             rev = reverse
@@ -143,7 +166,11 @@ class PrimerDesign:
             "mol_weight": sum(float(mol_weight[b]) for b in seq),
         }
         forwards["Tm"] = self.calculate_melting_temperature(
-            seq, mutation_type, replacement, forwards["gc_content"], forwards["mismatch"]
+            seq,
+            mutation_type,
+            replacement,
+            forwards["gc_content"],
+            forwards["mismatch"],
         )
 
         reverses = {
@@ -155,7 +182,11 @@ class PrimerDesign:
             "mol_weight": sum(float(mol_weight[b]) for b in rev),
         }
         reverses["Tm"] = self.calculate_melting_temperature(
-            seq, mutation_type, replacement, reverses["gc_content"], reverses["mismatch"]
+            seq,
+            mutation_type,
+            replacement,
+            reverses["gc_content"],
+            reverses["mismatch"],
         )
 
         col = [
@@ -193,7 +224,13 @@ class PrimerDesign:
         if index is None:
             index = 1
         if index - 1 < self.print_buffer:
-            print("\n", tabulate(array([col, dat]).T, headers=[f"Primer {index}"], tablefmt="orgtbl"), sep="")
+            print(
+                "\n",
+                tabulate(
+                    array([col, dat]).T, headers=[f"Primer {index}"], tablefmt="orgtbl"
+                ),
+                sep="",
+            )
         elif index - 1 == self.print_buffer:
             logger.info("Too many results; truncating output...")
         dat = array([dat])
@@ -201,7 +238,7 @@ class PrimerDesign:
         self.df = df
         return df
 
-    def substitution(
+    def substitution(  # noqa: C901
         self,
         sequence: str | list[str],
         mutation_type: MutationType,
@@ -221,7 +258,13 @@ class PrimerDesign:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate3 = list(replacement)
-                    candidate2 = seq[start_position + sequence_length - 1 : start_position + sequence_length + f3]
+                    candidate2 = seq[
+                        start_position
+                        + sequence_length
+                        - 1 : start_position
+                        + sequence_length
+                        + f3
+                    ]
                     candidate = candidate1 + candidate3 + candidate2
                     candidate = "".join(candidate)
                     if len(candidate) == 0:
@@ -247,10 +290,16 @@ class PrimerDesign:
                 for f3 in range(*self.flank3_range):
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
-                    candidate1 = forward_sequence[start_position - 1 - f5 : start_position - 1]
+                    candidate1 = forward_sequence[
+                        start_position - 1 - f5 : start_position - 1
+                    ]
                     candidate3 = list(replacement)
                     candidate2 = forward_sequence[
-                        start_position + sequence_length - 1 : start_position + sequence_length + f3
+                        start_position
+                        + sequence_length
+                        - 1 : start_position
+                        + sequence_length
+                        + f3
                     ]
                     candidate = candidate1 + candidate3 + candidate2
                     candidate = "".join(candidate)
@@ -270,7 +319,9 @@ class PrimerDesign:
                         valid_primers[candidate] = []
             for primers in valid_primers:
                 sequence = (
-                    sequence[: start_position - 1] + replacement + sequence[start_position - 1 + sequence_length :]
+                    sequence[: start_position - 1]
+                    + replacement
+                    + sequence[start_position - 1 + sequence_length :]
                 )
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
@@ -294,10 +345,18 @@ class PrimerDesign:
                         sc = SequenceChecks(candidate)
                         valid_gc = sc.check_gc_content(self.gc_range)
                         valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                        valid_trange = sc.check_close_Tm(forward_melting_temp, melting_temperature)
+                        valid_trange = sc.check_close_Tm(
+                            forward_melting_temp, melting_temperature
+                        )
                         valid_ends = sc.check_ends_gc(self.terminate_gc)
                         valid_length = sc.check_sequence_length(self.length_range)
-                        if valid_gc and valid_temp and valid_ends and valid_length and valid_trange:
+                        if (
+                            valid_gc
+                            and valid_temp
+                            and valid_ends
+                            and valid_length
+                            and valid_trange
+                        ):
                             valid_primers[primers].append(candidate)
                     end += 1
 
@@ -311,16 +370,29 @@ class PrimerDesign:
                 print(f"Using expression system: {self.expression_name}")
             if self.primer_mode == PrimerMode.COMPLEMENTARY:
                 for i, p in enumerate(valid_primers):
-                    df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i + 1))
+                    df.append(
+                        self.characterize_primer(
+                            p, mutation_type, replacement, mismatched_bases, i + 1
+                        )
+                    )
             else:
                 count = 1
                 for _, (k, v) in enumerate(valid_primers.items()):
                     for r in v:
-                        df.append(self.characterize_primer(k, mutation_type, replacement, mismatched_bases, count, r))
+                        df.append(
+                            self.characterize_primer(
+                                k,
+                                mutation_type,
+                                replacement,
+                                mismatched_bases,
+                                count,
+                                r,
+                            )
+                        )
                         count += 1
         return df
 
-    def deletion(
+    def deletion(  # noqa: C901
         self,
         sequence: str | list[str],
         mutation_type: MutationType,
@@ -339,11 +411,21 @@ class PrimerDesign:
                         continue
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                        candidate2 = seq[start_position + sequence_length - 1 : start_position + sequence_length + f3]
+                        candidate2 = seq[
+                            start_position
+                            + sequence_length
+                            - 1 : start_position
+                            + sequence_length
+                            + f3
+                        ]
                     elif self.mode == OperationMode.PROTEIN:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[
-                            start_position + sequence_length * 3 - 1 : start_position + sequence_length + f3
+                            start_position
+                            + sequence_length * 3
+                            - 1 : start_position
+                            + sequence_length
+                            + f3
                         ]
                     candidate = candidate1 + candidate2
                     candidate = "".join(candidate)
@@ -371,11 +453,21 @@ class PrimerDesign:
                         continue
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                        candidate2 = seq[start_position + sequence_length - 1 : start_position + sequence_length + f3]
+                        candidate2 = seq[
+                            start_position
+                            + sequence_length
+                            - 1 : start_position
+                            + sequence_length
+                            + f3
+                        ]
                     else:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[
-                            start_position + sequence_length * 3 - 1 : start_position + sequence_length + f3
+                            start_position
+                            + sequence_length * 3
+                            - 1 : start_position
+                            + sequence_length
+                            + f3
                         ]
                     candidate = candidate1 + candidate2
                     candidate = "".join(candidate)
@@ -394,9 +486,15 @@ class PrimerDesign:
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
             if self.mode == OperationMode.DNA:
-                sequence = sequence[: start_position - 1] + sequence[start_position + sequence_length - 1 :]
+                sequence = (
+                    sequence[: start_position - 1]
+                    + sequence[start_position + sequence_length - 1 :]
+                )
             elif self.mode == OperationMode.PROTEIN:
-                sequence = sequence[: start_position - 1] + sequence[start_position + sequence_length * 3 - 1 :]
+                sequence = (
+                    sequence[: start_position - 1]
+                    + sequence[start_position + sequence_length * 3 - 1 :]
+                )
             for primers in valid_primers:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
@@ -420,10 +518,18 @@ class PrimerDesign:
                         sc = SequenceChecks(candidate)
                         valid_gc = sc.check_gc_content(self.gc_range)
                         valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                        valid_trange = sc.check_close_Tm(forward_melting_temp, melting_temperature)
+                        valid_trange = sc.check_close_Tm(
+                            forward_melting_temp, melting_temperature
+                        )
                         valid_ends = sc.check_ends_gc(self.terminate_gc)
                         valid_length = sc.check_sequence_length(self.length_range)
-                        if valid_gc and valid_temp and valid_ends and valid_length and valid_trange:
+                        if (
+                            valid_gc
+                            and valid_temp
+                            and valid_ends
+                            and valid_length
+                            and valid_trange
+                        ):
                             valid_primers[primers].append(candidate)
                     end += 1
 
@@ -436,16 +542,29 @@ class PrimerDesign:
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.primer_mode == "complementary":
                 for i, p in enumerate(valid_primers):
-                    df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i + 1))
+                    df.append(
+                        self.characterize_primer(
+                            p, mutation_type, replacement, mismatched_bases, i + 1
+                        )
+                    )
             else:
                 count = 1
                 for _, (k, v) in enumerate(valid_primers.items()):
                     for r in v:
-                        df.append(self.characterize_primer(k, mutation_type, replacement, mismatched_bases, count, r))
+                        df.append(
+                            self.characterize_primer(
+                                k,
+                                mutation_type,
+                                replacement,
+                                mismatched_bases,
+                                count,
+                                r,
+                            )
+                        )
                         count += 1
         return df
 
-    def insertion(
+    def insertion(  # noqa: C901
         self,
         sequence: str | list[str],
         mutation_type: MutationType,
@@ -464,7 +583,9 @@ class PrimerDesign:
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                    candidate2 = seq[start_position - 1 : start_position + sequence_length + f3]
+                    candidate2 = seq[
+                        start_position - 1 : start_position + sequence_length + f3
+                    ]
                     candidate = candidate1 + candidate2
                     candidate = "".join(candidate)
                     if len(candidate) == 0:
@@ -491,7 +612,9 @@ class PrimerDesign:
                     if abs(f5 - f3) > 1 and self.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                    candidate2 = seq[start_position - 1 : start_position + sequence_length + f3]
+                    candidate2 = seq[
+                        start_position - 1 : start_position + sequence_length + f3
+                    ]
                     candidate = candidate1 + candidate2
                     candidate = "".join(candidate)
                     if len(candidate) == 0:
@@ -508,7 +631,11 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
-            sequence = sequence[: start_position - 1] + replacement + sequence[start_position - 1 :]
+            sequence = (
+                sequence[: start_position - 1]
+                + replacement
+                + sequence[start_position - 1 :]
+            )
             for primers in valid_primers:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
@@ -535,7 +662,13 @@ class PrimerDesign:
                         valid_trange = sc.check_close_Tm(fwd_Tm, melting_temp)
                         valid_ends = sc.check_ends_gc(self.terminate_gc)
                         valid_length = sc.check_sequence_length(self.length_range)
-                        if valid_gc and valid_temp and valid_ends and valid_length and valid_trange:
+                        if (
+                            valid_gc
+                            and valid_temp
+                            and valid_ends
+                            and valid_length
+                            and valid_trange
+                        ):
                             valid_primers[primers].append(candidate)
                     end += 1
 
@@ -547,12 +680,25 @@ class PrimerDesign:
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.primer_mode == PrimerMode.COMPLEMENTARY:
                 for i, p in enumerate(valid_primers):
-                    df.append(self.characterize_primer(p, mutation_type, replacement, mismatched_bases, i + 1))
+                    df.append(
+                        self.characterize_primer(
+                            p, mutation_type, replacement, mismatched_bases, i + 1
+                        )
+                    )
             else:
                 count = 1
                 for _, (k, v) in enumerate(valid_primers.items()):
                     for r in v:
-                        df.append(self.characterize_primer(k, mutation_type, replacement, mismatched_bases, count, r))
+                        df.append(
+                            self.characterize_primer(
+                                k,
+                                mutation_type,
+                                replacement,
+                                mismatched_bases,
+                                count,
+                                r,
+                            )
+                        )
                         count += 1
         return df
 
@@ -561,19 +707,34 @@ class PrimerDesign:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.target)
             result = self.deletion(
-                self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases
+                self.sequence,
+                self.mutation_type,
+                self.target,
+                self.replacement,
+                self.position,
+                self.mismatched_bases,
             )
         elif self.mutation_type == MutationType.INSERTION:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.replacement)
             result = self.insertion(
-                self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases
+                self.sequence,
+                self.mutation_type,
+                self.target,
+                self.replacement,
+                self.position,
+                self.mismatched_bases,
             )
         else:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.replacement)
             result = self.substitution(
-                self.sequence, self.mutation_type, self.target, self.replacement, self.position, self.mismatched_bases
+                self.sequence,
+                self.mutation_type,
+                self.target,
+                self.replacement,
+                self.position,
+                self.mismatched_bases,
             )
         return result
 
@@ -584,16 +745,28 @@ class PrimerDesign:
             rna = "".join([self.expression_system[b] for b in self.sequence])
             dna = rna.replace("U", "T")
             result = self.deletion(
-                dna, self.mutation_type, self.target, self.replacement, self.position * 3 - 2, self.mismatched_bases
+                dna,
+                self.mutation_type,
+                self.target,
+                self.replacement,
+                self.position * 3 - 2,
+                self.mismatched_bases,
             )
         elif self.mutation_type == MutationType.INSERTION:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.replacement)
             rna = "".join([self.expression_system[b] for b in self.sequence])
             dna = rna.replace("U", "T")
-            replacement = "".join(self.expression_system[self.replacement]).replace("U", "T")
+            replacement = "".join(self.expression_system[self.replacement]).replace(
+                "U", "T"
+            )
             result = self.insertion(
-                dna, self.mutation_type, self.target, replacement, self.position * 3 - 2, self.mismatched_bases
+                dna,
+                self.mutation_type,
+                self.target,
+                replacement,
+                self.position * 3 - 2,
+                self.mismatched_bases,
             )
         else:
             if self.mismatched_bases is None:
@@ -601,9 +774,16 @@ class PrimerDesign:
             rna = "".join([self.expression_system[b] for b in self.sequence])
             dna = rna.replace("U", "T")
             target = "".join(self.expression_system[self.target]).replace("U", "T")
-            replacement = "".join(self.expression_system[self.replacement]).replace("U", "T")
+            replacement = "".join(self.expression_system[self.replacement]).replace(
+                "U", "T"
+            )
             result = self.substitution(
-                dna, self.mutation_type, target, replacement, self.position * 3 - 2, self.mismatched_bases
+                dna,
+                self.mutation_type,
+                target,
+                replacement,
+                self.position * 3 - 2,
+                self.mismatched_bases,
             )
         return result
 
@@ -613,5 +793,10 @@ class PrimerDesign:
         elif self.mode == OperationMode.PROTEIN:
             df = self.protein_based()
         else:
-            df = self.characterize_primer(self.sequence, self.mutation_type, self.replacement, self.mismatched_bases)
+            df = self.characterize_primer(
+                self.sequence,
+                self.mutation_type,
+                self.replacement,
+                self.mismatched_bases,
+            )
         self.df = df

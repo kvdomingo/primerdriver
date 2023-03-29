@@ -1,104 +1,104 @@
 {
-    "dna_bases": {
-        "T": "thymine",
-        "A": "adenine",
-        "G": "guanine",
-        "C": "cytosine"
-    },
-    "rna_bases": {
-        "U": "uracil",
-        "A": "adenine",
-        "G": "guanine",
-        "C": "cytosine"
-    },
-    "complement": {
-        "T": "A",
-        "A": "T",
-        "G": "C",
-        "C": "G"
-    },
-    "dna_to_rna": {
-        "T": "A",
-        "A": "U",
-        "C": "G",
-        "G": "C"
-    },
-    "rna_to_dna": {
-        "A": "T",
-        "U": "A",
-        "C": "G",
-        "G": "C"
-    },
-    "mol_weight": {
-        "T": "126.115",
-        "A": "135.13",
-        "C": "111.10",
-        "G": "151.13"
-    },
-    "protein": {
-        "A": "alanine",
-        "R": "arginine",
-        "N": "asparagine",
-        "D": "aspartic acid",
-        "C": "cysteine",
-        "Q": "glutamine",
-        "E": "glutamic acid",
-        "G": "glycine",
-        "H": "histidine",
-        "I": "isoleucine",
-        "L": "leucine",
-        "K": "lysine",
-        "M": "methionine",
-        "F": "phenylalanine",
-        "P": "proline",
-        "S": "serine",
-        "T": "threonine",
-        "W": "tryptophan",
-        "Y": "tyrosine",
-        "V": "valine"
-    },
-    "protein1to3": {
-        "A": "Ala",
-        "R": "Arg",
-        "N": "Asn",
-        "D": "Asp",
-        "C": "Cys",
-        "Q": "Glu",
-        "E": "Gln",
-        "G": "Glx",
-        "H": "His",
-        "I": "Ile",
-        "L": "Leu",
-        "K": "Lys",
-        "M": "Met",
-        "F": "Phe",
-        "P": "Pro",
-        "S": "Ser",
-        "T": "Thr",
-        "W": "Trp",
-        "Y": "Tyr",
-        "V": "Val"
-    },
-    "protein3to1": {
-        "Ala": "A",
-        "Arg": "R",
-        "Asn": "N",
-        "Asp": "D",
-        "Cys": "C",
-        "Glu": "Q",
-        "Gln": "E",
-        "Glx": "G",
-        "His": "H",
-        "Ile": "I",
-        "Leu": "L",
-        "Lys": "K",
-        "Met": "M",
-        "Phe": "F",
-        "Pro": "P",
-        "Ser": "S",
-        "Thr": "T",
-        "Trp": "W",
-        "Tyr": "Y",
-        "Val": "V"
-    }
+  "dna_bases": {
+    "T": "thymine",
+    "A": "adenine",
+    "G": "guanine",
+    "C": "cytosine"
+  },
+  "rna_bases": {
+    "U": "uracil",
+    "A": "adenine",
+    "G": "guanine",
+    "C": "cytosine"
+  },
+  "complement": {
+    "T": "A",
+    "A": "T",
+    "G": "C",
+    "C": "G"
+  },
+  "dna_to_rna": {
+    "T": "A",
+    "A": "U",
+    "C": "G",
+    "G": "C"
+  },
+  "rna_to_dna": {
+    "A": "T",
+    "U": "A",
+    "C": "G",
+    "G": "C"
+  },
+  "mol_weight": {
+    "T": "126.115",
+    "A": "135.13",
+    "C": "111.10",
+    "G": "151.13"
+  },
+  "protein": {
+    "A": "alanine",
+    "R": "arginine",
+    "N": "asparagine",
+    "D": "aspartic acid",
+    "C": "cysteine",
+    "Q": "glutamine",
+    "E": "glutamic acid",
+    "G": "glycine",
+    "H": "histidine",
+    "I": "isoleucine",
+    "L": "leucine",
+    "K": "lysine",
+    "M": "methionine",
+    "F": "phenylalanine",
+    "P": "proline",
+    "S": "serine",
+    "T": "threonine",
+    "W": "tryptophan",
+    "Y": "tyrosine",
+    "V": "valine"
+  },
+  "protein1to3": {
+    "A": "Ala",
+    "R": "Arg",
+    "N": "Asn",
+    "D": "Asp",
+    "C": "Cys",
+    "Q": "Glu",
+    "E": "Gln",
+    "G": "Glx",
+    "H": "His",
+    "I": "Ile",
+    "L": "Leu",
+    "K": "Lys",
+    "M": "Met",
+    "F": "Phe",
+    "P": "Pro",
+    "S": "Ser",
+    "T": "Thr",
+    "W": "Trp",
+    "Y": "Tyr",
+    "V": "Val"
+  },
+  "protein3to1": {
+    "Ala": "A",
+    "Arg": "R",
+    "Asn": "N",
+    "Asp": "D",
+    "Cys": "C",
+    "Glu": "Q",
+    "Gln": "E",
+    "Glx": "G",
+    "His": "H",
+    "Ile": "I",
+    "Leu": "L",
+    "Lys": "K",
+    "Met": "M",
+    "Phe": "F",
+    "Pro": "P",
+    "Ser": "S",
+    "Thr": "T",
+    "Trp": "W",
+    "Tyr": "Y",
+    "Val": "V"
+  }
 }

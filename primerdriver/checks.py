@@ -1,8 +1,7 @@
 from json import load
 
+from primerdriver.exceptions import PrimerCheckError
 from primerx.log import logger
-
-from .exceptions import PrimerCheckError
 
 
 @logger.catch
@@ -17,11 +16,15 @@ class PrimerChecks:
         invalid_bases = unique_bases.difference(true_bases)
         if len(invalid_bases) != 0:
             if self.no_interaction:
-                logger.warning("Sequence contains invalid bases. Automatically removing...")
+                logger.warning(
+                    "Sequence contains invalid bases. Automatically removing..."
+                )
                 for b in invalid_bases:
                     self.sequence = self.sequence.upper().replace(b, "")
             else:
-                raise PrimerCheckError(f"Sequence contains invalid bases: {', '.join(list(invalid_bases))}")
+                raise PrimerCheckError(
+                    f"Sequence contains invalid bases: {', '.join(list(invalid_bases))}"
+                )
         return self.sequence
 
     def check_valid_protein(self) -> str:
@@ -31,11 +34,15 @@ class PrimerChecks:
         invalid_proteins = unique_proteins.difference(true_proteins.keys())
         if len(invalid_proteins) != 0:
             if self.no_interaction:
-                logger.warning("Sequence contains invalid proteins. Automatically removing...")
+                logger.warning(
+                    "Sequence contains invalid proteins. Automatically removing..."
+                )
                 for b in invalid_proteins:
                     self.sequence = self.sequence.upper().replace(b, "")
             else:
-                raise PrimerCheckError(f"Sequence contains invalid proteins: {', '.join(list(invalid_proteins))}")
+                raise PrimerCheckError(
+                    f"Sequence contains invalid proteins: {', '.join(list(invalid_proteins))}"
+                )
         return self.sequence
 
     def check_sequence_length(self) -> None:
@@ -87,4 +94,6 @@ class SequenceChecks:
         return abs(fwd_Tm - rev_Tm) <= 2
 
     def check_ends_gc(self, terminate_gc) -> bool:
-        return not terminate_gc or (self.sequence[0] in ["C", "G"] and self.sequence[-1] in ["C", "G"])
+        return not terminate_gc or (
+            self.sequence[0] in ["C", "G"] and self.sequence[-1] in ["C", "G"]
+        )
