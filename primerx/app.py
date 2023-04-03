@@ -62,7 +62,7 @@ def api():
         try:
             df = concat([*res.df]).T
             out = df.to_dict()
-        except TypeError:
+        except (TypeError, ValueError):
             out = {"data": "No valid primers found"}
     else:
         df = res.df

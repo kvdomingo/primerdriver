@@ -8,12 +8,12 @@ env:
 tasks:
   default:
     cmds:
-      - docker compose -p $NAME up -d --build --remove-orphans {{.CLI_ARGS}}
+      - docker compose -p {{.NAME}} up -d --build --remove-orphans {{.CLI_ARGS}}
       - task logs
 
   logs:
     cmds:
-      - docker compose -p $NAME logs --follow {{.CLI_ARGS}}
+      - docker compose -p {{.NAME}} logs --follow {{.CLI_ARGS}}
 
   test:
     cmds:
@@ -26,16 +26,16 @@ tasks:
 
   shutdown:
     cmds:
-      - docker compose -p $NAME stop {{.CLI_ARGS}}
+      - docker compose -p {{.NAME}} stop {{.CLI_ARGS}}
 
   restart:
     cmds:
-      - docker compose -p $NAME restart {{.CLI_ARGS}}
+      - docker compose -p {{.NAME}} restart {{.CLI_ARGS}}
 
   reload-proxy:
     cmds:
-      - docker compose -p $NAME exec -- proxy nginx -s reload
+      - docker compose -p {{.NAME}} exec -- proxy nginx -s reload
 
   clean:
     cmds:
-      - docker compose -p $NAME down -v --remove-orphans
+      - docker compose -p {{.NAME}} down -v --remove-orphans

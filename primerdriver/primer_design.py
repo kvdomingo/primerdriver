@@ -60,7 +60,7 @@ class PrimerDesign:
         self.replacement: str | None = (
             replacement.upper() if replacement is not None else None
         )
-        self.position: int | None = int(position) if position is not None else None
+        self.position: int | None = int(position) - 1 if position is not None else None
         self.target: str | None = target.upper() if target is not None else None
         self.Tm_range: tuple[float, float] = (
             self.settings["Tm_range_min"],
@@ -317,7 +317,7 @@ class PrimerDesign:
                     valid_length = sc.check_sequence_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
-            for primers in valid_primers:
+            for primers in valid_primers.keys():
                 sequence = (
                     sequence[: start_position - 1]
                     + replacement
@@ -360,13 +360,17 @@ class PrimerDesign:
                             valid_primers[primers].append(candidate)
                     end += 1
 
-        if not len(valid_primers) > 0:
+        if len(valid_primers) == 0 or (
+            isinstance(valid_primers, dict)
+            and len([val for values in list(valid_primers.values()) for val in values])
+            == 0
+        ):
             print("No valid primers found")
             return
         else:
             df = []
             print(f"\nGenerated forward primers: {len(valid_primers)}")
-            if self.mode == "PRO":
+            if self.mode == OperationMode.PROTEIN:
                 print(f"Using expression system: {self.expression_name}")
             if self.primer_mode == PrimerMode.COMPLEMENTARY:
                 for i, p in enumerate(valid_primers):
@@ -749,7 +753,7 @@ class PrimerDesign:
                 self.mutation_type,
                 self.target,
                 self.replacement,
-                self.position * 3 - 2,
+                self.position * 3,
                 self.mismatched_bases,
             )
         elif self.mutation_type == MutationType.INSERTION:
@@ -765,7 +769,7 @@ class PrimerDesign:
                 self.mutation_type,
                 self.target,
                 replacement,
-                self.position * 3 - 2,
+                self.position * 3,
                 self.mismatched_bases,
             )
         else:
@@ -782,7 +786,7 @@ class PrimerDesign:
                 self.mutation_type,
                 target,
                 replacement,
-                self.position * 3 - 2,
+                self.position * 3,
                 self.mismatched_bases,
             )
         return result

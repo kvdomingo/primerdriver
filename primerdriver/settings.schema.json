@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PrimerDriver configuration settings",
+  "type": "object",
+  "properties": {
+    "Tm_range_min": {
+      "description": "Minimum allowable melting temperature in C",
+      "type": "number"
+    },
+    "Tm_range_max": {
+      "description": "Maximum allowable melting temperature in C",
+      "type": "number"
+    },
+    "gc_range_min": {
+      "description": "Minimum %GC content",
+      "type": "number"
+    },
+    "gc_range_max": {
+      "description": "Maximum %GC content",
+      "type": "number"
+    },
+    "length_min": {
+      "description": "Minimum length of the desired primer",
+      "type": "integer"
+    },
+    "length_max": {
+      "description": "Maximum length of the desired primer",
+      "type": "integer"
+    },
+    "flank5_range_min": {
+      "description": "Minimum length of the 5' flank",
+      "type": "integer"
+    },
+    "flank5_range_max": {
+      "description": "Maximum length of the 5' flank",
+      "type": "integer"
+    },
+    "flank3_range_min": {
+      "description": "Minimum length of the 3' flank",
+      "type": "integer"
+    },
+    "flank3_range_max": {
+      "description": "Maximum length of the 3' flank",
+      "type": "integer"
+    },
+    "terminate_gc": {
+      "description": "Whether to have a GC clamp at both ends of the primer.",
+      "enum": [0, 1]
+    },
+    "center_mutation": {
+      "description": "Whether to center the mutation in the primer.",
+      "enum": [0, 1]
+    },
+    "primer_mode": {
+      "description": "Whether to design overlapping or complementary primers.",
+      "enum": ["complementary", "overlapping"]
+    },
+    "expression_system": {
+      "description": "File name of the expression system to use. File must be located inside the `expression system` folder.",
+      "enum": "string"
+    }
+  }
+}
