@@ -60,7 +60,7 @@ class PrimerDesign:
         self.replacement: str | None = (
             replacement.upper() if replacement is not None else None
         )
-        self.position: int | None = int(position) if position is not None else None
+        self.position: int | None = int(position) - 1 if position is not None else None
         self.target: str | None = target.upper() if target is not None else None
         self.Tm_range: tuple[float, float] = (
             self.settings["Tm_range_min"],
@@ -753,7 +753,7 @@ class PrimerDesign:
                 self.mutation_type,
                 self.target,
                 self.replacement,
-                self.position * 3 - 2,
+                self.position * 3,
                 self.mismatched_bases,
             )
         elif self.mutation_type == MutationType.INSERTION:
@@ -769,7 +769,7 @@ class PrimerDesign:
                 self.mutation_type,
                 self.target,
                 replacement,
-                self.position * 3 - 2,
+                self.position * 3,
                 self.mismatched_bases,
             )
         else:
@@ -786,7 +786,7 @@ class PrimerDesign:
                 self.mutation_type,
                 target,
                 replacement,
-                self.position * 3 - 2,
+                self.position * 3,
                 self.mismatched_bases,
             )
         return result
