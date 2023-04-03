@@ -4,17 +4,19 @@ ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV POETRY_VERSION 1.3.2
 
-RUN pip install poetry==$POETRY_VERSION
+RUN pip install poetry==$POETRY_VERSION && poetry config virtualenvs.create false
 
 FROM base as dev
 
-WORKDIR /primerdriver
+WORKDIR /tmp
 
 COPY pyproject.toml poetry.lock ./
 
 RUN poetry install
 
-ENTRYPOINT ["poetry", "run", "flask", "run", "-h", "0.0.0.0", "-p", "5000", "--reload"]
+WORKDIR /primerdriver
+
+ENTRYPOINT ["poetry", "run", "flask", "run", "-h", "0.0.0.0", "-p", "5000", "--reloSomead"]
 
 FROM node:16-alpine as web_build
 
