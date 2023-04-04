@@ -14,3 +14,8 @@ tasks:
     cmds:
       - poetry run pyinstaller --clean -F --name primerdriver setup.py
       - docker run -v "$(pwd)":/build --rm --env NAME={{.NAME}} --name primerdriver --workdir /build kvdomingo/py-cli-builder:latest
+
+  build-docs:
+    cmds:
+      - rm -rf docsrc/source/generated
+      - poetry run sphinx-build -b html docsrc/source docs

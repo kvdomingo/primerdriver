@@ -1,29 +1,30 @@
 .. _getting_started:
 
-***************
 Getting Started
-***************
+===============
 
 .. _requirements:
 
 Requirements
-============
+------------
 
 To use *PrimerDriver*, you should have:
-    - Updated web browser
-    - Python 3.6.8 or above
+    - `Python 3.8.1 or above <https://python.org/downloads>`_
+    - `Poetry <https://python-poetry.org/docs/#installation>`_
 
-Additional packages can be installed via the ``requirements.txt`` file, which will be covered in the next section. Before proceeding, it is recommended that you create a separate environment and activate it now.
+Additional packages can be installed via the ``pyproject.toml`` file, which will be covered in the next section. `poetry` will automatically handle creating an isolated virtual environment for the project.
 
 
 .. _installaton:
 
 Installation
-============
+------------
 
-First, download the latest release from `GitHub <https://github.com/kvdomingo/primerdriver/releases>`_ and extract it to your local machine. Open a terminal and ``cd`` to where you extracted the files. Install the required packages via::
+First, download the latest release from `GitHub <https://github.com/kvdomingo/primerdriver/releases>`_ and extract it to your local machine. Open a terminal and ``cd`` to where you extracted the files. Install the required packages via
 
-    > pip install -r requirements.txt
+.. code-block:: console
+
+    $ poetry install
 
 Now you are ready to design mutagenic primers.
 
@@ -31,22 +32,26 @@ Now you are ready to design mutagenic primers.
 .. _quickstart:
 
 Quickstart
-==========
+----------
 
-To make sure everything is in working order, run the following commands::
+To make sure everything is in working order, run the following commands
 
-    > python --version
-    > python primerdriver.py -h
+.. code-block:: console
 
-If no errors occur, then you are good to go. The PrimerDriver CLI can cater to first-time users by providing an interactive mode which allows the user to go through the settings step-by-step. This is triggered by passing the ``-i`` flag when running the program with no additional arguments::
+    $ poetry run python --version
+    $ poetry run python -m primerdriver -h
 
-    > python primerdriver.py -i
+If no errors occur, then you are good to go. The PrimerDriver CLI can cater to first-time users by providing an interactive mode which allows the user to go through the settings step-by-step. This is triggered by passing the ``-i`` flag when running the program with no additional arguments
+
+.. code-block:: console
+
+    $ poetry run python -m primerdriver -i
 
 The user is greeted with a customized header and the first question::
 
                     ---.   .------------.
                     ||||\ /||||||||||||||\
-                  Primer · Driver v1.1.1
+                  Primer · Driver v1.3.2
             \|||||||||||/ \|||||||
              `---------`   `------
 
@@ -58,7 +63,7 @@ Here, the user is asked for the desired mode, from DNA-based design (``dna``), p
 
                     ---.   .------------.
                     ||||\ /||||||||||||||\
-                  Primer · Driver v1.1.1
+                  Primer · Driver v1.3.2
             \|||||||||||/ \|||||||
              `---------`   `------
 
@@ -106,7 +111,7 @@ Enter the following at the interactive CLI::
 
                     ---.   .------------.
                     ||||\ /||||||||||||||\
-                  Primer · Driver v1.1.1
+                  Primer · Driver v1.3.2
             \|||||||||||/ \|||||||
              `---------`   `------
 
@@ -465,16 +470,22 @@ The output should yield::
 
     Save? [y/n] _
 
-Notice that the output is silenced if the number of potential primers exceed 20. In this case, the exceeding primers are still stored and can be accessed by saving the results. The above example can be run in single command mode via::
+Notice that the output is silenced if the number of potential primers exceed 20. In this case, the exceeding primers are still stored and can be accessed by saving the results. The above example can be run in single command mode via
 
-    > python primerdriver.py --mode dna --sequence read.fasta --mutation-type sub --target C --position 25 --replacement G --save primers.fasta
+.. code-block:: console
 
-or in shorthand form via::
+    $ poetry run python -m primerdriver --mode dna --sequence read.fasta --mutation-type sub --target C --position 25 --replacement G --save primers.fasta
 
-    > python primerdriver.py -M dna -s read.fasta -m sub -t C -p 25 -r G --save primers.fasta
+or in shorthand form via
+
+.. code-block:: console
+
+    $ poetry run python -m primerdriver -M dna -s read.fasta -m sub -t C -p 25 -r G --save primers.fasta
 
 The ``--save`` argument is optional and can be omitted if the first 20 primers suffice for the user. As you can see, this can become a powerful tool especially when batch designing primers, by including it as part of a shell script.
 
-Protein-based design works similarly and uses *Homo sapiens* expression system by default::
+Protein-based design works similarly and uses *Homo sapiens* expression system by default
 
-    > python primerdriver.py --mode pro --sequence CAISBVAIVBAIVBCAICBASCBAVQVFEWQEPFQEHVSDBVSKZDBNCSD --mutation-type sub -t Q -p 26 -r R
+.. code-block:: console
+
+    $ poetry run python -m primerdriver --mode pro --sequence CAISBVAIVBAIVBCAICBASCBAVQVFEWQEPFQEHVSDBVSKZDBNCSD --mutation-type sub -t Q -p 26 -r R

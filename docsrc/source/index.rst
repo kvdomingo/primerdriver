@@ -1,16 +1,17 @@
 .. PrimerDriver documentation master file, created by
-sphinx-quickstart on Mon Feb 24 21:07:35 2020.
-You can adapt this file completely to your liking, but it should at least
-contain the root `toctree` directive.
+   sphinx-quickstart on Mon Feb 24 21:07:35 2020.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-.. image:: images/PrimerDriver_logo.png
+.. image:: _static/PrimerDriver_logo.png
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
-
-   gettingstarted.rst
-   software.rst
+   
+   gettingstarted
+   software
+   api
    Source Code <https://github.com/kvdomingo/primerdriver>
    Official Website <https://primerdriver.kvdstudio.app/>
 
