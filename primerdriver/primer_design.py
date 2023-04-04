@@ -1,5 +1,5 @@
 from enum import Enum
-from json import load, loads
+from json import load
 from typing import Any
 
 from numpy import array
@@ -7,7 +7,10 @@ from pandas import DataFrame
 from tabulate import tabulate
 
 from primerdriver.checks import SequenceChecks
-from primerx.log import logger
+from primerdriver.config import BASE_DIR, get_settings
+from primerdriver.log import logger
+
+settings = get_settings()
 
 
 class OperationMode(Enum):
@@ -40,17 +43,11 @@ class PrimerDesign:
         replacement=None,
         position=None,
         savename=None,
-        config_file="primerdriver/settings.json",
         print_buffer=20,
+        config_file=BASE_DIR / "primerdriver" / "settings.json",  # deprecated
         **kwargs,
     ):
-        if isinstance(config_file, str):
-            if config_file.endswith("json"):
-                with open(config_file, "r") as f:
-                    config_file = load(f)
-            else:
-                config_file = loads(config_file)
-        self.settings: dict[str, Any] = config_file
+        self.settings: dict[str, Any] = settings
         self.mode = OperationMode(mode.upper())
         self.sequence: str = sequence.upper()
         self.mutation_type = MutationType(mutation_type[0].upper())
@@ -90,10 +87,14 @@ class PrimerDesign:
         self.print_buffer: int = print_buffer
         self.expression_name: str = self.settings["expression_system"]
         self.savename = savename
-        with open("primerdriver/lut.json", "r", encoding="utf-8") as f:
+        with open(BASE_DIR / "primerdriver" / "lut.json", "r", encoding="utf-8") as f:
             self.lut: dict[str, Any] = load(f)
         with open(
-            f"primerdriver/expression system/{self.expression_name}.json", "r"
+            BASE_DIR
+            / "primerdriver"
+            / "expression_system"
+            / f"{self.expression_name}.json",
+            "r",
         ) as f:
             self.expression_system: dict[str, str] = load(f)
 

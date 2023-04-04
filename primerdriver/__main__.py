@@ -1,11 +1,11 @@
 import sys
 from argparse import ArgumentParser
 
+from primerdriver import __version__
 from primerdriver.input_handler import interactive_handler, single_command_handler
+from primerdriver.log import logger
 from primerdriver.output_handler import interactive_saver, single_command_saver
 from primerdriver.primer_design import MutationType, OperationMode, PrimerDesign
-from primerdriver.version import __version__
-from primerx.log import logger
 
 
 @logger.catch

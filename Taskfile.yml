@@ -6,15 +6,6 @@ env:
     sh: git show --format="%h" --no-patch
 
 tasks:
-  default:
-    cmds:
-      - docker compose -p {{.NAME}} up -d --build --remove-orphans {{.CLI_ARGS}}
-      - task logs
-
-  logs:
-    cmds:
-      - docker compose -p {{.NAME}} logs --follow {{.CLI_ARGS}}
-
   test:
     cmds:
       - poetry run python -m unittest {{.CLI_ARGS}}
@@ -23,19 +14,3 @@ tasks:
     cmds:
       - poetry run pyinstaller --clean -F --name primerdriver setup.py
       - docker run -v "$(pwd)":/build --rm --env NAME={{.NAME}} --name primerdriver --workdir /build kvdomingo/py-cli-builder:latest
-
-  shutdown:
-    cmds:
-      - docker compose -p {{.NAME}} stop {{.CLI_ARGS}}
-
-  restart:
-    cmds:
-      - docker compose -p {{.NAME}} restart {{.CLI_ARGS}}
-
-  reload-proxy:
-    cmds:
-      - docker compose -p {{.NAME}} exec -- proxy nginx -s reload
-
-  clean:
-    cmds:
-      - docker compose -p {{.NAME}} down -v --remove-orphans

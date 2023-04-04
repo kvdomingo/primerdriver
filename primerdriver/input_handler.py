@@ -1,9 +1,6 @@
 from Bio import SeqIO
 
 from primerdriver.checks import PrimerChecks
-from primerdriver.version import __version__
-
-version = str(__version__)
 
 
 def single_command_handler(args):

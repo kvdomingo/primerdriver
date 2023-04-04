@@ -1,4 +1,6 @@
+import json
 import os
+from functools import lru_cache
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -12,3 +14,9 @@ PYTHON_ENV = (
 )
 
 SHORT_SHA = os.environ.get("SHORT_SHA", "")
+
+
+@lru_cache
+def get_settings():
+    with open(BASE_DIR / "primerdriver" / "settings.json", "r") as f:
+        return json.load(f)
