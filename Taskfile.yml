@@ -1,7 +1,7 @@
 version: '3'
 
 env:
-  NAME: primerdriver-dev
+  NAME: primerdriver
   SHORT_SHA:
     sh: git show --format="%h" --no-patch
 
