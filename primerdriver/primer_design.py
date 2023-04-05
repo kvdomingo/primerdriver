@@ -1,6 +1,6 @@
+import json
 from enum import Enum
-from json import load
-from typing import Any
+from typing import Any, Dict, Tuple, Union
 
 from numpy import array
 from pandas import DataFrame
@@ -11,6 +11,10 @@ from primerdriver.config import BASE_DIR, get_settings
 from primerdriver.log import logger
 
 settings = get_settings()
+
+TABLES_DIR = BASE_DIR / "primerdriver" / "tables"
+
+EXPRESSION_SYS_DIR = BASE_DIR / "primerdriver" / "expression_systems"
 
 
 class OperationMode(Enum):
@@ -44,59 +48,52 @@ class PrimerDesign:
         position=None,
         savename=None,
         print_buffer=20,
-        config_file=BASE_DIR / "primerdriver" / "settings.json",  # deprecated
-        **kwargs,
+        settings=settings,
     ):
-        self.settings: dict[str, Any] = settings
+        self.settings = settings
         self.mode = OperationMode(mode.upper())
         self.sequence: str = sequence.upper()
         self.mutation_type = MutationType(mutation_type[0].upper())
-        self.mismatched_bases: int | None = (
+        self.mismatched_bases: Union[int, None] = (
             int(mismatched_bases) if mismatched_bases is not None else None
         )
-        self.replacement: str | None = (
+        self.replacement: Union[str, None] = (
             replacement.upper() if replacement is not None else None
         )
-        self.position: int | None = int(position) - 1 if position is not None else None
-        self.target: str | None = target.upper() if target is not None else None
-        self.Tm_range: tuple[float, float] = (
-            self.settings["Tm_range_min"],
-            self.settings["Tm_range_max"],
+        self.position: Union[int, None] = (
+            int(position) - 1 if position is not None else None
         )
-        self.length_range: tuple[int, int] = (
-            self.settings["length_min"],
-            self.settings["length_max"],
+        self.target: Union[str, None] = target.upper() if target is not None else None
+        self.Tm_range: Tuple[float, float] = (
+            self.settings.Tm_range_min,
+            self.settings.Tm_range_max,
         )
-        self.gc_range: tuple[float, float] = (
-            self.settings["gc_range_min"],
-            self.settings["gc_range_max"],
+        self.length_range: Tuple[int, int] = (
+            self.settings.length_min,
+            self.settings.length_max,
         )
-        self.flank5_range: tuple[int, int] = (
-            self.settings["flank5_range_min"],
-            self.settings["flank5_range_max"],
+        self.gc_range: Tuple[float, float] = (
+            self.settings.gc_range_min,
+            self.settings.gc_range_max,
         )
-        self.flank3_range: tuple[int, int] = (
-            self.settings["flank3_range_min"],
-            self.settings["flank3_range_max"],
+        self.flank5_range: Tuple[int, int] = (
+            self.settings.flank5_range_min,
+            self.settings.flank5_range_max,
         )
-        self.forward_overlap5: int = self.settings["forward_overlap5"]
-        self.forward_overlap3: int = self.settings["forward_overlap3"]
-        self.terminate_gc = bool(self.settings["terminate_gc"])
-        self.center_mutation = bool(self.settings["center_mutation"])
-        self.primer_mode = PrimerMode(self.settings["primer_mode"])
+        self.flank3_range: Tuple[int, int] = (
+            self.settings.flank3_range_min,
+            self.settings.flank3_range_max,
+        )
+        self.primer_mode = PrimerMode(self.settings.primer_mode)
         self.print_buffer: int = print_buffer
-        self.expression_name: str = self.settings["expression_system"]
         self.savename = savename
-        with open(BASE_DIR / "primerdriver" / "lut.json", "r", encoding="utf-8") as f:
-            self.lut: dict[str, Any] = load(f)
+        with open(TABLES_DIR / "lut.json", "r", encoding="utf-8") as f:
+            self.lut: Dict[str, Dict[str, Any]] = json.load(f)
         with open(
-            BASE_DIR
-            / "primerdriver"
-            / "expression_system"
-            / f"{self.expression_name}.json",
+            EXPRESSION_SYS_DIR / f"{self.settings.expression_system}.json",
             "r",
         ) as f:
-            self.expression_system: dict[str, str] = load(f)
+            self.expression_system: dict[str, str] = json.load(f)
 
     @staticmethod
     def calculate_gc_content(seq: str | list[str]) -> float:
@@ -255,7 +252,7 @@ class PrimerDesign:
             seq[start_position - 1] = replacement
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate3 = list(replacement)
@@ -280,7 +277,7 @@ class PrimerDesign:
                     valid_temp = sc.is_valid_melting_temp(
                         melting_temperature, self.Tm_range
                     )
-                    valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                     valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
@@ -291,7 +288,7 @@ class PrimerDesign:
             forward_sequence[start_position - 1] = replacement
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = forward_sequence[
                         start_position - 1 - f5 : start_position - 1
@@ -318,7 +315,7 @@ class PrimerDesign:
                     valid_temp = sc.is_valid_melting_temp(
                         melting_temperature, self.Tm_range
                     )
-                    valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                     valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
@@ -331,12 +328,13 @@ class PrimerDesign:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
                 while (
-                    start < self.position - self.forward_overlap5
-                    and end > self.position + sequence_length + self.forward_overlap3
+                    start < self.position - self.settings.forward_overlap5
+                    and end
+                    > self.position + sequence_length + self.settings.forward_overlap3
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.forward_overlap5, end):
+                for i in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -355,7 +353,7 @@ class PrimerDesign:
                         valid_trange = sc.are_melting_temps_close(
                             forward_melting_temp, melting_temperature
                         )
-                        valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                         valid_length = sc.is_valid_length(self.length_range)
                         if (
                             valid_gc
@@ -378,7 +376,7 @@ class PrimerDesign:
             df = []
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.mode == OperationMode.PROTEIN:
-                print(f"Using expression system: {self.expression_name}")
+                print(f"Using expression system: {self.settings.expression_system}")
             if self.primer_mode == PrimerMode.COMPLEMENTARY:
                 for i, p in enumerate(valid_primers):
                     df.append(
@@ -418,7 +416,7 @@ class PrimerDesign:
             seq = list(sequence)
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
@@ -452,7 +450,7 @@ class PrimerDesign:
                     valid_temp = sc.is_valid_melting_temp(
                         melting_temperature, self.Tm_range
                     )
-                    valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                     valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
@@ -462,7 +460,7 @@ class PrimerDesign:
             seq = list(sequence)
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
@@ -496,7 +494,7 @@ class PrimerDesign:
                     valid_temp = sc.is_valid_melting_temp(
                         melting_temperature, self.Tm_range
                     )
-                    valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                     valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
@@ -514,12 +512,13 @@ class PrimerDesign:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
                 while (
-                    start < self.position - self.forward_overlap5
-                    and end > self.position + sequence_length + self.forward_overlap3
+                    start < self.position - self.settings.forward_overlap5
+                    and end
+                    > self.position + sequence_length + self.settings.forward_overlap3
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.forward_overlap5, end):
+                for i in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -538,7 +537,7 @@ class PrimerDesign:
                         valid_trange = sc.are_melting_temps_close(
                             forward_melting_temp, melting_temperature
                         )
-                        valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                         valid_length = sc.is_valid_length(self.length_range)
                         if (
                             valid_gc
@@ -597,7 +596,7 @@ class PrimerDesign:
             seq[start_position - 1] = replacement + seq[start_position - 1]
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate2 = seq[
@@ -615,7 +614,7 @@ class PrimerDesign:
                     sc = SequenceChecks(candidate)
                     valid_gc = sc.is_valid_gc_content(self.gc_range)
                     valid_temp = sc.is_valid_melting_temp(melting_temp, self.Tm_range)
-                    valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                     valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
@@ -626,7 +625,7 @@ class PrimerDesign:
             seq[start_position - 1] = replacement + seq[start_position - 1]
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate2 = seq[
@@ -644,7 +643,7 @@ class PrimerDesign:
                     sc = SequenceChecks(candidate)
                     valid_gc = sc.is_valid_gc_content(self.gc_range)
                     valid_temp = sc.is_valid_melting_temp(melting_temp, self.Tm_range)
-                    valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                     valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
@@ -657,12 +656,13 @@ class PrimerDesign:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
                 while (
-                    start < self.position - self.forward_overlap5
-                    and end > self.position + sequence_length + self.forward_overlap3
+                    start < self.position - self.settings.forward_overlap5
+                    and end
+                    > self.position + sequence_length + self.settings.forward_overlap3
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.forward_overlap5, end):
+                for i in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -679,7 +679,7 @@ class PrimerDesign:
                             melting_temp, self.Tm_range
                         )
                         valid_trange = sc.are_melting_temps_close(fwd_Tm, melting_temp)
-                        valid_ends = sc.is_gc_clamped(self.terminate_gc)
+                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
                         valid_length = sc.is_valid_length(self.length_range)
                         if (
                             valid_gc

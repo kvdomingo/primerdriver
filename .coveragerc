@@ -1,0 +1,7 @@
+[run]
+source = .
+omit = */tests/*,*/*.ipynb
+
+[report]
+omit = */tests/*,*/*.ipynb
+precision = 1

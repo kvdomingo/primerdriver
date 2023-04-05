@@ -8,7 +8,7 @@ env:
 tasks:
   test:
     cmds:
-      - poetry run python -m unittest {{.CLI_ARGS}}
+      - poetry run coverage run -m pytest
 
   build:
     cmds:
