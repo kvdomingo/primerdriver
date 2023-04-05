@@ -25,7 +25,7 @@ def interactive_saver(df: DataFrame) -> None:
                 break
             elif savename.endswith(".fasta"):
                 seq_list = []
-                for i, seq in enumerate(df):
+                for i in range(len(df)):
                     seq_list.append(
                         SeqRecord(
                             Seq(df[i]["Forward"].values[0], IUPAC.unambiguous_dna),
@@ -61,7 +61,7 @@ def single_command_saver(df: DataFrame, savename: Union[str, PathLike]):
         df.to_html(savename)
     elif savename.endswith(".fasta"):
         seq_list = []
-        for i, seq in enumerate(df):
+        for i in range(len(df)):
             seq_list.append(
                 SeqRecord(
                     Seq(df[i]["Forward"].values[0], IUPAC.unambiguous_dna),

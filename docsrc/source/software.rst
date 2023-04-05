@@ -11,8 +11,10 @@ Parameter Setting
 
 The user parameter setting is possible for the inputs in PrimerDriver. The tool designs the desired mutagenic primer pairs according to user input and performs site-directed mutagenesis from single- or multiple-bases within the sequence.
 
-The user needs to open the ``primerdriver/settings.json`` file to define the range of allowable values in most of the parameters. The ``json`` file with the default settings appears as follows: ::
+When running ``primerdriver`` as standalone CLI, the user needs to modify the ``primerdriver/settings.json`` file to define custom values for the required parameters. The parameter defaults are as follows
     
+.. code-block:: json
+
     {
         "Tm_range_min": 75,
         "Tm_range_max": 85,
@@ -26,11 +28,35 @@ The user needs to open the ``primerdriver/settings.json`` file to define the ran
         "flank3_range_max": 21,
         "forward_overlap5": 9,
         "forward_overlap3": 9,
-        "terminate_gc" : 1,
-        "center_mutation": 0,
+        "terminate_gc" : true,
+        "center_mutation": false,
         "primer_mode": "overlapping",
         "expression_system": "Homo sapiens"
     }
+
+When running ``primerdriver`` as part of a larger Python script, you can instead import the settings via
+
+.. code-block:: python
+
+    from primerdriver.config import get_settings
+
+    settings = get_settings()
+
+then access/modify the individual parameters using dot notation, e.g.
+
+.. code-block:: python
+
+    settings.terminate_gc = False
+    settings.length_min = 20
+    settings.length_max = 55
+
+then pass the updated settings when initializing the module
+
+.. code-block:: python
+
+    from primerdriver.primer_design import PrimerDesign
+
+    pd = PrimerDesign(*args, settings=settings)
 
 The following definitions and considerations should be made for designing mutagenic primers:
 
@@ -63,13 +89,13 @@ The following definitions and considerations should be made for designing mutage
     This is the length of the region that is to the left of the mutation when read in standard sequence notation.
 
 - ``flank3_range``
-    This refers to the length of the region that is to the right of the mutation when read in 5’ to 3’.
+    This refers to the length of the region that is to the right of the mutation when read in 5' to 3'.
 
 - ``forward_overlap5``
     When generating overlapping primers, this is where the user sets the minimum number of overlapping bases of the 5’ end of the forward primer to the reverse primer.
 
 - ``forward_overlap3``
-    This sets the minimum number of base overlaps from the 3’ end of the forward primer to the reverse primer.
+    This sets the minimum number of base overlaps from the 3' end of the forward primer to the reverse primer.
 
 - ``terminate_gc``
     Set in boolean values, this refers to having a GC clamp at both ends of the primers.
@@ -118,9 +144,6 @@ Choosing primer design modes
 ----------------------------
 
 PrimerDriver asks you to choose from three different modes when using the command-line interface:
-
     - Primer characterization
-
     - DNA-based primer design
-
     - Protein-based primer design

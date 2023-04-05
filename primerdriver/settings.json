@@ -11,8 +11,8 @@
   "flank3_range_max": 21,
   "forward_overlap5": 9,
   "forward_overlap3": 9,
-  "terminate_gc": 1,
-  "center_mutation": 0,
+  "terminate_gc": true,
+  "center_mutation": false,
   "primer_mode": "overlapping",
   "expression_system": "Homo sapiens"
 }

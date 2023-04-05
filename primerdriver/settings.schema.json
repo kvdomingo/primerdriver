@@ -45,11 +45,11 @@
     },
     "terminate_gc": {
       "description": "Whether to have a GC clamp at both ends of the primer (0 = false, 1 = true)",
-      "enum": [0, 1]
+      "type": "boolean"
     },
     "center_mutation": {
       "description": "Whether to center the mutation in the primer (0 = false, 1 = true)",
-      "enum": [0, 1]
+      "type": "boolean"
     },
     "primer_mode": {
       "description": "Whether to design overlapping or complementary primers.",
