@@ -1,13 +1,13 @@
 import json
 from enum import Enum
-from typing import Any, Dict, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from numpy import array
 from pandas import DataFrame
 from tabulate import tabulate
 
 from primerdriver.checks import SequenceChecks
-from primerdriver.config import BASE_DIR, get_settings
+from primerdriver.config import BASE_DIR, get_lookup_tables, get_settings
 from primerdriver.log import logger
 
 settings = get_settings()
@@ -15,6 +15,8 @@ settings = get_settings()
 TABLES_DIR = BASE_DIR / "primerdriver" / "tables"
 
 EXPRESSION_SYS_DIR = BASE_DIR / "primerdriver" / "expression_systems"
+
+LOOKUP_TABLES = get_lookup_tables()
 
 
 class OperationMode(Enum):
@@ -36,6 +38,7 @@ class PrimerMode(Enum):
 
 class PrimerDesign:
     df: DataFrame
+    lut = LOOKUP_TABLES
 
     def __init__(
         self,
@@ -87,8 +90,6 @@ class PrimerDesign:
         self.primer_mode = PrimerMode(self.settings.primer_mode)
         self.print_buffer: int = print_buffer
         self.savename = savename
-        with open(TABLES_DIR / "lut.json", "r", encoding="utf-8") as f:
-            self.lut: Dict[str, Dict[str, Any]] = json.load(f)
         with open(
             EXPRESSION_SYS_DIR / f"{self.settings.expression_system}.json",
             "r",
@@ -96,19 +97,19 @@ class PrimerDesign:
             self.expression_system: dict[str, str] = json.load(f)
 
     @staticmethod
-    def calculate_gc_content(seq: str | list[str]) -> float:
+    def calculate_gc_content(seq: Union[str, List[str]]) -> float:
         return (seq.count("G") + seq.count("C")) / len(seq)
 
     @staticmethod
-    def calculate_mismatch(seq: str | list[str], mismatched_bases: int) -> float:
+    def calculate_mismatch(seq: Union[str, List[str]], mismatched_bases: int) -> float:
         return mismatched_bases / len(seq)
 
-    def get_reverse_complement(self, seq: str | list[str]) -> list[str]:
+    def get_reverse_complement(self, seq: Union[str, List[str]]) -> list[str]:
         seq = list(seq)
         return [self.lut["complement"][b] for b in seq][::-1]
 
     @staticmethod
-    def is_gc_end(sequence: str | list[str]) -> bool:
+    def is_gc_end(sequence: Union[str, List[str]]) -> bool:
         sequence = "".join(sequence)
         return (sequence.startswith("G") or sequence.startswith("C")) and (
             sequence.endswith("G") or sequence.endswith("C")
@@ -116,9 +117,9 @@ class PrimerDesign:
 
     @staticmethod
     def calculate_melting_temperature(
-        seq: str | list[str],
+        seq: Union[str, List[str]],
         mutation_type: MutationType,
-        replacement: str | list[str],
+        replacement: Union[str, List[str]],
         gc_content: float,
         mismatch: float,
     ) -> float:
@@ -138,12 +139,12 @@ class PrimerDesign:
 
     def characterize_primer(
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        replacement: str | list[str] | None,
+        replacement: Union[str, List[str], None],
         mismatched_bases: int,
-        index: int = None,
-        reverse: list[str] = None,
+        index: Optional[int] = None,
+        reverse: Optional[List[str]] = None,
     ) -> DataFrame:
         mol_weight = self.lut["mol_weight"]
         seq = list(sequence)
@@ -238,13 +239,13 @@ class PrimerDesign:
 
     def substitution(  # noqa: C901
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
+        target: Union[str, List[str], None],
+        replacement: Union[str, List[str]],
         start_position: int,
         mismatched_bases: int,
-    ) -> DataFrame | None:
+    ) -> Union[DataFrame, None]:
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             seq = list(sequence)
@@ -403,13 +404,13 @@ class PrimerDesign:
 
     def deletion(  # noqa: C901
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
+        target: Union[str, List[str], None],
+        replacement: Union[str, List[str]],
         start_position: int,
         mismatched_bases: int,
-    ) -> DataFrame | None:
+    ) -> Union[DataFrame, None]:
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             sequence_length = len(self.target)
@@ -582,13 +583,13 @@ class PrimerDesign:
 
     def insertion(  # noqa: C901
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
+        target: Union[str, List[str], None],
+        replacement: Union[str, List[str]],
         start_position: int,
         mismatched_bases: int,
-    ) -> DataFrame | None:
+    ) -> Union[DataFrame, None]:
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             seq = list(sequence)

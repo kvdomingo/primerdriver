@@ -2,7 +2,7 @@ import json
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Any, Dict, Literal
 
 from dotenv import load_dotenv
 from pydantic import BaseSettings
@@ -55,3 +55,9 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings():
     return Settings()
+
+
+@lru_cache
+def get_lookup_tables() -> Dict[str, Any]:
+    with open(BASE_DIR / "primerdriver" / "tables" / "lut.json", "r") as f:
+        return json.load(f)
