@@ -1,5 +1,5 @@
 from json import load
-from typing import List, Tuple, Union
+from typing import List, Union
 
 from primerdriver.config import BASE_DIR, get_settings
 from primerdriver.exceptions import PrimerCheckError
@@ -73,7 +73,7 @@ class PrimerChecks:
         if self.no_interaction:
             raise PrimerCheckError(error_message)
 
-    def is_gc_clamped(self) -> None:
+    def is_valid_gc_content(self) -> None:
         """
         Check if the `self.sequence` has valid %GC content (determined by settings.json).
 
@@ -98,21 +98,23 @@ class SequenceChecks:
         """
         self.sequence = sequence.upper()
 
-    def is_valid_length(self, length_range: Tuple[int, int]) -> bool:
+    def is_valid_length(self) -> bool:
         return settings.length_min <= len(self.sequence) <= settings.length_max
 
-    def is_valid_gc_content(self, gc_range: Tuple[int, int]) -> bool:
+    def is_valid_gc_content(self) -> bool:
         seq = list(self.sequence)
         gc = (seq.count("C") + seq.count("G")) / len(seq) * 100
         return settings.gc_range_min < gc < settings.gc_range_max
 
-    def is_valid_melting_temp(self, Tm, Tm_range) -> bool:
-        return settings.Tm_range_min < Tm < settings.Tm_range_max
+    @staticmethod
+    def is_valid_melting_temp(melting_temp) -> bool:
+        return settings.Tm_range_min < melting_temp < settings.Tm_range_max
 
-    def are_melting_temps_close(self, fwd_Tm, rev_Tm) -> bool:
+    @staticmethod
+    def are_melting_temps_close(fwd_Tm, rev_Tm) -> bool:
         return abs(fwd_Tm - rev_Tm) <= 2
 
-    def is_gc_clamped(self, terminate_gc) -> bool:
+    def is_gc_clamped(self) -> bool:
         return not settings.terminate_gc or (
             self.sequence[0] in ["C", "G"] and self.sequence[-1] in ["C", "G"]
         )

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "primerdriver"
-version = "1.4.0"
+version = "1.5.0"
 description = "Automated design of mutagenic PCR primers"
 authors = [
     "Kenneth V. Domingo <hello@kvdomingo.xyz>",

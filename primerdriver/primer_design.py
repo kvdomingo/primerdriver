@@ -1,4 +1,3 @@
-import json
 from enum import Enum
 from typing import List, Optional, Tuple, Union
 
@@ -6,8 +5,10 @@ from numpy import array
 from pandas import DataFrame
 from tabulate import tabulate
 
+from primerdriver import expression_sys_loader
 from primerdriver.checks import SequenceChecks
 from primerdriver.config import BASE_DIR, get_lookup_tables, get_settings
+from primerdriver.exceptions import PrimerCheckError
 from primerdriver.log import logger
 
 settings = get_settings()
@@ -90,11 +91,9 @@ class PrimerDesign:
         self.primer_mode = PrimerMode(self.settings.primer_mode)
         self.print_buffer: int = print_buffer
         self.savename = savename
-        with open(
-            EXPRESSION_SYS_DIR / f"{self.settings.expression_system}.json",
-            "r",
-        ) as f:
-            self.expression_system: dict[str, str] = json.load(f)
+        self.expression_system: dict[str, str] = expression_sys_loader.lazy_load(
+            self.settings.expression_system
+        )
 
     @staticmethod
     def calculate_gc_content(seq: Union[str, List[str]]) -> float:
@@ -274,12 +273,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content(self.gc_range)
-                    valid_temp = sc.is_valid_melting_temp(
-                        melting_temperature, self.Tm_range
-                    )
-                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                    valid_length = sc.is_valid_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content()
+                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
+                    valid_ends = sc.is_gc_clamped()
+                    valid_length = sc.is_valid_length()
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
@@ -312,12 +309,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content(self.gc_range)
-                    valid_temp = sc.is_valid_melting_temp(
-                        melting_temperature, self.Tm_range
-                    )
-                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                    valid_length = sc.is_valid_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content()
+                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
+                    valid_ends = sc.is_gc_clamped()
+                    valid_length = sc.is_valid_length()
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
             for primers in valid_primers.keys():
@@ -347,15 +342,13 @@ class PrimerDesign:
                             candidate, mutation_type, replacement, gc_content, mismatch
                         )
                         sc = SequenceChecks(candidate)
-                        valid_gc = sc.is_valid_gc_content(self.gc_range)
-                        valid_temp = sc.is_valid_melting_temp(
-                            melting_temperature, self.Tm_range
-                        )
+                        valid_gc = sc.is_valid_gc_content()
+                        valid_temp = sc.is_valid_melting_temp(melting_temperature)
                         valid_trange = sc.are_melting_temps_close(
                             forward_melting_temp, melting_temperature
                         )
-                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                        valid_length = sc.is_valid_length(self.length_range)
+                        valid_ends = sc.is_gc_clamped()
+                        valid_length = sc.is_valid_length()
                         if (
                             valid_gc
                             and valid_temp
@@ -447,12 +440,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content(self.gc_range)
-                    valid_temp = sc.is_valid_melting_temp(
-                        melting_temperature, self.Tm_range
-                    )
-                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                    valid_length = sc.is_valid_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content()
+                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
+                    valid_ends = sc.is_gc_clamped()
+                    valid_length = sc.is_valid_length()
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
@@ -491,12 +482,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content(self.gc_range)
-                    valid_temp = sc.is_valid_melting_temp(
-                        melting_temperature, self.Tm_range
-                    )
-                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                    valid_length = sc.is_valid_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content()
+                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
+                    valid_ends = sc.is_gc_clamped()
+                    valid_length = sc.is_valid_length()
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
             if self.mode == OperationMode.DNA:
@@ -531,15 +520,13 @@ class PrimerDesign:
                             candidate, mutation_type, replacement, gc_content, mismatch
                         )
                         sc = SequenceChecks(candidate)
-                        valid_gc = sc.is_valid_gc_content(self.gc_range)
-                        valid_temp = sc.is_valid_melting_temp(
-                            melting_temperature, self.Tm_range
-                        )
+                        valid_gc = sc.is_valid_gc_content()
+                        valid_temp = sc.is_valid_melting_temp(melting_temperature)
                         valid_trange = sc.are_melting_temps_close(
                             forward_melting_temp, melting_temperature
                         )
-                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                        valid_length = sc.is_valid_length(self.length_range)
+                        valid_ends = sc.is_gc_clamped()
+                        valid_length = sc.is_valid_length()
                         if (
                             valid_gc
                             and valid_temp
@@ -613,10 +600,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content(self.gc_range)
-                    valid_temp = sc.is_valid_melting_temp(melting_temp, self.Tm_range)
-                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                    valid_length = sc.is_valid_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content()
+                    valid_temp = sc.is_valid_melting_temp(melting_temp)
+                    valid_ends = sc.is_gc_clamped()
+                    valid_length = sc.is_valid_length()
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
@@ -642,10 +629,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content(self.gc_range)
-                    valid_temp = sc.is_valid_melting_temp(melting_temp, self.Tm_range)
-                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                    valid_length = sc.is_valid_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content()
+                    valid_temp = sc.is_valid_melting_temp(melting_temp)
+                    valid_ends = sc.is_gc_clamped()
+                    valid_length = sc.is_valid_length()
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
             sequence = (
@@ -675,13 +662,11 @@ class PrimerDesign:
                             candidate, mutation_type, replacement, gc_content, mismatch
                         )
                         sc = SequenceChecks(candidate)
-                        valid_gc = sc.is_valid_gc_content(self.gc_range)
-                        valid_temp = sc.is_valid_melting_temp(
-                            melting_temp, self.Tm_range
-                        )
+                        valid_gc = sc.is_valid_gc_content()
+                        valid_temp = sc.is_valid_melting_temp(melting_temp)
                         valid_trange = sc.are_melting_temps_close(fwd_Tm, melting_temp)
-                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
-                        valid_length = sc.is_valid_length(self.length_range)
+                        valid_ends = sc.is_gc_clamped()
+                        valid_length = sc.is_valid_length()
                         if (
                             valid_gc
                             and valid_temp
@@ -812,11 +797,13 @@ class PrimerDesign:
             df = self.dna_based()
         elif self.mode == OperationMode.PROTEIN:
             df = self.protein_based()
-        else:
+        elif self.mode == OperationMode.CHARACTERIZATION:
             df = self.characterize_primer(
                 self.sequence,
                 self.mutation_type,
                 self.replacement,
                 self.mismatched_bases,
             )
+        else:
+            raise PrimerCheckError(f"Unknown mode '{self.mode}'")
         self.df = df

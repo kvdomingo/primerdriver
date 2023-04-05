@@ -37,17 +37,5 @@
    
       ~PrimerDesign.lut
       ~PrimerDesign.df
-      ~PrimerDesign.sequence
-      ~PrimerDesign.mismatched_bases
-      ~PrimerDesign.replacement
-      ~PrimerDesign.position
-      ~PrimerDesign.target
-      ~PrimerDesign.Tm_range
-      ~PrimerDesign.length_range
-      ~PrimerDesign.gc_range
-      ~PrimerDesign.flank5_range
-      ~PrimerDesign.flank3_range
-      ~PrimerDesign.print_buffer
-      ~PrimerDesign.expression_system
    
    
