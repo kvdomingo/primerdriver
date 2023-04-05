@@ -1,13 +1,22 @@
+import json
 from enum import Enum
-from json import load, loads
-from typing import Any
+from typing import List, Optional, Tuple, Union
 
 from numpy import array
 from pandas import DataFrame
 from tabulate import tabulate
 
 from primerdriver.checks import SequenceChecks
-from primerx.log import logger
+from primerdriver.config import BASE_DIR, get_lookup_tables, get_settings
+from primerdriver.log import logger
+
+settings = get_settings()
+
+TABLES_DIR = BASE_DIR / "primerdriver" / "tables"
+
+EXPRESSION_SYS_DIR = BASE_DIR / "primerdriver" / "expression_systems"
+
+LOOKUP_TABLES = get_lookup_tables()
 
 
 class OperationMode(Enum):
@@ -29,6 +38,7 @@ class PrimerMode(Enum):
 
 class PrimerDesign:
     df: DataFrame
+    lut = LOOKUP_TABLES
 
     def __init__(
         self,
@@ -40,77 +50,66 @@ class PrimerDesign:
         replacement=None,
         position=None,
         savename=None,
-        config_file="primerdriver/settings.json",
         print_buffer=20,
-        **kwargs,
+        settings=settings,
     ):
-        if isinstance(config_file, str):
-            if config_file.endswith("json"):
-                with open(config_file, "r") as f:
-                    config_file = load(f)
-            else:
-                config_file = loads(config_file)
-        self.settings: dict[str, Any] = config_file
+        self.settings = settings
         self.mode = OperationMode(mode.upper())
         self.sequence: str = sequence.upper()
         self.mutation_type = MutationType(mutation_type[0].upper())
-        self.mismatched_bases: int | None = (
+        self.mismatched_bases: Union[int, None] = (
             int(mismatched_bases) if mismatched_bases is not None else None
         )
-        self.replacement: str | None = (
+        self.replacement: Union[str, None] = (
             replacement.upper() if replacement is not None else None
         )
-        self.position: int | None = int(position) - 1 if position is not None else None
-        self.target: str | None = target.upper() if target is not None else None
-        self.Tm_range: tuple[float, float] = (
-            self.settings["Tm_range_min"],
-            self.settings["Tm_range_max"],
+        self.position: Union[int, None] = (
+            int(position) - 1 if position is not None else None
         )
-        self.length_range: tuple[int, int] = (
-            self.settings["length_min"],
-            self.settings["length_max"],
+        self.target: Union[str, None] = target.upper() if target is not None else None
+        self.Tm_range: Tuple[float, float] = (
+            self.settings.Tm_range_min,
+            self.settings.Tm_range_max,
         )
-        self.gc_range: tuple[float, float] = (
-            self.settings["gc_range_min"],
-            self.settings["gc_range_max"],
+        self.length_range: Tuple[int, int] = (
+            self.settings.length_min,
+            self.settings.length_max,
         )
-        self.flank5_range: tuple[int, int] = (
-            self.settings["flank5_range_min"],
-            self.settings["flank5_range_max"],
+        self.gc_range: Tuple[float, float] = (
+            self.settings.gc_range_min,
+            self.settings.gc_range_max,
         )
-        self.flank3_range: tuple[int, int] = (
-            self.settings["flank3_range_min"],
-            self.settings["flank3_range_max"],
+        self.flank5_range: Tuple[int, int] = (
+            self.settings.flank5_range_min,
+            self.settings.flank5_range_max,
         )
-        self.forward_overlap5: int = self.settings["forward_overlap5"]
-        self.forward_overlap3: int = self.settings["forward_overlap3"]
-        self.terminate_gc = bool(self.settings["terminate_gc"])
-        self.center_mutation = bool(self.settings["center_mutation"])
-        self.primer_mode = PrimerMode(self.settings["primer_mode"])
+        self.flank3_range: Tuple[int, int] = (
+            self.settings.flank3_range_min,
+            self.settings.flank3_range_max,
+        )
+        self.primer_mode = PrimerMode(self.settings.primer_mode)
         self.print_buffer: int = print_buffer
-        self.expression_name: str = self.settings["expression_system"]
         self.savename = savename
-        with open("primerdriver/lut.json", "r", encoding="utf-8") as f:
-            self.lut: dict[str, Any] = load(f)
         with open(
-            f"primerdriver/expression system/{self.expression_name}.json", "r"
+            EXPRESSION_SYS_DIR / f"{self.settings.expression_system}.json",
+            "r",
         ) as f:
-            self.expression_system: dict[str, str] = load(f)
+            self.expression_system: dict[str, str] = json.load(f)
 
     @staticmethod
-    def calculate_gc_content(seq: str | list[str]) -> float:
+    def calculate_gc_content(seq: Union[str, List[str]]) -> float:
         return (seq.count("G") + seq.count("C")) / len(seq)
 
     @staticmethod
-    def calculate_mismatch(seq: str | list[str], mismatched_bases: int) -> float:
+    def calculate_mismatch(seq: Union[str, List[str]], mismatched_bases: int) -> float:
         return mismatched_bases / len(seq)
 
-    def get_reverse_complement(self, seq: str | list[str]) -> list[str]:
+    def get_reverse_complement(self, seq: Union[str, List[str]]) -> List[str]:
         seq = list(seq)
         return [self.lut["complement"][b] for b in seq][::-1]
 
     @staticmethod
-    def is_gc_end(sequence: str | list[str]) -> bool:
+    def is_gc_end(sequence: Union[str, List[str]]) -> bool:
         sequence = "".join(sequence)
         return (sequence.startswith("G") or sequence.startswith("C")) and (
             sequence.endswith("G") or sequence.endswith("C")
@@ -118,9 +117,9 @@ class PrimerDesign:
 
     @staticmethod
     def calculate_melting_temperature(
-        seq: str | list[str],
+        seq: Union[str, List[str]],
         mutation_type: MutationType,
-        replacement: str | list[str],
+        replacement: Union[str, List[str]],
         gc_content: float,
         mismatch: float,
     ) -> float:
@@ -140,12 +139,12 @@ class PrimerDesign:
 
     def characterize_primer(
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        replacement: str | list[str] | None,
+        replacement: Union[str, List[str], None],
         mismatched_bases: int,
-        index: int = None,
-        reverse: list[str] = None,
+        index: Optional[int] = None,
+        reverse: Optional[List[str]] = None,
     ) -> DataFrame:
         mol_weight = self.lut["mol_weight"]
         seq = list(sequence)
@@ -240,13 +239,13 @@ class PrimerDesign:
 
     def substitution(  # noqa: C901
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
+        target: Union[str, List[str], None],
+        replacement: Union[str, List[str]],
         start_position: int,
         mismatched_bases: int,
-    ) -> DataFrame | None:
+    ) -> Union[DataFrame, None]:
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             seq = list(sequence)
@@ -254,7 +253,7 @@ class PrimerDesign:
             seq[start_position - 1] = replacement
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate3 = list(replacement)
@@ -275,10 +274,12 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                    valid_ends = sc.check_ends_gc(self.terminate_gc)
-                    valid_length = sc.check_sequence_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content(self.gc_range)
+                    valid_temp = sc.is_valid_melting_temp(
+                        melting_temperature, self.Tm_range
+                    )
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                    valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
@@ -288,7 +289,7 @@ class PrimerDesign:
             forward_sequence[start_position - 1] = replacement
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = forward_sequence[
                         start_position - 1 - f5 : start_position - 1
@@ -311,10 +312,12 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                    valid_ends = sc.check_ends_gc(self.terminate_gc)
-                    valid_length = sc.check_sequence_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content(self.gc_range)
+                    valid_temp = sc.is_valid_melting_temp(
+                        melting_temperature, self.Tm_range
+                    )
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                    valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
             for primers in valid_primers.keys():
@@ -326,12 +329,13 @@ class PrimerDesign:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
                 while (
-                    start < self.position - self.forward_overlap5
-                    and end > self.position + sequence_length + self.forward_overlap3
+                    start < self.position - self.settings.forward_overlap5
+                    and end
+                    > self.position + sequence_length + self.settings.forward_overlap3
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.forward_overlap5, end):
+                for i in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -343,13 +347,15 @@ class PrimerDesign:
                             candidate, mutation_type, replacement, gc_content, mismatch
                         )
                         sc = SequenceChecks(candidate)
-                        valid_gc = sc.check_gc_content(self.gc_range)
-                        valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                        valid_trange = sc.check_close_Tm(
+                        valid_gc = sc.is_valid_gc_content(self.gc_range)
+                        valid_temp = sc.is_valid_melting_temp(
+                            melting_temperature, self.Tm_range
+                        )
+                        valid_trange = sc.are_melting_temps_close(
                             forward_melting_temp, melting_temperature
                         )
-                        valid_ends = sc.check_ends_gc(self.terminate_gc)
-                        valid_length = sc.check_sequence_length(self.length_range)
+                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                        valid_length = sc.is_valid_length(self.length_range)
                         if (
                             valid_gc
                             and valid_temp
@@ -371,7 +377,7 @@ class PrimerDesign:
             df = []
             print(f"\nGenerated forward primers: {len(valid_primers)}")
             if self.mode == OperationMode.PROTEIN:
-                print(f"Using expression system: {self.expression_name}")
+                print(f"Using expression system: {self.settings.expression_system}")
             if self.primer_mode == PrimerMode.COMPLEMENTARY:
                 for i, p in enumerate(valid_primers):
                     df.append(
@@ -398,20 +404,20 @@ class PrimerDesign:
 
     def deletion(  # noqa: C901
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
+        target: Union[str, List[str], None],
+        replacement: Union[str, List[str]],
         start_position: int,
         mismatched_bases: int,
-    ) -> DataFrame | None:
+    ) -> Union[DataFrame, None]:
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             sequence_length = len(self.target)
             seq = list(sequence)
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
@@ -441,10 +447,12 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                    valid_ends = sc.check_ends_gc(self.terminate_gc)
-                    valid_length = sc.check_sequence_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content(self.gc_range)
+                    valid_temp = sc.is_valid_melting_temp(
+                        melting_temperature, self.Tm_range
+                    )
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                    valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
@@ -453,7 +461,7 @@ class PrimerDesign:
             seq = list(sequence)
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
@@ -483,10 +491,12 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                    valid_ends = sc.check_ends_gc(self.terminate_gc)
-                    valid_length = sc.check_sequence_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content(self.gc_range)
+                    valid_temp = sc.is_valid_melting_temp(
+                        melting_temperature, self.Tm_range
+                    )
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                    valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
             if self.mode == OperationMode.DNA:
@@ -503,12 +513,13 @@ class PrimerDesign:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
                 while (
-                    start < self.position - self.forward_overlap5
-                    and end > self.position + sequence_length + self.forward_overlap3
+                    start < self.position - self.settings.forward_overlap5
+                    and end
+                    > self.position + sequence_length + self.settings.forward_overlap3
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.forward_overlap5, end):
+                for i in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -520,13 +531,15 @@ class PrimerDesign:
                             candidate, mutation_type, replacement, gc_content, mismatch
                         )
                         sc = SequenceChecks(candidate)
-                        valid_gc = sc.check_gc_content(self.gc_range)
-                        valid_temp = sc.check_Tm(melting_temperature, self.Tm_range)
-                        valid_trange = sc.check_close_Tm(
+                        valid_gc = sc.is_valid_gc_content(self.gc_range)
+                        valid_temp = sc.is_valid_melting_temp(
+                            melting_temperature, self.Tm_range
+                        )
+                        valid_trange = sc.are_melting_temps_close(
                             forward_melting_temp, melting_temperature
                         )
-                        valid_ends = sc.check_ends_gc(self.terminate_gc)
-                        valid_length = sc.check_sequence_length(self.length_range)
+                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                        valid_length = sc.is_valid_length(self.length_range)
                         if (
                             valid_gc
                             and valid_temp
@@ -570,13 +583,13 @@ class PrimerDesign:
 
     def insertion(  # noqa: C901
         self,
-        sequence: str | list[str],
+        sequence: Union[str, List[str]],
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
+        target: Union[str, List[str], None],
+        replacement: Union[str, List[str]],
         start_position: int,
         mismatched_bases: int,
-    ) -> DataFrame | None:
+    ) -> Union[DataFrame, None]:
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             seq = list(sequence)
@@ -584,7 +597,7 @@ class PrimerDesign:
             seq[start_position - 1] = replacement + seq[start_position - 1]
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate2 = seq[
@@ -600,10 +613,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(melting_temp, self.Tm_range)
-                    valid_ends = sc.check_ends_gc(self.terminate_gc)
-                    valid_length = sc.check_sequence_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content(self.gc_range)
+                    valid_temp = sc.is_valid_melting_temp(melting_temp, self.Tm_range)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                    valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
@@ -613,7 +626,7 @@ class PrimerDesign:
             seq[start_position - 1] = replacement + seq[start_position - 1]
             for f5 in range(*self.flank5_range):
                 for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.center_mutation:
+                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
                         continue
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate2 = seq[
@@ -629,10 +642,10 @@ class PrimerDesign:
                         candidate, mutation_type, replacement, gc_content, mismatch
                     )
                     sc = SequenceChecks(candidate)
-                    valid_gc = sc.check_gc_content(self.gc_range)
-                    valid_temp = sc.check_Tm(melting_temp, self.Tm_range)
-                    valid_ends = sc.check_ends_gc(self.terminate_gc)
-                    valid_length = sc.check_sequence_length(self.length_range)
+                    valid_gc = sc.is_valid_gc_content(self.gc_range)
+                    valid_temp = sc.is_valid_melting_temp(melting_temp, self.Tm_range)
+                    valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                    valid_length = sc.is_valid_length(self.length_range)
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers[candidate] = []
             sequence = (
@@ -644,12 +657,13 @@ class PrimerDesign:
                 start = sequence.find(primers)
                 end = start + len(primers) - 1
                 while (
-                    start < self.position - self.forward_overlap5
-                    and end > self.position + sequence_length + self.forward_overlap3
+                    start < self.position - self.settings.forward_overlap5
+                    and end
+                    > self.position + sequence_length + self.settings.forward_overlap3
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.forward_overlap5, end):
+                for i in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -661,11 +675,13 @@ class PrimerDesign:
                             candidate, mutation_type, replacement, gc_content, mismatch
                         )
                         sc = SequenceChecks(candidate)
-                        valid_gc = sc.check_gc_content(self.gc_range)
-                        valid_temp = sc.check_Tm(melting_temp, self.Tm_range)
-                        valid_trange = sc.check_close_Tm(fwd_Tm, melting_temp)
-                        valid_ends = sc.check_ends_gc(self.terminate_gc)
-                        valid_length = sc.check_sequence_length(self.length_range)
+                        valid_gc = sc.is_valid_gc_content(self.gc_range)
+                        valid_temp = sc.is_valid_melting_temp(
+                            melting_temp, self.Tm_range
+                        )
+                        valid_trange = sc.are_melting_temps_close(fwd_Tm, melting_temp)
+                        valid_ends = sc.is_gc_clamped(self.settings.terminate_gc)
+                        valid_length = sc.is_valid_length(self.length_range)
                         if (
                             valid_gc
                             and valid_temp

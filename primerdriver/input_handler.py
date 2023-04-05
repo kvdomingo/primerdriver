@@ -1,16 +1,15 @@
 from Bio import SeqIO
 
 from primerdriver.checks import PrimerChecks
-from primerdriver.version import __version__
-
-version = str(__version__)
 
 
 def single_command_handler(args):
     args_dict = dict()
     args_dict["mode"] = args.mode
+
     if args.save:
         args_dict["savename"] = args.save
+
     if args.sequence.endswith(".txt"):
         with open(args.sequence, "r", encoding="utf-8") as f:
             args_dict["sequence"] = f.read().strip()
@@ -19,12 +18,14 @@ def single_command_handler(args):
             args_dict["sequence"] = str(list(SeqIO.parse(f, "fasta"))[0].seq).strip()
     else:
         args_dict["sequence"] = args.sequence
+
     if args.mode.upper() == "DNA":
-        PrimerChecks(args_dict["sequence"]).check_sequence_length()
-        PrimerChecks(args_dict["sequence"]).check_valid_base()
+        PrimerChecks(args_dict["sequence"]).is_valid_sequence_length()
+        PrimerChecks(args_dict["sequence"]).is_valid_dna()
         args_dict["mutation_type"] = args.mutation_type
         args_dict["position"] = args.position
         args_dict["replacement"] = args.replacement
+
         if args.mutation_type.upper() in ["S", "SUB"]:
             args_dict["target"] = args.target
         elif args_dict["mutation_type"].upper() in ["I", "INS"]:
@@ -38,15 +39,14 @@ def single_command_handler(args):
         else:
             raise ValueError("Invalid argument passed to 'MUTATION_TYPE'")
     elif args.mode.upper() == "CHAR":
-        PrimerChecks(args.sequence).check_valid_base()
+        PrimerChecks(args.sequence).is_valid_dna()
         args_dict["mutation_type"] = args.mutation_type
         args_dict["mismatched_bases"] = args.position
     elif args.mode.upper() == "PRO":
         args_dict["sequence"] = args.sequence
-        args_dict["sequence"] = PrimerChecks(
-            args_dict["sequence"]
-        ).check_valid_protein()
+        args_dict["sequence"] = PrimerChecks(args_dict["sequence"]).is_valid_protein()
         args_dict["mutation_type"] = args.mutation_type
+
         if args_dict["mutation_type"].upper() in ["S", "SUB"]:
             args_dict["target"] = args.target
             args_dict["replacement"] = args.replacement
@@ -67,8 +67,10 @@ def single_command_handler(args):
 def interactive_handler():
     args_dict = dict()
     args_dict["mode"] = input("Enter primer mode [dna/pro/char]: ")
+
     if args_dict["mode"].upper() == "DNA":
         args_dict["sequence"] = input("Enter DNA sequence: ")
+
         if args_dict["sequence"].endswith(".txt"):
             with open(args_dict["sequence"], "r", encoding="utf-8") as f:
                 args_dict["sequence"] = f.read().strip()
@@ -77,9 +79,11 @@ def interactive_handler():
                 args_dict["sequence"] = str(
                     list(SeqIO.parse(f, "fasta"))[0].seq
                 ).strip()
-        PrimerChecks(args_dict["sequence"]).check_sequence_length()
-        args_dict["sequence"] = PrimerChecks(args_dict["sequence"]).check_valid_base()
+
+        PrimerChecks(args_dict["sequence"]).is_valid_sequence_length()
+        args_dict["sequence"] = PrimerChecks(args_dict["sequence"]).is_valid_dna()
         args_dict["mutation_type"] = input("Enter mutation type [s/i/d]: ")
+
         if args_dict["mutation_type"].upper() in ["S", "SUB"]:
             args_dict["target"] = input("Enter target base: ")
             args_dict["replacement"] = input("Enter replacement for target base: ")
@@ -100,10 +104,9 @@ def interactive_handler():
         args_dict["mismatched_bases"] = int(input("Enter number of mismatched bases: "))
     elif args_dict["mode"].upper() == "PRO":
         args_dict["sequence"] = input("Enter protein sequence: ")
-        args_dict["sequence"] = PrimerChecks(
-            args_dict["sequence"]
-        ).check_valid_protein()
+        args_dict["sequence"] = PrimerChecks(args_dict["sequence"]).is_valid_protein()
         args_dict["mutation_type"] = input("Enter mutation type [s/i/d]: ")
+
         if args_dict["mutation_type"].upper() in ["S", "SUB"]:
             args_dict["target"] = input("Enter target base: ")
             args_dict["replacement"] = input("Enter replacement for target base: ")

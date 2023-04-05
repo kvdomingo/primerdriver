@@ -6,7 +6,15 @@
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
 
-## CLI
+## Introduction
+
+_PrimerDriver_ is a user-friendly bioinformatics platform specifically designed to generate primers for site-directed
+mutagenesis experiments into workflows with an easy-to-use command-line interface. “Traversing” PrimerDriver lanes,
+users can generate possible mutagenic primers upon input of a DNA sequence (`DNA`), design primers for an array of species
+codon expression systems through direct mutation of the amino acid (`PRO`), characterize and report user-designed
+primers (`CHAR`).
+
+## Usage
 
 ### A. Running standalone
 
@@ -99,14 +107,6 @@ development environment running
 poetry install
 ```
 
-### Running local server
-
-Setup the Docker containers:
-
-```shell
-task
-```
-
 Wait a few minutes for all the containers to start, then access the
 local server in your browser at http://localhost:8000.
 
@@ -115,8 +115,9 @@ local server in your browser at http://localhost:8000.
 Run the script:
 
 ```shell
-# Build for Windows on a Windows machine / for Linux on a Linux machine 
-task build-all
+# On a Linux machine, will build for Linux x64 only
+# On a Windows machine, will build for Windows and Linux x64
+task build
 ```
 
 ### Deployment
