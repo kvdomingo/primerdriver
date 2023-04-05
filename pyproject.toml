@@ -11,7 +11,6 @@ homepage = "https://github.com/kvdomingo/primerdriver"
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Development Status :: 5 - Production/Stable",
-    "Framework :: Flask",
     "Intended Audience :: Science/Research",
     "Typing :: Typed"
 ]

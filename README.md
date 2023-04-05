@@ -4,7 +4,7 @@
 
 ![GitHub](https://img.shields.io/github/license/kvdomingo/primerdriver)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/django)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/primerdriver)
 
 ## Introduction
 
@@ -43,7 +43,7 @@ Batch design can be performed by including
 
 #### Prerequisites
 
-- [Python 3.10+](https://www.python.org/downloads/)
+- [Python 3.8.1+](https://www.python.org/downloads/)
 - [Poetry](https://python-poetry.org/docs/#installation)
 - [Git](https://git-scm.com/downloads)
 
