@@ -35,6 +35,7 @@
 
    .. autosummary::
    
+      ~PrimerDesign.lut
       ~PrimerDesign.df
    
    
