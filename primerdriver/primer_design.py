@@ -104,7 +104,7 @@ class PrimerDesign:
     def calculate_mismatch(seq: Union[str, List[str]], mismatched_bases: int) -> float:
         return mismatched_bases / len(seq)
 
-    def get_reverse_complement(self, seq: Union[str, List[str]]) -> list[str]:
+    def get_reverse_complement(self, seq: Union[str, List[str]]) -> List[str]:
         seq = list(seq)
         return [self.lut["complement"][b] for b in seq][::-1]
 
