@@ -9,12 +9,14 @@
 import sys
 from pathlib import Path
 
+from primerdriver import __version__
+
 sys.path.insert(0, Path(__file__).parent.parent.parent.resolve().as_posix())
 
 project = "PrimerDriver"
 copyright = "2023, Kenneth V. Domingo, Numeriano Amer E. Gutierrez"
 author = "Kenneth V. Domingo, Numeriano Amer E. Gutierrez"
-release = "1.3.2"
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
