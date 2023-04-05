@@ -6,6 +6,12 @@ env:
     sh: git show --format="%h" --no-patch
 
 tasks:
+  setup:
+    cmds:
+      - pip install pre-commit
+      - pre-commit install
+      - poetry install
+
   test:
     cmds:
       - poetry run coverage run -m pytest
