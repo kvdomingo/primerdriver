@@ -3,7 +3,6 @@ name: Make docs
 on:
   pull_request:
     types:
-      - edited
       - ready_for_review
       - synchronize
   workflow_dispatch:
