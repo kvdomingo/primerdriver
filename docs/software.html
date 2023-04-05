@@ -210,25 +210,43 @@
 <section id="parameter-setting">
 <span id="id2"></span><h2>Parameter Setting<a class="headerlink" href="#parameter-setting" title="Permalink to this heading">#</a></h2>
 <p>The user parameter setting is possible for the inputs in PrimerDriver. The tool designs the desired mutagenic primer pairs according to user input and performs site-directed mutagenesis from single- or multiple-bases within the sequence.</p>
-<p>The user needs to open the <code class="docutils literal notranslate"><span class="pre">primerdriver/settings.json</span></code> file to define the range of allowable values in most of the parameters. The <code class="docutils literal notranslate"><span class="pre">json</span></code> file with the default settings appears as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;Tm_range_min&quot;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span>
-    <span class="s2">&quot;Tm_range_max&quot;</span><span class="p">:</span> <span class="mi">85</span><span class="p">,</span>
-    <span class="s2">&quot;gc_range_min&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
-    <span class="s2">&quot;gc_range_max&quot;</span><span class="p">:</span> <span class="mi">60</span><span class="p">,</span>
-    <span class="s2">&quot;length_min&quot;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
-    <span class="s2">&quot;length_max&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">,</span>
-    <span class="s2">&quot;flank5_range_min&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-    <span class="s2">&quot;flank5_range_max&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
-    <span class="s2">&quot;flank3_range_min&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-    <span class="s2">&quot;flank3_range_max&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
-    <span class="s2">&quot;forward_overlap5&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-    <span class="s2">&quot;forward_overlap3&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
-    <span class="s2">&quot;terminate_gc&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;center_mutation&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;primer_mode&quot;</span><span class="p">:</span> <span class="s2">&quot;overlapping&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;expression_system&quot;</span><span class="p">:</span> <span class="s2">&quot;Homo sapiens&quot;</span>
+<p>When running <code class="docutils literal notranslate"><span class="pre">primerdriver</span></code> as standalone CLI, the user needs to modify the <code class="docutils literal notranslate"><span class="pre">primerdriver/settings.json</span></code> file to define custom values for the required parameters. The parameter defaults are as follows</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;Tm_range_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">75</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;Tm_range_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">85</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;gc_range_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;gc_range_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;length_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">25</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;length_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">45</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;flank5_range_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;flank5_range_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;flank3_range_min&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;flank3_range_max&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;forward_overlap5&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;forward_overlap3&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;terminate_gc&quot;</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;center_mutation&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;primer_mode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;overlapping&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;expression_system&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Homo sapiens&quot;</span>
 <span class="p">}</span>
+</pre></div>
+</div>
+<p>When running <code class="docutils literal notranslate"><span class="pre">primerdriver</span></code> as part of a larger Python script, you can instead import the settings via</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">primerdriver.config</span> <span class="kn">import</span> <span class="n">get_settings</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="n">get_settings</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>then access/modify the individual parameters using dot notation, e.g.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">terminate_gc</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">length_min</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">length_max</span> <span class="o">=</span> <span class="mi">55</span>
+</pre></div>
+</div>
+<p>then pass the updated settings when initializing the module</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">primerdriver.primer_design</span> <span class="kn">import</span> <span class="n">PrimerDesign</span>
+
+<span class="n">pd</span> <span class="o">=</span> <span class="n">PrimerDesign</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The following definitions and considerations should be made for designing mutagenic primers:</p>
@@ -338,14 +356,14 @@
 </section>
 <section id="choosing-primer-design-modes">
 <span id="design-mode"></span><h2>Choosing primer design modes<a class="headerlink" href="#choosing-primer-design-modes" title="Permalink to this heading">#</a></h2>
-<p>PrimerDriver asks you to choose from three different modes when using the command-line interface:</p>
-<blockquote>
-<div><ul class="simple">
+<dl class="simple">
+<dt>PrimerDriver asks you to choose from three different modes when using the command-line interface:</dt><dd><ul class="simple">
 <li><p>Primer characterization</p></li>
 <li><p>DNA-based primer design</p></li>
 <li><p>Protein-based primer design</p></li>
 </ul>
-</div></blockquote>
+</dd>
+</dl>
 </section>
 </section>
 
