@@ -7,7 +7,9 @@ authors = [
     "Numeriano Amer E. Gutierrez <ngutierrez@evc.pshs.edu.ph>"
 ]
 readme = "README.md"
-homepage = "https://github.com/kvdomingo/primerdriver"
+homepage = "https://primerdriver.kvd.studio"
+repository = "https://github.com/kvdomingo/primerdriver"
+documentation = "https://primerdriver-docs.kvd.studio"
 classifiers = [
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Development Status :: 5 - Production/Stable",
