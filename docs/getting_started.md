@@ -47,7 +47,7 @@ The user is greeted with a customized header and the first question:
         \|||||||||||/ \|||||||
          `---------`   `------
 
-PrimerDriver v1.5.0
+PrimerDriver v1.6.0
 (c) 2020 Kenneth V. Domingo & Numeriano Amer E. Gutierrez
 
 Enter primer mode [dna/pro/char]: _
@@ -64,7 +64,7 @@ follows:
         \|||||||||||/ \|||||||
          `---------`   `------
 
-PrimerDriver v1.5.0
+PrimerDriver v1.6.0
 (c) 2020 Kenneth V. Domingo & Numeriano Amer E. Gutierrez
 
 Enter primer mode [dna/pro/char]: char
@@ -135,7 +135,7 @@ Enter the following at the interactive CLI:
         \|||||||||||/ \|||||||
          `---------`   `------
 
-PrimerDriver v1.5.0
+PrimerDriver v1.6.0
 (c) 2020 Kenneth V. Domingo & Numeriano Amer E. Gutierrez
 
 Enter primer mode [dna/pro/char]: dna
