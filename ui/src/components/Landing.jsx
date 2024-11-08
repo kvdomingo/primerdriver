@@ -57,7 +57,7 @@ function Landing() {
           </a>
           {" | "}
           <a
-            href="https://primerdriver-docs.lab.kvd.studio"
+            href="https://primerdriver-docs.kvd.studio"
             target="_blank"
             rel="noopener noreferrer"
             className="px-2"
