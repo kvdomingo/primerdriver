@@ -1,5 +1,4 @@
 from json import load
-from typing import List, Union
 
 from primerdriver.config import BASE_DIR, get_settings
 from primerdriver.exceptions import PrimerCheckError
@@ -16,10 +15,9 @@ class PrimerChecks:
         """
         A set of validation checks to perform on the DNA/protein input before processing.
 
-        :param sequence: The input DNA/protein sequence.
-        :type sequence: str
-        :param no_interaction: Suppress all prompts and use program defaults if not explicitly provided.
-        :type no_interaction: bool
+        Args:
+            sequence: The input DNA/protein sequence.
+            no_interaction: Suppress all prompts and use program defaults if not explicitly provided.
         """
         self.sequence = sequence
         self.no_interaction = no_interaction
@@ -28,10 +26,12 @@ class PrimerChecks:
         """
         Check if the `self.sequence` contains valid bases [ATCG].
 
-        :raise primerdriver.checks.PrimerCheckError: DNA/protein sequence contains bases/amino acids.
-        :return: The input DNA sequence.
+        Raises:
+            primerdriver.checks.PrimerCheckError: DNA/protein sequence contains bases/amino acids.
+        Returns:
+             The input DNA sequence.
         """
-        unique_bases = set(list(self.sequence.upper()))
+        unique_bases = set(self.sequence.upper())
         true_bases = {"A", "C", "T", "G"}
         invalid_bases = unique_bases.difference(true_bases)
         if len(invalid_bases) > 0:
@@ -44,11 +44,13 @@ class PrimerChecks:
         """
         Check if the `self.sequence` contains valid amino acids.
 
-        :raise primerdriver.checks.PrimerCheckError: Protein sequence contains invalid amino acids.
-        :return: The input protein sequence.
+        Raises:
+            primerdriver.checks.PrimerCheckError: Protein sequence contains invalid amino acids.
+        Returns:
+             The input protein sequence.
         """
-        unique_proteins = set(list(self.sequence.upper()))
-        with open(TABLES_DIR / "AAcompressed.json", "r") as f:
+        unique_proteins = set(self.sequence.upper())
+        with open(TABLES_DIR / "AAcompressed.json") as f:
             true_proteins = load(f)
         invalid_proteins = unique_proteins.difference(true_proteins.keys())
         if len(invalid_proteins) != 0:
@@ -61,7 +63,8 @@ class PrimerChecks:
         """
         Check if the `self.sequence` is within the allowed processing length (40 <= sequence <= 8000).
 
-        :raise primerdriver.checks.PrimerCheckError: DNA/protein sequence is too short/long.
+        Raises:
+             primerdriver.checks.PrimerCheckError: DNA/protein sequence is too short/long.
         """
         if len(self.sequence) < 40:
             error_message = "DNA sequence is too short"
@@ -77,7 +80,8 @@ class PrimerChecks:
         """
         Check if the `self.sequence` has valid %GC content (determined by settings.json).
 
-        :raise primerdriver.checks.PrimerCheckError: DNA/protein sequence has too little/too much GC content.
+        Raises:
+             primerdriver.checks.PrimerCheckError: DNA/protein sequence has too little/too much GC content.
         """
         seq = list(self.sequence)
         gc = (seq.count("C") + seq.count("G")) / len(seq)
@@ -90,11 +94,12 @@ class PrimerChecks:
 
 
 class SequenceChecks:
-    def __init__(self, sequence: Union[str, List[str]]):
+    def __init__(self, sequence: str | list[str]):
         """
         Set of checks to perform on a generated primer.
 
-        :param sequence: The generated primer's DNA sequence.
+        Args:
+             sequence: The generated primer's DNA sequence.
         """
         self.sequence = sequence.upper()
 

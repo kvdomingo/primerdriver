@@ -1,0 +1,56 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    image: kvdomingo/primerdriver-api:latest
+    init: true
+    command:
+      - |
+        poetry install --no-root
+        poetry run flask run -h 0.0.0.0 -p '5000' --reload
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - .:/primerdriver
+      - venv-data:/primerdriver/.venv
+    ports:
+      - '5000:5000'
+
+  docs:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    image: kvdomingo/primerdriver-api:latest
+    init: true
+    restart: unless-stopped
+    env_file: .env
+    command:
+      - |
+        poetry install --no-root
+        poetry run mkdocs serve -a 0.0.0.0:8000
+    volumes:
+      - .:/primerdriver
+      - docs-venv-data:/primerdriver/.venv
+    ports:
+      - '8000:8000'
+
+  frontend:
+    image: oven/bun:1.1-alpine
+    restart: unless-stopped
+    init: true
+    environment:
+      NODE_ENV: development
+    entrypoint:
+      - /bin/sh
+      - "-c"
+      - "bun install && exec bun run dev"
+    working_dir: /web
+    volumes:
+      - ./ui:/web
+    ports:
+      - '3000:3000'
+
+volumes:
+  venv-data:
+  docs-venv-data:

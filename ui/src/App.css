@@ -1,0 +1,83 @@
+body {
+  font-family: "Figtree Variable", sans-serif;
+}
+
+@media (min-width: 576px) {
+  html {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 992px) {
+  html {
+    font-size: 1rem;
+  }
+}
+
+.transition-group {
+  position: relative;
+}
+
+.route-section {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
+
+.fade-appear,
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-appear-active,
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in-out;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+.fade-exit-done {
+  opacity: 0;
+}
+
+.slide-enter,
+.slide-appear {
+  transform: translate(100%);
+}
+
+.slide-enter-active,
+.slide-appear-active {
+  transform: translate(0%);
+  transition: transform 300ms ease-in-out;
+}
+
+.slide-exit {
+  transform: translate(0%);
+}
+
+.slide-exit-active {
+  transform: translate(-100%);
+  transition: transform 300ms ease-in-out;
+}
+
+select[name="expression_system"] {
+  font-style: italic;
+}
+
+select[name="expression_system"] option {
+  font-style: italic;
+}

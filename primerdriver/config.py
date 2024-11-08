@@ -2,7 +2,7 @@ import json
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, Literal
+from typing import Any, Literal
 
 from dotenv import load_dotenv
 from pydantic import BaseSettings
@@ -39,8 +39,18 @@ class Settings(BaseSettings):
     class Config:
         @staticmethod
         def json_config_settings_source(_):
-            with open(BASE_DIR / "primerdriver" / "settings.json", "r") as f:
-                return json.load(f)
+            dev_loc = BASE_DIR / "primerdriver" / "settings.json"
+            prod_loc = Path.home() / ".primerdriverrc.json"
+
+            if dev_loc.resolve().exists():
+                with open(dev_loc) as f:
+                    return json.load(f)
+
+            if prod_loc.resolve().exists():
+                with open(prod_loc) as f:
+                    return json.load(f)
+
+            raise FileNotFoundError("Config JSON not found.")
 
         @classmethod
         def customise_sources(cls, init_settings, env_settings, file_secret_settings):
@@ -58,6 +68,6 @@ def get_settings():
 
 
 @lru_cache
-def get_lookup_tables() -> Dict[str, Any]:
-    with open(BASE_DIR / "primerdriver" / "tables" / "lut.json", "r") as f:
+def get_lookup_tables() -> dict[str, Any]:
+    with open(BASE_DIR / "primerdriver" / "tables" / "lut.json") as f:
         return json.load(f)

@@ -3,25 +3,67 @@ version: '3'
 env:
   NAME: primerdriver
   SHORT_SHA:
-    sh: git show --format="%h" --no-patch
+    sh: git rev-parse --short HEAD
 
 tasks:
-  setup:
-    cmds:
-      - pip install pre-commit
-      - pre-commit install
-      - poetry install
+  default:
+    cmd:
+      task: up
 
-  test:
-    cmds:
-      - poetry run coverage run -m pytest
+  up:
+    desc: Build and start containers
+    cmd: docker compose --project-name {{.NAME}} up --detach --build --remove-orphans {{.CLI_ARGS}}
 
-  build:
+  stop:
+    desc: Stop containers
+    cmd: docker compose --project-name {{.NAME}} stop {{.CLI_ARGS}}
+
+  logs:
+    desc: Follow Docker logs
+    interactive: true
+    cmd: docker compose --project-name {{.NAME}} logs --follow {{.CLI_ARGS}}
+
+  restart:
+    desc: Restart containers
+    cmd: docker compose --project-name {{.NAME}} restart {{.CLI_ARGS}}
+
+  down:
+    desc: Stop and remove containers
+    cmd: docker compose --project-name {{.NAME}} down --remove-orphans
+
+  clean:
+    desc: Nuke everything
+    cmd: docker compose --project-name {{.NAME}} down --volumes --remove-orphans
+
+  build-web:
+    desc: Build web app image
+    cmd: >
+      docker build
+      -t kvdomingo/primerdriver:{{.SHORT_SHA}}
+      -t kvdomingo/primerdriver:latest
+      --build-arg SHORT_SHA={{.SHORT_SHA}}
+      -f web.Dockerfile .
+
+  build-cli:
+    desc: Build CLI
     cmds:
-      - poetry run pyinstaller --clean -F --name primerdriver setup.py
-      - docker run -v "$(pwd)":/build --rm --env NAME={{.NAME}} --name primerdriver --workdir /build kvdomingo/py-cli-builder:latest
+      - >
+        docker build
+        -t kvdomingo/primerdriver-cli:{{.SHORT_SHA}}
+        -t kvdomingo/primerdriver-cli:latest
+        -f cli.Dockerfile .
+      - >
+        docker run
+        -t --rm
+        -u $(id -u):$(id -g)
+        -v "$(pwd)":/build
+        --workdir /build
+        kvdomingo/primerdriver-cli:latest
 
   build-docs:
-    cmds:
-      - rm -rf docsrc/source/generated
-      - poetry run sphinx-build -b html docsrc/source docs
+    desc: Build docs
+    cmd: >
+      docker build
+      -t kvdomingo/primerdriver-docs:{{.SHORT_SHA}}
+      -t kvdomingo/primerdriver-docs:latest
+      -f docs.Dockerfile .

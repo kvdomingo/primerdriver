@@ -1,0 +1,89 @@
+site_name: PrimerDriver
+site_url: https://kvdomingo.github.io/primerdriver
+site_description: Automated design of mutagenic primers for site-directed mutagenesis
+site_author: Kenneth V. Domingo <hello@kvd.studio>, Numeriano Amer E. Gutierrez <ngutierrez@evc.pshs.edu.ph>
+copyright: >
+  &copy; 2020
+  <a href="mailto:hello@kvd.studio">Kenneth V. Domingo</a>,
+  <a href="ngutierrez@evc.pshs.edu.ph">Numeriano Amer E. Gutierrez</a>
+
+repo_name: kvdomingo/primerdriver
+repo_url: https://github.com/kvdomingo/primerdriver
+
+theme:
+  name: material
+  logo: assets/PrimerDriver_logo.png
+  font:
+    text: Inter
+  features:
+    - content.code.copy
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.path
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.footer
+    - navigation.top
+    - toc.follow
+    - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+nav:
+  - Home: index.md
+  - Getting Started: getting_started.md
+  - Software Features: software.md
+  - API Reference: api.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: false
+            show_bases: true
+            show_inheritance_diagram: true
+            show_root_heading: true
+            show_root_toc_entry: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            modernize_annotations: true
+
+extra_javascript:
+  - js/katex.js
+  - https://unpkg.com/katex@0/dist/katex.min.js
+  - https://unpkg.com/katex@0/dist/contrib/auto-render.min.js
+  - https://unpkg.com/mermaid@10.9.0/dist/mermaid.min.js
+
+extra_css:
+  - https://unpkg.com/katex@0/dist/katex.min.css

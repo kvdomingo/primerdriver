@@ -1,6 +1,5 @@
 from datetime import datetime
 from os import PathLike
-from typing import Union
 
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
@@ -52,7 +51,7 @@ def interactive_saver(df: DataFrame) -> None:
                 )
 
 
-def single_command_saver(df: DataFrame, savename: Union[str, PathLike]):
+def single_command_saver(df: DataFrame, savename: str | PathLike):
     if savename.endswith(".csv"):
         df = concat([*df])
         df.to_csv(savename)

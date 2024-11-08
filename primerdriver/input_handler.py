@@ -3,18 +3,17 @@ from Bio import SeqIO
 from primerdriver.checks import PrimerChecks
 
 
-def single_command_handler(args):
-    args_dict = dict()
-    args_dict["mode"] = args.mode
+def single_command_handler(args):  # noqa: C901
+    args_dict = {"mode": args.mode}
 
     if args.save:
         args_dict["savename"] = args.save
 
     if args.sequence.endswith(".txt"):
-        with open(args.sequence, "r", encoding="utf-8") as f:
+        with open(args.sequence, encoding="utf-8") as f:
             args_dict["sequence"] = f.read().strip()
     elif args.sequence.endswith(".fasta"):
-        with open(args.sequence, "r", encoding="utf-8") as f:
+        with open(args.sequence, encoding="utf-8") as f:
             args_dict["sequence"] = str(list(SeqIO.parse(f, "fasta"))[0].seq).strip()
     else:
         args_dict["sequence"] = args.sequence
@@ -64,18 +63,17 @@ def single_command_handler(args):
     return args_dict
 
 
-def interactive_handler():
-    args_dict = dict()
-    args_dict["mode"] = input("Enter primer mode [dna/pro/char]: ")
+def interactive_handler():  # noqa: C901
+    args_dict = {"mode": input("Enter primer mode [dna/pro/char]: ")}
 
     if args_dict["mode"].upper() == "DNA":
         args_dict["sequence"] = input("Enter DNA sequence: ")
 
         if args_dict["sequence"].endswith(".txt"):
-            with open(args_dict["sequence"], "r", encoding="utf-8") as f:
+            with open(args_dict["sequence"], encoding="utf-8") as f:
                 args_dict["sequence"] = f.read().strip()
         elif args_dict["sequence"].endswith(".fasta"):
-            with open(args_dict["sequence"], "r", encoding="utf-8") as f:
+            with open(args_dict["sequence"], encoding="utf-8") as f:
                 args_dict["sequence"] = str(
                     list(SeqIO.parse(f, "fasta"))[0].seq
                 ).strip()

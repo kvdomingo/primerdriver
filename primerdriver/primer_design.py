@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import List, Optional, Tuple, Union
 
 from numpy import array
 from pandas import DataFrame
@@ -58,33 +57,31 @@ class PrimerDesign:
         self.mode = OperationMode(mode.upper())
         self.sequence: str = sequence.upper()
         self.mutation_type = MutationType(mutation_type[0].upper())
-        self.mismatched_bases: Union[int, None] = (
+        self.mismatched_bases: int | None = (
             int(mismatched_bases) if mismatched_bases is not None else None
         )
-        self.replacement: Union[str, None] = (
+        self.replacement: str | None = (
             replacement.upper() if replacement is not None else None
         )
-        self.position: Union[int, None] = (
-            int(position) - 1 if position is not None else None
-        )
-        self.target: Union[str, None] = target.upper() if target is not None else None
-        self.Tm_range: Tuple[float, float] = (
+        self.position: int | None = int(position) - 1 if position is not None else None
+        self.target: str | None = target.upper() if target is not None else None
+        self.Tm_range: tuple[float, float] = (
             self.settings.Tm_range_min,
             self.settings.Tm_range_max,
         )
-        self.length_range: Tuple[int, int] = (
+        self.length_range: tuple[int, int] = (
             self.settings.length_min,
             self.settings.length_max,
         )
-        self.gc_range: Tuple[float, float] = (
+        self.gc_range: tuple[float, float] = (
             self.settings.gc_range_min,
             self.settings.gc_range_max,
         )
-        self.flank5_range: Tuple[int, int] = (
+        self.flank5_range: tuple[int, int] = (
             self.settings.flank5_range_min,
             self.settings.flank5_range_max,
         )
-        self.flank3_range: Tuple[int, int] = (
+        self.flank3_range: tuple[int, int] = (
             self.settings.flank3_range_min,
             self.settings.flank3_range_max,
         )
@@ -96,19 +93,56 @@ class PrimerDesign:
         )
 
     @staticmethod
-    def calculate_gc_content(seq: Union[str, List[str]]) -> float:
+    def calculate_gc_content(seq: str | list[str]) -> float:
+        """
+        Calculate the GC content of a sequence.
+
+        Parameters:
+          seq: The sequence to calculate the GC content of.
+
+        Returns:
+          The %GC content of the sequence.
+        """
         return (seq.count("G") + seq.count("C")) / len(seq)
 
     @staticmethod
-    def calculate_mismatch(seq: Union[str, List[str]], mismatched_bases: int) -> float:
+    def calculate_mismatch(seq: str | list[str], mismatched_bases: int) -> float:
+        """
+        Calculate the base mismatch percentage of a sequence.
+
+        Parameters:
+          seq: The sequence to calculate the mismatch percentage of.
+          mismatched_bases: The number of mismatched bases in the sequence.
+
+        Returns:
+          The base mismatch percentage of the sequence.
+        """
         return mismatched_bases / len(seq)
 
-    def get_reverse_complement(self, seq: Union[str, List[str]]) -> List[str]:
+    def get_reverse_complement(self, seq: str | list[str]) -> list[str]:
+        """
+        Get the reverse complement of a sequence.
+
+        Parameters:
+          seq: The sequence to get the reverse complement of.
+
+        Returns:
+          The reverse complement of the sequence.
+        """
         seq = list(seq)
         return [self.lut["complement"][b] for b in seq][::-1]
 
     @staticmethod
-    def is_gc_end(sequence: Union[str, List[str]]) -> bool:
+    def is_gc_end(sequence: str | list[str]) -> bool:
+        """
+        Check if a sequence starts/ends in G or C.
+
+        Parameters:
+          sequence: The sequence to check.
+
+        Returns:
+          True if the sequence starts/ends in G or C, False otherwise.
+        """
         sequence = "".join(sequence)
         return (sequence.startswith("G") or sequence.startswith("C")) and (
             sequence.endswith("G") or sequence.endswith("C")
@@ -116,12 +150,25 @@ class PrimerDesign:
 
     @staticmethod
     def calculate_melting_temperature(
-        seq: Union[str, List[str]],
+        seq: str | list[str],
         mutation_type: MutationType,
-        replacement: Union[str, List[str]],
+        replacement: str | list[str],
         gc_content: float,
         mismatch: float,
     ) -> float:
+        """
+        Calculate the melting temperature of a sequence.
+
+        Parameters:
+          seq: The sequence to calculate the melting temperature of.
+          mutation_type: The type of mutation (substitution, insertion, or deletion).
+          replacement: The replacement sequence for the mutation.
+          gc_content: The %GC content of the sequence.
+          mismatch: The base mismatch percentage of the sequence.
+
+        Returns:
+          The melting temperature of the sequence in degrees Celsius.
+        """
         gc_content = int(gc_content * 100)
         mismatch = int(mismatch * 100)
         if mutation_type == MutationType.SUBSTITUTION:
@@ -138,13 +185,27 @@ class PrimerDesign:
 
     def characterize_primer(
         self,
-        sequence: Union[str, List[str]],
+        sequence: str | list[str],
         mutation_type: MutationType,
-        replacement: Union[str, List[str], None],
+        replacement: str | list[str] | None,
         mismatched_bases: int,
-        index: Optional[int] = None,
-        reverse: Optional[List[str]] = None,
+        index: int | None = None,
+        reverse: list[str] | None = None,
     ) -> DataFrame:
+        """
+        Characterize a primer.
+
+        Parameters:
+          sequence: The sequence of the primer.
+          mutation_type: The type of mutation (substitution, insertion, or deletion).
+          replacement: The replacement sequence for the mutation.
+          mismatched_bases: The number of mismatched bases in the sequence.
+          index: The index of the primer in the list of primers.
+          reverse: The reverse complement of the sequence.
+
+        Returns:
+          A DataFrame containing the characteristics of the primer.
+        """
         mol_weight = self.lut["mol_weight"]
         seq = list(sequence)
         if (
@@ -238,13 +299,27 @@ class PrimerDesign:
 
     def substitution(  # noqa: C901
         self,
-        sequence: Union[str, List[str]],
+        sequence: str | list[str],
         mutation_type: MutationType,
-        target: Union[str, List[str], None],
-        replacement: Union[str, List[str]],
+        target: str | list[str] | None,
+        replacement: str | list[str],
         start_position: int,
         mismatched_bases: int,
-    ) -> Union[DataFrame, None]:
+    ) -> DataFrame | None:
+        """
+        Performs a substitution mutation on a sequence.
+
+        Parameters:
+          sequence: The sequence to mutate.
+          mutation_type: The type of mutation (substitution, insertion, or deletion).
+          target: The target of the mutation.
+          replacement: The replacement sequence for the mutation.
+          start_position: The starting position of the mutation.
+          mismatched_bases: The number of mismatched bases in the sequence.
+
+        Returns:
+          A DataFrame containing the characteristics of the generated primer(s).
+        """
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             seq = list(sequence)
@@ -257,9 +332,7 @@ class PrimerDesign:
                     candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                     candidate3 = list(replacement)
                     candidate2 = seq[
-                        start_position
-                        + sequence_length
-                        - 1 : start_position
+                        start_position + sequence_length - 1 : start_position
                         + sequence_length
                         + f3
                     ]
@@ -293,9 +366,7 @@ class PrimerDesign:
                     ]
                     candidate3 = list(replacement)
                     candidate2 = forward_sequence[
-                        start_position
-                        + sequence_length
-                        - 1 : start_position
+                        start_position + sequence_length - 1 : start_position
                         + sequence_length
                         + f3
                     ]
@@ -330,7 +401,7 @@ class PrimerDesign:
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.settings.forward_overlap5, end):
+                for _ in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -397,13 +468,27 @@ class PrimerDesign:
 
     def deletion(  # noqa: C901
         self,
-        sequence: Union[str, List[str]],
+        sequence: str | list[str],
         mutation_type: MutationType,
-        target: Union[str, List[str], None],
-        replacement: Union[str, List[str]],
+        target: str | list[str] | None,
+        replacement: str | list[str],
         start_position: int,
         mismatched_bases: int,
-    ) -> Union[DataFrame, None]:
+    ) -> DataFrame | None:
+        """
+        Perform a deletion mutation.
+
+        Parameters:
+          sequence: The sequence of the primer.
+          mutation_type: The type of mutation.
+          target: The target sequence.
+          replacement: The replacement sequence.
+          start_position: The starting position of the mutation.
+          mismatched_bases: The number of mismatched bases.
+
+        Returns:
+          A DataFrame containing the characteristics of the generated primer(s).
+        """
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             sequence_length = len(self.target)
@@ -415,18 +500,14 @@ class PrimerDesign:
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[
-                            start_position
-                            + sequence_length
-                            - 1 : start_position
+                            start_position + sequence_length - 1 : start_position
                             + sequence_length
                             + f3
                         ]
                     elif self.mode == OperationMode.PROTEIN:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[
-                            start_position
-                            + sequence_length * 3
-                            - 1 : start_position
+                            start_position + sequence_length * 3 - 1 : start_position
                             + sequence_length
                             + f3
                         ]
@@ -457,18 +538,14 @@ class PrimerDesign:
                     if self.mode == OperationMode.DNA:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[
-                            start_position
-                            + sequence_length
-                            - 1 : start_position
+                            start_position + sequence_length - 1 : start_position
                             + sequence_length
                             + f3
                         ]
                     else:
                         candidate1 = seq[start_position - 1 - f5 : start_position - 1]
                         candidate2 = seq[
-                            start_position
-                            + sequence_length * 3
-                            - 1 : start_position
+                            start_position + sequence_length * 3 - 1 : start_position
                             + sequence_length
                             + f3
                         ]
@@ -508,7 +585,7 @@ class PrimerDesign:
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.settings.forward_overlap5, end):
+                for _ in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -570,13 +647,27 @@ class PrimerDesign:
 
     def insertion(  # noqa: C901
         self,
-        sequence: Union[str, List[str]],
+        sequence: str | list[str],
         mutation_type: MutationType,
-        target: Union[str, List[str], None],
-        replacement: Union[str, List[str]],
+        target: str | list[str] | None,
+        replacement: str | list[str],
         start_position: int,
         mismatched_bases: int,
-    ) -> Union[DataFrame, None]:
+    ) -> DataFrame | None:
+        """
+        Perform an insertion mutation.
+
+        Parameters:
+          sequence: The sequence to mutate.
+          mutation_type: The type of mutation to perform.
+          target: The target sequence to insert into the sequence.
+          replacement: The sequence to insert into the sequence.
+          start_position: The position to start the mutation.
+          mismatched_bases: The number of mismatched bases in the sequence.
+
+        Returns:
+          A DataFrame containing the characteristics of the generated primer(s).
+        """
         if self.primer_mode == PrimerMode.COMPLEMENTARY:
             valid_primers = []
             seq = list(sequence)
@@ -607,7 +698,7 @@ class PrimerDesign:
                     if valid_gc and valid_temp and valid_ends and valid_length:
                         valid_primers.append(candidate)
         else:
-            valid_primers = dict()
+            valid_primers = {}
             seq = list(sequence)
             sequence_length = len(replacement)
             seq[start_position - 1] = replacement + seq[start_position - 1]
@@ -650,7 +741,7 @@ class PrimerDesign:
                 ):
                     start -= 1
                     end -= 1
-                for i in range(self.position - self.settings.forward_overlap5, end):
+                for _ in range(self.position - self.settings.forward_overlap5, end):
                     for j in range(self.flank3_range[1]):
                         candidate = sequence[start - j : end]
                         if len(candidate) == 0:
@@ -708,6 +799,7 @@ class PrimerDesign:
         return df
 
     def dna_based(self):
+        """DNA based primer design."""
         if self.mutation_type == MutationType.DELETION:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.target)
@@ -744,6 +836,7 @@ class PrimerDesign:
         return result
 
     def protein_based(self):
+        """Protein based primer design."""
         if self.mutation_type == MutationType.DELETION:
             if self.mismatched_bases is None:
                 self.mismatched_bases = len(self.target)
