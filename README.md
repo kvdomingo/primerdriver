@@ -6,6 +6,12 @@
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/primerdriver)
 
+> [!IMPORTANT]
+> PrimerDriver is no longer under active development.
+> It may occasionally receive minor updates, but these will not add new functionality.
+> The web app will be kept running on a best-effort basis, but note that we do not guarantee any SLAs.
+> This project remains open-source, so anyone may fork and deploy their own instance.
+
 ## Introduction
 
 _PrimerDriver_ is a user-friendly bioinformatics platform specifically designed to generate primers for site-directed
