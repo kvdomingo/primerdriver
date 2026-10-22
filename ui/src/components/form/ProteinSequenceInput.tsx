@@ -4,16 +4,21 @@ import {
   MDBRow as Row,
   MDBTooltip as Tooltip,
 } from "mdbreact";
-import type { SyntheticEvent } from "react";
+import { type SyntheticEvent, useState } from "react";
 
 interface ProteinSequenceInputProps {
-  cursorPosition: number;
-  handleChangeSequence: (e: SyntheticEvent<HTMLTextAreaElement>) => void;
   sequence: string;
-  sequenceLength: number;
+  onChange: (value: string) => void;
 }
 
 function ProteinSequenceInput(props: ProteinSequenceInputProps) {
+  const [cursorPosition, setCursorPosition] = useState(1);
+
+  function handleChange(e: SyntheticEvent<HTMLTextAreaElement>) {
+    props.onChange(e.currentTarget.value);
+    setCursorPosition(e.currentTarget.selectionStart + 1);
+  }
+
   return (
     <div className="form-group">
       <div className="alert alert-warning text-left" role="alert">
@@ -40,22 +45,20 @@ function ProteinSequenceInput(props: ProteinSequenceInputProps) {
         id="sequence"
         name="sequence"
         value={props.sequence}
-        onChange={props.handleChangeSequence}
-        onKeyUp={props.handleChangeSequence}
-        onMouseUp={props.handleChangeSequence}
+        onChange={handleChange}
+        onKeyUp={handleChange}
+        onMouseUp={handleChange}
         autoFocus
         required
         style={{ height: 128 }}
       />
       <Row className="row-cols-1 row-cols-md-2">
         <Col className="text-left">
-          <small className="blue-grey-text">
-            Cursor position: {props.cursorPosition}
-          </small>
+          <small className="blue-grey-text">Cursor position: {cursorPosition}</small>
         </Col>
         <Col className="text-left text-md-right">
           <small className="blue-grey-text">
-            Sequence length: {props.sequenceLength}
+            Sequence length: {props.sequence.length}
           </small>
         </Col>
       </Row>

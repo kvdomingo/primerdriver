@@ -1,11 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { MDBContainer as Container, MDBIcon as Icon } from "mdbreact";
-import type { FormEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { usePrimerDriverStore } from "../../store";
 
 interface FormProps {
-  handleValidate: () => void;
-  handleSubmit: (e: FormEvent) => void;
+  onSubmit: () => void;
   isValid: boolean;
   title: string;
   children: ReactNode;
@@ -25,10 +24,10 @@ function Form(props: FormProps) {
       <form
         id="form"
         className="form"
-        onChange={props.handleValidate}
-        onMouseUp={props.handleValidate}
-        onKeyUp={props.handleValidate}
-        onSubmit={props.handleSubmit}
+        onSubmit={e => {
+          e.preventDefault();
+          props.onSubmit();
+        }}
       >
         {props.children}
 
@@ -43,7 +42,6 @@ function Form(props: FormProps) {
           <input
             type="submit"
             id="submit"
-            onClick={props.handleSubmit}
             className="btn btn-primary"
             value="Submit"
             disabled={!props.isValid}

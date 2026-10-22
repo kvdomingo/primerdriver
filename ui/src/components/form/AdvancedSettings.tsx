@@ -8,38 +8,55 @@ import {
 } from "mdbreact";
 import { useState } from "react";
 
+export const defaultSettings = {
+  Tm_range_min: 75,
+  Tm_range_max: 85,
+  gc_range_min: 40,
+  gc_range_max: 60,
+  length_min: 25,
+  length_max: 45,
+  flank5_range_min: 11,
+  flank5_range_max: 21,
+  flank3_range_min: 11,
+  flank3_range_max: 21,
+  forward_overlap5: 9,
+  forward_overlap3: 9,
+  terminate_gc: true,
+  center_mutation: true,
+  primer_mode: "complementary",
+  expression_system: "Homo sapiens",
+};
+
+export type Settings = typeof defaultSettings;
+
+const RANGES: [
+  "Tm_range" | "gc_range" | "length" | "flank5_range" | "flank3_range",
+  string,
+][] = [
+  ["Tm_range", "Melting point (°C)"],
+  ["gc_range", "GC Content (%)"],
+  ["length", "Length (bp)"],
+  ["flank5_range", "5' flanking region (bp)"],
+  ["flank3_range", "3' flanking region (bp)"],
+];
+
 interface AdvancedSettingsProps {
-  tmRange: number[];
-  setTmRange: (value: number[]) => void;
-  gcRange: number[];
-  setGcRange: (value: number[]) => void;
-  lengthRange: number[];
-  setLengthRange: (value: number[]) => void;
-  flank3Range: number[];
-  setFlank3Range: (value: number[]) => void;
-  flank5Range: number[];
-  setFlank5Range: (value: number[]) => void;
-  forwardOverlap3: number;
-  setForwardOverlap3: (value: number) => void;
-  forwardOverlap5: number;
-  setForwardOverlap5: (value: number) => void;
-  expressionSystem: string;
-  setExpressionSystem: (value: string) => void;
+  value: Settings;
+  onChange: (value: Settings) => void;
   mode?: string;
-  primerMode: string;
-  setPrimerMode: (value: string) => void;
-  terminateGc: boolean;
-  setTerminateGc: (value: boolean) => void;
-  centerMutation: boolean;
-  setCenterMutation: (value: boolean) => void;
   expressionList?: string[];
 }
 
-function AdvancedSettings(props: AdvancedSettingsProps) {
+function AdvancedSettings({
+  value,
+  onChange,
+  mode,
+  expressionList,
+}: AdvancedSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  function toggleCollapse() {
-    setIsOpen(!isOpen);
+  function set(patch: Partial<Settings>) {
+    onChange({ ...value, ...patch });
   }
 
   return (
@@ -52,293 +69,87 @@ function AdvancedSettings(props: AdvancedSettingsProps) {
               color="none"
               id="show-advanced"
               type="button"
-              data-toggle="collapse"
-              data-target="#advanced"
-              aria-expanded="true"
+              aria-expanded={isOpen}
               aria-controls="advanced"
-              onClick={toggleCollapse}
+              onClick={() => setIsOpen(!isOpen)}
             >
               Advanced settings
             </button>
           </h5>
         </CardHeader>
-        <Collapse
-          id="advanced"
-          aria-labelledby="headingAdvanced"
-          data-parent="#accordionAdvanced"
-          isOpen={isOpen}
-        >
+        <Collapse id="advanced" aria-labelledby="headingAdvanced" isOpen={isOpen}>
           <CardBody>
             <Row className="row-cols-3 text-center">
               <Col />
               <Col>Min</Col>
               <Col>Max</Col>
             </Row>
-            <Row className="row-cols-3">
-              <Col className="text-right">
-                Melting point (<sup>o</sup>C)
-              </Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="Tm_range_min"
-                    name="Tm_range_min"
-                    className="form-control"
-                    value={props.tmRange[0]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) < props.tmRange[1]
-                          ? Number.parseFloat(value)
-                          : props.tmRange[1] - 1;
-
-                      props.setTmRange([newValue, props.tmRange[1]]);
-                    }}
-                  />
-                </div>
-              </Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="Tm_range_max"
-                    name="Tm_range_max"
-                    className="form-control"
-                    value={props.tmRange[1]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) > props.tmRange[0]
-                          ? Number.parseFloat(value)
-                          : props.tmRange[0] + 1;
-
-                      props.setTmRange([props.tmRange[0], newValue]);
-                    }}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row className="row-cols-3">
-              <Col className="text-right">GC Content (%)</Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="gc_range_min"
-                    name="gc_range_min"
-                    className="form-control"
-                    value={props.gcRange[0]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) < props.gcRange[1]
-                          ? Number.parseFloat(value)
-                          : props.gcRange[1] - 1;
-
-                      props.setGcRange([newValue, props.gcRange[1]]);
-                    }}
-                  />
-                </div>
-              </Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="gc_range_max"
-                    name="gc_range_max"
-                    className="form-control"
-                    value={props.gcRange[1]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) > props.gcRange[0]
-                          ? Number.parseFloat(value)
-                          : props.gcRange[0] + 1;
-
-                      props.setGcRange([props.gcRange[0], newValue]);
-                    }}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row className="row-cols-3">
-              <Col className="text-right">Length (bp)</Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="length_min"
-                    name="length_min"
-                    className="form-control"
-                    value={props.lengthRange[0]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) < props.lengthRange[1]
-                          ? Number.parseFloat(value)
-                          : props.lengthRange[1] - 1;
-
-                      props.setLengthRange([newValue, props.lengthRange[1]]);
-                    }}
-                  />
-                </div>
-              </Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="length_max"
-                    name="length_max"
-                    className="form-control"
-                    value={props.lengthRange[1]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) > props.lengthRange[0]
-                          ? Number.parseFloat(value)
-                          : props.lengthRange[0] + 1;
-
-                      props.setLengthRange([props.lengthRange[0], newValue]);
-                    }}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row className="row-cols-3">
-              <Col className="text-right">5&apos; flanking region (bp)</Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="flank5_range_min"
-                    name="flank5_range_min"
-                    className="form-control"
-                    value={props.flank5Range[0]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) < props.flank5Range[1]
-                          ? Number.parseFloat(value)
-                          : props.flank5Range[1] - 1;
-
-                      props.setFlank5Range([newValue, props.flank5Range[1]]);
-                    }}
-                  />
-                </div>
-              </Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="flank5_range_max"
-                    name="flank5_range_max"
-                    className="form-control"
-                    value={props.flank5Range[1]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) > props.flank5Range[0]
-                          ? Number.parseFloat(value)
-                          : props.flank5Range[0] + 1;
-
-                      props.setFlank5Range([props.flank5Range[0], newValue]);
-                    }}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <Row>
-              <Col className="text-right">3&apos; flanking region (bp)</Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="flank3_range_min"
-                    name="flank3_range_min"
-                    className="form-control"
-                    value={props.flank3Range[0]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) < props.flank3Range[1]
-                          ? Number.parseFloat(value)
-                          : props.flank3Range[1] - 1;
-
-                      props.setFlank3Range([newValue, props.flank3Range[1]]);
-                    }}
-                  />
-                </div>
-              </Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="flank3_range_max"
-                    name="flank3_range_max"
-                    className="form-control"
-                    value={props.flank3Range[1]}
-                    onChange={e => {
-                      const { value } = e.target;
-
-                      const newValue =
-                        Number.parseFloat(value) > props.flank3Range[0]
-                          ? Number.parseFloat(value)
-                          : props.flank3Range[0] + 1;
-
-                      props.setFlank3Range([props.flank3Range[0], newValue]);
-                    }}
-                  />
-                </div>
-              </Col>
-            </Row>
+            {RANGES.map(([prefix, label]) => {
+              const minKey = `${prefix}_min` as const;
+              const maxKey = `${prefix}_max` as const;
+              const min = value[minKey];
+              const max = value[maxKey];
+              return (
+                <Row className="row-cols-3" key={prefix}>
+                  <Col className="text-right">{label}</Col>
+                  <Col>
+                    <div className="md-outline">
+                      <input
+                        type="number"
+                        id={minKey}
+                        name={minKey}
+                        className="form-control"
+                        value={min}
+                        onChange={e => {
+                          const v = Number.parseFloat(e.target.value);
+                          set({ [minKey]: v < max ? v : max - 1 });
+                        }}
+                      />
+                    </div>
+                  </Col>
+                  <Col>
+                    <div className="md-outline">
+                      <input
+                        type="number"
+                        id={maxKey}
+                        name={maxKey}
+                        className="form-control"
+                        value={max}
+                        onChange={e => {
+                          const v = Number.parseFloat(e.target.value);
+                          set({ [maxKey]: v > min ? v : min + 1 });
+                        }}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              );
+            })}
             <hr />
-            <Row className="row-cols-3">
-              <Col className="text-right">5&apos; forward overlap (bp)</Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="forward_overlap5"
-                    name="forward_overlap5"
-                    className="form-control"
-                    value={props.forwardOverlap5}
-                    onChange={e =>
-                      props.setForwardOverlap5(Number.parseInt(e.target.value))
-                    }
-                  />
-                </div>
-              </Col>
-              <Col />
-            </Row>
-            <Row className="row-cols-3">
-              <Col className="text-right">3&apos; forward overlap (bp)</Col>
-              <Col>
-                <div className="md-outline">
-                  <input
-                    type="number"
-                    id="forward_overlap3"
-                    name="forward_overlap3"
-                    className="form-control"
-                    value={props.forwardOverlap3}
-                    onChange={e =>
-                      props.setForwardOverlap3(Number.parseInt(e.target.value))
-                    }
-                  />
-                </div>
-              </Col>
-              <Col />
-            </Row>
-            {(props.mode ?? "CHAR") === "PRO" ? (
+            {(
+              [
+                ["forward_overlap5", "5' forward overlap (bp)"],
+                ["forward_overlap3", "3' forward overlap (bp)"],
+              ] as const
+            ).map(([key, label]) => (
+              <Row className="row-cols-3" key={key}>
+                <Col className="text-right">{label}</Col>
+                <Col>
+                  <div className="md-outline">
+                    <input
+                      type="number"
+                      id={key}
+                      name={key}
+                      className="form-control"
+                      value={value[key]}
+                      onChange={e => set({ [key]: Number.parseInt(e.target.value) })}
+                    />
+                  </div>
+                </Col>
+                <Col />
+              </Row>
+            ))}
+            {mode === "PRO" ? (
               <Row className="row-cols-3">
                 <Col className="text-right">Expression system</Col>
                 <Col>
@@ -346,10 +157,10 @@ function AdvancedSettings(props: AdvancedSettingsProps) {
                     className="browser-default custom-select"
                     id="expression_system"
                     name="expression_system"
-                    value={props.expressionSystem}
-                    onChange={e => props.setExpressionSystem(e.target.value)}
+                    value={value.expression_system}
+                    onChange={e => set({ expression_system: e.target.value })}
                   >
-                    {(props.expressionList ?? []).map(exp => (
+                    {(expressionList ?? []).map(exp => (
                       <option value={exp} key={exp}>
                         {exp}
                       </option>
@@ -365,8 +176,8 @@ function AdvancedSettings(props: AdvancedSettingsProps) {
                   className="browser-default custom-select"
                   id="primer_mode"
                   name="primer_mode"
-                  value={props.primerMode}
-                  onChange={e => props.setPrimerMode(e.target.value)}
+                  value={value.primer_mode}
+                  onChange={e => set({ primer_mode: e.target.value })}
                 >
                   <option value="complementary">Complementary</option>
                   <option value="overlapping">Overlapping</option>
@@ -383,8 +194,8 @@ function AdvancedSettings(props: AdvancedSettingsProps) {
                     className="custom-control-input"
                     id="terminate_gc"
                     name="terminate_gc"
-                    checked={props.terminateGc}
-                    onChange={e => props.setTerminateGc(e.target.checked)}
+                    checked={value.terminate_gc}
+                    onChange={e => set({ terminate_gc: e.target.checked })}
                   />
                   <label className="custom-control-label" htmlFor="terminate_gc">
                     Terminates in G/C
@@ -396,8 +207,8 @@ function AdvancedSettings(props: AdvancedSettingsProps) {
                     className="custom-control-input"
                     id="center_mutation"
                     name="center_mutation"
-                    checked={props.centerMutation}
-                    onChange={e => props.setCenterMutation(e.target.checked)}
+                    checked={value.center_mutation}
+                    onChange={e => set({ center_mutation: e.target.checked })}
                   />
                   <label className="custom-control-label" htmlFor="center_mutation">
                     Mutation at center of primer
