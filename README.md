@@ -142,20 +142,50 @@ development environment running
     task
     ```
 
+    This runs Docker Compose in the foreground with `--watch`; containers
+    restart when `uv.lock` or `ui/bun.lockb` change. Stop with `Ctrl+C` or
+    `task stop`.
+
 Wait a few minutes for all the containers to start, then access the
 local servers in your browser at:
 
 - Web app: <http://localhost:3000>
+- API: <http://localhost:5000>
 - Docs: <http://localhost:8000>
+
+### Web app
+
+The UI in [`ui/`](ui) is React + TypeScript, built with Vite and Bun, using
+Zustand for shared state, TanStack Router for routing and TanStack Form with zod
+schemas for the design forms.
+
+The `frontend` container installs dependencies into the mounted `ui/`, so add
+packages through it to avoid mixing file ownership in `ui/node_modules`:
+
+```shell
+docker compose exec frontend bun add <package>
+```
+
+### Tests and checks
+
+```shell
+uv run pytest            # backend tests
+uv run ruff check .      # backend lint
+cd ui
+bun run build            # typecheck (tsc) and production build
+bunx biome check src     # frontend lint and format
+```
+
+`prek` runs ruff, Biome and the other pre-commit hooks on each commit.
 
 ### Building from source
 
-Run the script:
+Build the CLI binary (PyInstaller, Linux x64) or the Docker images:
 
 ```shell
-# On a Linux machine, will build for Linux x64 only
-# On a Windows machine, will build for Windows and Linux x64
-task build
+task build-cli    # standalone binary
+task build-web    # web app + API image
+task build-docs   # documentation image
 ```
 
 ### Deployment
