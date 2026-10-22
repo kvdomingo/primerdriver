@@ -9,7 +9,7 @@ import {
   NumberMismatch,
   characterizeSchema,
 } from "../form";
-import Result from "./Result";
+import Result from "./result";
 
 function Characterize() {
   const mode = "CHAR" as const;

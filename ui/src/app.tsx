@@ -1,8 +1,8 @@
 import { RouterProvider } from "@tanstack/react-router";
 import { MDBCol as Col, MDBRow as Row } from "mdbreact";
-import "./App.css";
-import { router } from "./components/AppRoutes";
-import Landing from "./components/Landing";
+import "./app.css";
+import { router } from "./components/app-routes";
+import Landing from "./components/landing";
 
 function App() {
   return (

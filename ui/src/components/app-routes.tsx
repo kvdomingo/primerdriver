@@ -6,11 +6,11 @@ import {
 } from "@tanstack/react-router";
 import { MDBContainer as Container, MDBJumbotron as Jumbotron } from "mdbreact";
 import { usePrimerDriverStore } from "../store";
-import Characterize from "./menu/Characterize";
-import Dna from "./menu/DnaView";
-import Menu from "./menu/Menu";
-import Protein from "./menu/ProteinView";
-import Loading from "./shared/LoadingScreen";
+import Characterize from "./menu/characterize";
+import Dna from "./menu/dna-view";
+import Menu from "./menu/menu";
+import Protein from "./menu/protein-view";
+import Loading from "./shared/loading-screen";
 
 const styles = {
   appContainer: {

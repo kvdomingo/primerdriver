@@ -1,23 +1,27 @@
 import { useForm, useSelector } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import api from "../../api";
 import {
   AdvancedSettings,
-  DnaSequenceInput,
   Form,
   MutationSelector,
   MutationType,
+  ProteinSequenceInput,
   defaultSettings,
   designSchema,
 } from "../form";
-import Result from "./Result";
+import Result from "./result";
 
-function filterBases(value: string) {
-  return value.toUpperCase().replace(/[^ACGT]/g, "");
+function filterAminoAcids(value: string) {
+  return value.toUpperCase().replace(/[^ARNDCQEGHILKMFPSTWYV]/g, "");
 }
 
-function DnaView() {
-  const mode = "DNA" as const;
+function ProteinView() {
+  const mode = "PRO" as const;
+  const { data: expressionList } = useQuery({
+    queryKey: ["expressionSystem"],
+    queryFn: async () => (await api.data.expressionSystem()).data.data,
+  });
   const primerDriver = useMutation({
     mutationFn: async (body: object) => (await api.data.primerDriver(body)).data,
   });
@@ -43,15 +47,15 @@ function DnaView() {
   return (
     <>
       <Form
-        title="DNA-based Primer Design"
+        title="Protein-based Primer Design"
         onSubmit={form.handleSubmit}
         isValid={isValid}
       >
         <form.Field name="sequence">
           {field => (
-            <DnaSequenceInput
+            <ProteinSequenceInput
               sequence={field.state.value}
-              onChange={value => field.handleChange(filterBases(value))}
+              onChange={value => field.handleChange(filterAminoAcids(value))}
             />
           )}
         </form.Field>
@@ -64,9 +68,11 @@ function DnaView() {
           )}
         </form.Field>
         <MutationSelector
-          handleChangeTarget={value => form.setFieldValue("target", filterBases(value))}
+          handleChangeTarget={value =>
+            form.setFieldValue("target", filterAminoAcids(value))
+          }
           handleChangeReplacement={value =>
-            form.setFieldValue("replacement", filterBases(value))
+            form.setFieldValue("replacement", filterAminoAcids(value))
           }
           handleChangePosition={value => form.setFieldValue("position", value)}
           mutation_type={values.mutation_type}
@@ -76,7 +82,12 @@ function DnaView() {
         />
         <form.Field name="settings">
           {field => (
-            <AdvancedSettings value={field.state.value} onChange={field.handleChange} />
+            <AdvancedSettings
+              value={field.state.value}
+              onChange={field.handleChange}
+              mode={mode}
+              expressionList={expressionList}
+            />
           )}
         </form.Field>
       </Form>
@@ -85,4 +96,4 @@ function DnaView() {
   );
 }
 
-export default DnaView;
+export default ProteinView;

@@ -29,7 +29,11 @@
         "noAutofocus": "off"
       },
       "style": {
-        "noNonNullAssertion": "warn"
+        "noNonNullAssertion": "warn",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": { "filenameCases": ["kebab-case"] }
+        }
       },
       "suspicious": {
         "noExplicitAny": "warn"

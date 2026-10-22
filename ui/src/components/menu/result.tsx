@@ -6,7 +6,7 @@ import {
 } from "mdbreact";
 import { Fragment, useState } from "react";
 import type { ResultData } from "../../api";
-import LoadingScreen from "../shared/LoadingScreen";
+import LoadingScreen from "../shared/loading-screen";
 
 interface ResultProps {
   mode: "CHAR" | "DNA" | "PRO";

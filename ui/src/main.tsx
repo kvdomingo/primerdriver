@@ -6,7 +6,7 @@ import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
 import "@fontsource-variable/figtree/wght.css";
 import "@fontsource-variable/figtree/wght-italic.css";
-import App from "./App";
+import App from "./app";
 import "./index.css";
 
 const queryClient = new QueryClient({
