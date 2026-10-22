@@ -1,5 +1,4 @@
 import json
-import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
@@ -10,12 +9,6 @@ from pydantic_settings import BaseSettings, JsonConfigSettingsSource
 load_dotenv()
 
 BASE_DIR = Path(__file__).parent.parent
-
-PYTHON_ENV = (
-    "development" if bool(os.environ.get("FLASK_DEBUG", False)) else "production"
-)
-
-SHORT_SHA = os.environ.get("SHORT_SHA", "")
 
 
 def _settings_file() -> Path:

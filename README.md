@@ -150,7 +150,7 @@ Wait a few minutes for all the containers to start, then access the
 local servers in your browser at:
 
 - Web app: <http://localhost:3000>
-- API: <http://localhost:5000>
+- API: <http://localhost:5000> (docs at <http://localhost:5000/api/docs>)
 - Docs: <http://localhost:8000>
 
 ### Web app

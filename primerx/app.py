@@ -1,94 +1,84 @@
-import json
-import os
-from http import HTTPStatus
-
-from flask import Flask, Response, jsonify, request, send_from_directory
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from pandas import concat
+from scalar_fastapi import get_scalar_api_reference
 
-from primerdriver import __version__
+from primerdriver import __version__, expression_sys_loader
 from primerdriver.checks import PrimerChecks
-from primerdriver.config import Settings
+from primerdriver.config import get_settings
 from primerdriver.exceptions import PrimerCheckError
 from primerdriver.primer_design import OperationMode, PrimerDesign
-from primerx.cache import cache
-from primerx.config import BASE_DIR, PYTHON_ENV, SHORT_SHA
+from primerx.config import BASE_DIR, settings
 from primerx.log import logger
-from primerx.models import AdvancedSettings
-from primerx.tasks import on_ready
+from primerx.models import (
+    DesignRequest,
+    DesignResult,
+    ExpressionSystemsResponse,
+    MessageResponse,
+    VersionResponse,
+)
 
-app = Flask(__name__, static_url_path="", static_folder=BASE_DIR / "ui")
-cache.init_app(app)
+EXPRESSION_SYSTEMS = sorted(expression_sys_loader.eager_load())
 
-on_ready()
+app = FastAPI(
+    title="PrimerDriver",
+    version=__version__,
+    docs_url=None,
+    redoc_url=None,
+    openapi_url="/api/openapi.json",
+)
 
 
-@app.route("/api/health")
+@app.exception_handler(PrimerCheckError)
+def primer_check_error(_: Request, e: PrimerCheckError):
+    logger.error(str(e))
+    return JSONResponse({"detail": str(e)}, status_code=400)
+
+
+@app.get("/api/docs", include_in_schema=False)
+def docs():
+    return get_scalar_api_reference(openapi_url=app.openapi_url, title=app.title)
+
+
+@app.get("/api/health")
 def health():
     return {"status": "ok"}
 
 
-@app.route("/api/version")
-def api_version():
-    return jsonify(
-        {
-            "program_version": __version__,
-            "web_version": f"web {SHORT_SHA if SHORT_SHA else __version__}",
-        }
+@app.get("/api/version")
+def api_version() -> VersionResponse:
+    return VersionResponse(
+        program_version=__version__,
+        web_version=f"web {settings.SHORT_SHA or __version__}",
     )
 
 
-@app.route("/api/expressionsys")
-def api_expression_systems():
-    try:
-        expression = json.loads(cache.get("expression_systems"))
-        return jsonify({"data": sorted(expression.keys())})
-    except json.JSONDecodeError as e:
-        logger.error(str(e))
-        return Response(status=HTTPStatus.INTERNAL_SERVER_ERROR)
+@app.get("/api/expressionsys")
+def api_expression_systems() -> ExpressionSystemsResponse:
+    return ExpressionSystemsResponse(data=EXPRESSION_SYSTEMS)
 
 
-@app.route("/api", methods=["POST"])
-def api():
-    data = request.json
-    data["settings"] = AdvancedSettings(
-        **(data.get("settings", None) or Settings().model_dump())
+@app.post("/api")
+def api(body: DesignRequest) -> DesignResult | MessageResponse:
+    checks = PrimerChecks(body.sequence)
+    sequence = (
+        checks.is_valid_protein()
+        if body.mode == OperationMode.PROTEIN
+        else checks.is_valid_dna()
     )
-    checks = PrimerChecks(data["sequence"])
-    if data["mode"] == OperationMode.PROTEIN.value:
-        try:
-            data["sequence"] = checks.is_valid_protein()
-        except PrimerCheckError as e:
-            logger.error(str(e))
-            return Response(str(e), status=HTTPStatus.BAD_REQUEST)
-    else:
-        try:
-            data["sequence"] = checks.is_valid_dna()
-        except PrimerCheckError as e:
-            logger.error(str(e))
-            return Response(str(e), status=HTTPStatus.BAD_REQUEST)
-    res = PrimerDesign(**data)
+    res = PrimerDesign(
+        **body.model_dump(mode="json", exclude={"sequence", "settings"}),
+        sequence=sequence,
+        settings=body.settings or get_settings(),
+    )
     res.main()
-    if data["mode"] != OperationMode.CHARACTERIZATION.value:
-        try:
-            df = concat([*res.df]).T
-            out = df.to_dict()
-        except (TypeError, ValueError):
-            out = {"data": "No valid primers found"}
-    else:
-        df = res.df
-        out = df.to_dict()
-    return jsonify(out)
+    if body.mode == OperationMode.CHARACTERIZATION:
+        return res.df.to_dict()
+    try:
+        return concat([*res.df]).T.to_dict()
+    except (TypeError, ValueError):
+        return MessageResponse(data="No valid primers found")
 
 
-if PYTHON_ENV != "development":
-
-    @app.route("/", defaults={"path": ""})
-    @app.route("/<path:path>")
-    def serve(path: str):
-        if path != "" and os.path.exists(f"{app.static_folder}/{path}"):
-            return send_from_directory(app.static_folder, path)
-        return send_from_directory(app.static_folder, "index.html")
-
-    @app.errorhandler(404)
-    def not_found(_):
-        return send_from_directory(app.static_folder, "index.html")
+if settings.PYTHON_ENV != "development":
+    app.frontend("/", directory=BASE_DIR / "ui")

@@ -11,7 +11,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = [
     "Development Status :: 5 - Production/Stable",
-    "Framework :: Flask",
+    "Framework :: FastAPI",
     "Intended Audience :: Science/Research",
     "Typing :: Typed",
     "Programming Language :: Python :: 3",
@@ -21,10 +21,7 @@ classifiers = [
 ]
 dependencies = [
     "python-dotenv~=1.0",
-    "Flask~=2.0",
-    "gunicorn[gthread]~=26.0",
     "loguru~=0.0",
-    "Flask-Caching~=1.0",
     "biopython~=1.78",
     "pandas~=3.0",
     "numpy~=2.0",
@@ -33,6 +30,8 @@ dependencies = [
     "pydantic~=2.0",
     "pydantic-settings~=2.0",
     "requests~=2.0",
+    "fastapi[standard]~=0.0",
+    "scalar-fastapi~=1.0",
 ]
 
 [project.urls]
