@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ '3.12', '3.13', '3.14' ]
+        python-version: ["3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
 
@@ -22,12 +22,3 @@ jobs:
 
       - name: Run tests
         run: uv run coverage run -m pytest
-
-      - name: Update code coverage badge
-        run: uv run coverage-badge -o coverage.svg -f
-        if: ${{ matrix.python-version == '3.14' }}
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        if: ${{ matrix.python-version == '3.14' }}
-        with:
-          commit_message: Update code coverage badge
