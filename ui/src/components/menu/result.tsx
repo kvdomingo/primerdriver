@@ -1,10 +1,16 @@
 import {
+  columnSizingFeature,
+  createColumnHelper,
+  tableFeatures,
+  useTable,
+} from "@tanstack/react-table";
+import {
   MDBContainer as Container,
   MDBTable as Table,
   MDBTableBody as TableBody,
   MDBTableHead as TableHead,
 } from "mdbreact";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import type { ResultData } from "../../api";
 import LoadingScreen from "../shared/loading-screen";
 
@@ -12,6 +18,77 @@ interface ResultProps {
   mode: "CHAR" | "DNA" | "PRO";
   status: "idle" | "pending" | "error" | "success";
   data?: ResultData;
+}
+
+type Row = { label: string; value: string | number | boolean };
+
+const features = tableFeatures({ columnSizingFeature });
+const helper = createColumnHelper<typeof features, Row>();
+const columns = helper.columns([
+  helper.accessor("label", { header: "", size: 180 }),
+  helper.accessor("value", {
+    header: "",
+    cell: info => String(info.getValue()),
+  }),
+]);
+
+function fixed(width: number) {
+  return { width, minWidth: width };
+}
+
+function ResultTable({
+  title,
+  record,
+}: {
+  title?: string;
+  record: Record<string, string | number | boolean>;
+}) {
+  const data = useMemo(
+    () => Object.entries(record).map(([label, value]) => ({ label, value })),
+    [record],
+  );
+  const table = useTable({ features, columns, data });
+
+  return (
+    <Table responsive bordered small hover className="text-nowrap">
+      {title && (
+        <TableHead>
+          <tr>
+            {table.getFlatHeaders().map(header => (
+              <th
+                key={header.id}
+                scope="col"
+                style={
+                  header.column.id === "label"
+                    ? fixed(header.column.getSize())
+                    : undefined
+                }
+              >
+                {header.column.id === "value" ? title : null}
+              </th>
+            ))}
+          </tr>
+        </TableHead>
+      )}
+      <TableBody>
+        {table.getRowModel().rows.map(row => (
+          <tr key={row.id}>
+            {row.getAllCells().map(cell =>
+              cell.column.id === "label" ? (
+                <th key={cell.id} scope="row" style={fixed(cell.column.getSize())}>
+                  <table.FlexRender cell={cell} />
+                </th>
+              ) : (
+                <td key={cell.id}>
+                  <table.FlexRender cell={cell} />
+                </td>
+              ),
+            )}
+          </tr>
+        ))}
+      </TableBody>
+    </Table>
+  );
 }
 
 function isMessage(data: ResultData): data is { data: string } {
@@ -43,16 +120,11 @@ function Result({ mode, status, data }: ResultProps) {
     if (mode === "CHAR")
       return (
         <Container id="results" className="mb-5">
-          <Table responsive bordered small hover className="text-nowrap">
-            <TableBody>
-              {Object.keys(results).map(key => (
-                <tr key={key}>
-                  <th scope="row">{key}</th>
-                  <td>{results[key]["1"]}</td>
-                </tr>
-              ))}
-            </TableBody>
-          </Table>
+          <ResultTable
+            record={Object.fromEntries(
+              Object.entries(results).map(([key, row]) => [key, row["1"]]),
+            )}
+          />
         </Container>
       );
 
@@ -66,22 +138,7 @@ function Result({ mode, status, data }: ResultProps) {
           (item, i) =>
             i < viewLimit && (
               <Fragment key={item}>
-                <Table responsive className="text-nowrap" small bordered hover>
-                  <TableHead>
-                    <tr>
-                      <th scope="col" />
-                      <th scope="col">{`Primer ${i + 1}`}</th>
-                    </tr>
-                  </TableHead>
-                  <TableBody>
-                    {Object.keys(results[(i + 1).toString()]).map(key => (
-                      <tr key={key}>
-                        <th scope="row">{key}</th>
-                        <td>{results[(i + 1).toString()][key]}</td>
-                      </tr>
-                    ))}
-                  </TableBody>
-                </Table>
+                <ResultTable title={`Primer ${i + 1}`} record={results[item]} />
                 {i + 1 === viewLimit && i + 1 < Object.keys(results).length && (
                   <div className="mt-4 mb-5 text-center">
                     <button
