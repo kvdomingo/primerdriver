@@ -4,14 +4,12 @@ from json import load
 
 from primerdriver.config import BASE_DIR, Settings, get_settings
 from primerdriver.exceptions import PrimerCheckError
-from primerdriver.log import logger
 
 settings = get_settings()
 
 TABLES_DIR = BASE_DIR / "primerdriver" / "tables"
 
 
-@logger.catch
 class PrimerChecks:
     def __init__(self, sequence: str):
         """
