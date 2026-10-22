@@ -5,14 +5,12 @@ import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
 import "@fontsource-variable/figtree/wght.css";
 import "@fontsource-variable/figtree/wght-italic.css";
-import App from "./App.jsx";
-import { PrimerDriverProvider } from "./contexts/PrimerDriverContext";
+import App from "./App";
 import "./index.css";
 
-createRoot(document.getElementById("root")).render(
+// biome-ignore lint/style/noNonNullAssertion: #root is in index.html
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <PrimerDriverProvider>
-      <App />
-    </PrimerDriverProvider>
+    <App />
   </StrictMode>,
 );

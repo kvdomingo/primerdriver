@@ -1,24 +1,27 @@
-import {
-  MDBContainer as Container,
-  MDBIcon as Icon,
-  MDBTypography as Typography,
-} from "mdbreact";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link } from "@tanstack/react-router";
+import { MDBContainer as Container, MDBIcon as Icon } from "mdbreact";
+import type { FormEvent, ReactNode } from "react";
+import { usePrimerDriverStore } from "../../store";
 
-function Form(props) {
+interface FormProps {
+  handleValidate: () => void;
+  handleSubmit: (e: FormEvent) => void;
+  isValid: boolean;
+  title: string;
+  children: ReactNode;
+}
+
+function Form(props: FormProps) {
+  const resetForm = usePrimerDriverStore(state => state.resetForm);
+
   return (
     <Container className="my-5">
       <Link className="btn btn-blue-grey btn-rounded mb-4" to="/" id="back">
         <Icon fas icon="arrow-left" className="mr-2" /> main menu
       </Link>
-      <Typography
-        tag="h2"
-        variant="h2-responsive"
-        className="d-md-inline ml-md-4 py-2 text-md-center"
-      >
+      <h2 className="h2-responsive d-md-inline ml-md-4 py-2 text-md-center">
         {props.title}
-      </Typography>
+      </h2>
       <form
         id="form"
         className="form"
@@ -33,7 +36,7 @@ function Form(props) {
           <input
             type="reset"
             id="reset"
-            onClick={props.handleReset}
+            onClick={resetForm}
             className="btn btn-warning text-dark"
             value="Reset"
           />
@@ -50,13 +53,5 @@ function Form(props) {
     </Container>
   );
 }
-
-Form.propTypes = {
-  handleValidate: PropTypes.func,
-  handleReset: PropTypes.func,
-  handleSubmit: PropTypes.func,
-  isValid: PropTypes.bool,
-  title: PropTypes.string,
-};
 
 export { Form };

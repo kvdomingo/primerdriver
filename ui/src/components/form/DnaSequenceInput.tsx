@@ -4,9 +4,16 @@ import {
   MDBRow as Row,
   MDBTooltip as Tooltip,
 } from "mdbreact";
-import PropTypes from "prop-types";
+import type { SyntheticEvent } from "react";
 
-function DnaSequenceInput(props) {
+interface DnaSequenceInputProps {
+  cursorPosition: number;
+  handleChange: (e: SyntheticEvent<HTMLTextAreaElement>) => void;
+  sequence: string;
+  sequenceLength: number;
+}
+
+function DnaSequenceInput(props: DnaSequenceInputProps) {
   return (
     <div className="form-group">
       <label htmlFor="sequence">Enter sequence</label>
@@ -47,12 +54,5 @@ function DnaSequenceInput(props) {
     </div>
   );
 }
-
-DnaSequenceInput.propTypes = {
-  cursorPosition: PropTypes.number,
-  handleChange: PropTypes.func,
-  sequence: PropTypes.string,
-  sequenceLength: PropTypes.number,
-};
 
 export { DnaSequenceInput };

@@ -1,6 +1,9 @@
-import PropTypes from "prop-types";
+interface MutationTypeProps {
+  handleChange: (value: string) => void;
+  mutation_type: string;
+}
 
-function MutationType(props) {
+function MutationType(props: MutationTypeProps) {
   return (
     <div className="form-group">
       <label htmlFor="mutation_type">Mutation type</label>
@@ -20,10 +23,5 @@ function MutationType(props) {
     </div>
   );
 }
-
-MutationType.propTypes = {
-  handleChange: PropTypes.func,
-  mutation_type: PropTypes.string,
-};
 
 export { MutationType };

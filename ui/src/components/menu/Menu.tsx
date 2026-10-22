@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Image } from "cloudinary-react";
 import {
   MDBCard as Card,
@@ -6,8 +7,7 @@ import {
   MDBRow as Row,
 } from "mdbreact";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext.jsx";
+import { usePrimerDriverStore } from "../../store";
 
 const menu_data = [
   {
@@ -34,21 +34,12 @@ const menu_data = [
 ];
 
 function Menu() {
-  const { PDDispatch } = usePrimerDriverContext();
+  const { setResults, setMode } = usePrimerDriverStore();
 
   useEffect(() => {
-    PDDispatch({
-      type: "updateResults",
-      payload: {
-        data: [],
-        loaded: false,
-      },
-    });
-    PDDispatch({
-      type: "updateMode",
-      payload: "",
-    });
-  }, [PDDispatch]);
+    setResults({ data: {}, loaded: false });
+    setMode("");
+  }, [setResults, setMode]);
 
   return (
     <Row className="row-cols-1 row-cols-md-3 mx-0 h-100 align-items-center">

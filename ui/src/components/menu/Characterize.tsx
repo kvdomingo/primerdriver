@@ -1,13 +1,12 @@
+import { useNavigate } from "@tanstack/react-router";
 import { MDBCol as Col, MDBRow as Row } from "mdbreact";
-import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../api/index.js";
-import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext.jsx";
+import { type FormEvent, type SyntheticEvent, useEffect, useState } from "react";
+import api from "../../api";
+import { type ResultData, usePrimerDriverStore } from "../../store";
 import { DnaSequenceInput, Form, MutationType, NumberMismatch } from "../form";
-import LoadingScreen from "../shared/LoadingScreen.jsx";
+import LoadingScreen from "../shared/LoadingScreen";
 
-function Characterize(props) {
+function Characterize() {
   const [formData, setFormData] = useState({});
   const [sequence, setSequence] = useState("");
   const [mutationType, setMutationType] = useState("");
@@ -17,18 +16,15 @@ function Characterize(props) {
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { PDDispatch } = usePrimerDriverContext();
-  const mode = "CHAR";
+  const { setMode, setLoadedResultsFromModule, setResults } = usePrimerDriverStore();
+  const mode = "CHAR" as const;
 
   useEffect(() => {
-    PDDispatch({
-      type: "updateMode",
-      payload: mode,
-    });
-  }, [PDDispatch]);
+    setMode(mode);
+  }, [setMode, mode]);
 
-  function handleChangeSequence(e) {
-    const sequence = e.target.value.toUpperCase().split("");
+  function handleChangeSequence(e: SyntheticEvent<HTMLTextAreaElement>) {
+    const sequence = e.currentTarget.value.toUpperCase().split("");
     const filteredSequence = [];
 
     for (const char of sequence) {
@@ -36,14 +32,14 @@ function Characterize(props) {
     }
 
     setSequence(filteredSequence.join(""));
-    setCursorPosition(e.target.selectionStart + 1);
-    setSequenceLength(e.target.value.length);
+    setCursorPosition(e.currentTarget.selectionStart + 1);
+    setSequenceLength(e.currentTarget.value.length);
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
-    let data;
+    let data: ResultData;
     api.data
       .primerDriver(formData)
       .then(res => {
@@ -54,18 +50,9 @@ function Characterize(props) {
         data = "Request failed. Please try again later.";
       })
       .finally(() => {
-        PDDispatch({
-          type: "updateLoadedResults",
-          payload: true,
-        });
-        PDDispatch({
-          type: "updateResults",
-          payload: {
-            data,
-            loaded: true,
-          },
-        });
-        navigate("/results");
+        setLoadedResultsFromModule(true);
+        setResults({ data, loaded: true });
+        navigate({ to: "/results" });
       });
   }
 
@@ -88,7 +75,6 @@ function Characterize(props) {
       title="Primer Characterization"
       handleValidate={validateForm}
       handleSubmit={handleSubmit}
-      handleReset={props.handleReset}
       isValid={isValid}
     >
       <DnaSequenceInput
@@ -111,9 +97,5 @@ function Characterize(props) {
     </Form>
   );
 }
-
-Characterize.propTypes = {
-  handleReset: PropTypes.func,
-};
 
 export default Characterize;

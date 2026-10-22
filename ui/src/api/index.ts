@@ -6,14 +6,16 @@ const axiosInstance = axios.create({ baseURL });
 
 const api = {
   data: {
-    primerDriver(body) {
+    primerDriver(body: object) {
       return axiosInstance.post("", body);
     },
     version() {
-      return axiosInstance.get("/version");
+      return axiosInstance.get<{ program_version: string; web_version: string }>(
+        "/version",
+      );
     },
     expressionSystem() {
-      return axiosInstance.get("/expressionsys");
+      return axiosInstance.get<{ data: string[] }>("/expressionsys");
     },
   },
 };

@@ -1,16 +1,15 @@
-import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../api/index.js";
-import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext.jsx";
+import { useNavigate } from "@tanstack/react-router";
+import { type FormEvent, type SyntheticEvent, useEffect, useState } from "react";
+import api from "../../api";
+import { type ResultData, usePrimerDriverStore } from "../../store";
 import {
   AdvancedSettings,
   Form,
   MutationSelector,
   MutationType,
   ProteinSequenceInput,
-} from "../form/index.js";
-import LoadingScreen from "../shared/LoadingScreen.jsx";
+} from "../form";
+import LoadingScreen from "../shared/LoadingScreen";
 
 const AMINO_ACIDS = [
   "A",
@@ -35,7 +34,7 @@ const AMINO_ACIDS = [
   "V",
 ];
 
-function ProteinView(props) {
+function ProteinView() {
   const [formData, setFormData] = useState({});
   const [cursorPosition, setCursorPosition] = useState(1);
   const [sequenceLength, setSequenceLength] = useState(0);
@@ -57,10 +56,10 @@ function ProteinView(props) {
   const [centerMutation, setCenterMutation] = useState(true);
   const [primerMode, setPrimerMode] = useState("complementary");
   const [expressionSystem, setExpressionSystem] = useState("Homo sapiens");
-  const [expressionList, setExpressionList] = useState([]);
-  const { PDDispatch } = usePrimerDriverContext();
+  const [expressionList, setExpressionList] = useState<string[]>([]);
+  const { setMode, setLoadedResultsFromModule, setResults } = usePrimerDriverStore();
   const navigate = useNavigate();
-  const mode = "PRO";
+  const mode = "PRO" as const;
 
   useEffect(() => {
     api.data
@@ -68,13 +67,10 @@ function ProteinView(props) {
       .then(res => setExpressionList(res.data.data))
       .catch(err => console.log(err.message));
 
-    PDDispatch({
-      type: "updateMode",
-      payload: mode,
-    });
-  }, [PDDispatch]);
+    setMode(mode);
+  }, [setMode, mode]);
 
-  function validateSequence(sequence) {
+  function validateSequence(sequence: string) {
     return sequence
       .toUpperCase()
       .split("")
@@ -82,24 +78,27 @@ function ProteinView(props) {
       .join("");
   }
 
-  function handleChangeSequence(e) {
-    const { value } = e.target;
+  function handleChangeSequence(e: SyntheticEvent<HTMLTextAreaElement>) {
+    const { value } = e.currentTarget;
     const filteredSequence = validateSequence(value);
     setSequence(filteredSequence);
-    setCursorPosition(e.target.selectionStart + 1);
+    setCursorPosition(e.currentTarget.selectionStart + 1);
     setSequenceLength(value.length);
   }
 
-  function handleChangeTargetReplacement(value, type) {
+  function handleChangeTargetReplacement(
+    value: string,
+    type: "target" | "replacement",
+  ) {
     const filteredSequence = validateSequence(value);
     if (type === "target") setTarget(filteredSequence);
     else if (type === "replacement") setReplacement(filteredSequence);
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
-    let data;
+    let data: ResultData;
     api.data
       .primerDriver(formData)
       .then(res => {
@@ -110,18 +109,9 @@ function ProteinView(props) {
         data = "Request failed. Please try again later.";
       })
       .finally(() => {
-        PDDispatch({
-          type: "updateLoadedResults",
-          payload: true,
-        });
-        PDDispatch({
-          type: "updateResults",
-          payload: {
-            data,
-            loaded: true,
-          },
-        });
-        navigate("/results");
+        setLoadedResultsFromModule(true);
+        setResults({ data, loaded: true });
+        navigate({ to: "/results" });
       });
   }
 
@@ -165,7 +155,6 @@ function ProteinView(props) {
   return (
     <Form
       handleValidate={validateForm}
-      handleReset={props.handleReset}
       handleSubmit={handleSubmit}
       isValid={isValid}
       title="Protein-based Primer Design"
@@ -216,9 +205,5 @@ function ProteinView(props) {
     </Form>
   );
 }
-
-ProteinView.propTypes = {
-  handleReset: PropTypes.func,
-};
 
 export default ProteinView;

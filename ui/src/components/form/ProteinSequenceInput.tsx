@@ -4,16 +4,25 @@ import {
   MDBRow as Row,
   MDBTooltip as Tooltip,
 } from "mdbreact";
-import PropTypes from "prop-types";
+import type { SyntheticEvent } from "react";
 
-function ProteinSequenceInput(props) {
+interface ProteinSequenceInputProps {
+  cursorPosition: number;
+  handleChangeSequence: (e: SyntheticEvent<HTMLTextAreaElement>) => void;
+  sequence: string;
+  sequenceLength: number;
+}
+
+function ProteinSequenceInput(props: ProteinSequenceInputProps) {
   return (
     <div className="form-group">
       <div className="alert alert-warning text-left" role="alert">
-        <strong>Codon-optimized genes only.</strong> Protein-based design rebuilds a template by translating your
-        sequence into the selected expression system&apos;s preferred codons, then designs against that
-        reconstruction. The primers will anneal to your actual template only if the gene was synthesized with exactly
-        those codons. For a cloned or cDNA-derived gene, use DNA-based design with the real coding sequence.
+        <strong>Codon-optimized genes only.</strong> Protein-based design rebuilds a
+        template by translating your sequence into the selected expression system&apos;s
+        preferred codons, then designs against that reconstruction. The primers will
+        anneal to your actual template only if the gene was synthesized with exactly
+        those codons. For a cloned or cDNA-derived gene, use DNA-based design with the
+        real coding sequence.
       </div>
       <label htmlFor="sequence">Enter sequence</label>
       <Tooltip domElement tag="span" placement="right">
@@ -53,12 +62,5 @@ function ProteinSequenceInput(props) {
     </div>
   );
 }
-
-ProteinSequenceInput.propTypes = {
-  cursorPosition: PropTypes.number,
-  handleChangeSequence: PropTypes.func,
-  sequence: PropTypes.string,
-  sequenceLength: PropTypes.number,
-};
 
 export { ProteinSequenceInput };

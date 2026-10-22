@@ -1,6 +1,9 @@
-import PropTypes from "prop-types";
+interface NumberMismatchProps {
+  handleChangeInt: (value: number) => void;
+  mismatched_bases: number;
+}
 
-function NumberMismatch(props) {
+function NumberMismatch(props: NumberMismatchProps) {
   return (
     <div className="form-group">
       <label htmlFor="mismatched_bases">Number of mismatched bases</label>
@@ -17,10 +20,5 @@ function NumberMismatch(props) {
     </div>
   );
 }
-
-NumberMismatch.propTypes = {
-  handleChangeInt: PropTypes.func,
-  mismatched_bases: PropTypes.number,
-};
 
 export { NumberMismatch };

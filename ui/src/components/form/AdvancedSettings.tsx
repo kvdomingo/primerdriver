@@ -6,10 +6,36 @@ import {
   MDBCollapse as Collapse,
   MDBRow as Row,
 } from "mdbreact";
-import PropTypes from "prop-types";
 import { useState } from "react";
 
-function AdvancedSettings(props) {
+interface AdvancedSettingsProps {
+  tmRange: number[];
+  setTmRange: (value: number[]) => void;
+  gcRange: number[];
+  setGcRange: (value: number[]) => void;
+  lengthRange: number[];
+  setLengthRange: (value: number[]) => void;
+  flank3Range: number[];
+  setFlank3Range: (value: number[]) => void;
+  flank5Range: number[];
+  setFlank5Range: (value: number[]) => void;
+  forwardOverlap3: number;
+  setForwardOverlap3: (value: number) => void;
+  forwardOverlap5: number;
+  setForwardOverlap5: (value: number) => void;
+  expressionSystem: string;
+  setExpressionSystem: (value: string) => void;
+  mode?: string;
+  primerMode: string;
+  setPrimerMode: (value: string) => void;
+  terminateGc: boolean;
+  setTerminateGc: (value: boolean) => void;
+  centerMutation: boolean;
+  setCenterMutation: (value: boolean) => void;
+  expressionList?: string[];
+}
+
+function AdvancedSettings(props: AdvancedSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   function toggleCollapse() {
@@ -386,32 +412,5 @@ function AdvancedSettings(props) {
     </div>
   );
 }
-
-AdvancedSettings.propTypes = {
-  tmRange: PropTypes.arrayOf(PropTypes.number),
-  setTmRange: PropTypes.func,
-  gcRange: PropTypes.arrayOf(PropTypes.number),
-  setGcRange: PropTypes.func,
-  lengthRange: PropTypes.arrayOf(PropTypes.number),
-  setLengthRange: PropTypes.func,
-  flank3Range: PropTypes.arrayOf(PropTypes.number),
-  setFlank3Range: PropTypes.func,
-  flank5Range: PropTypes.arrayOf(PropTypes.number),
-  setFlank5Range: PropTypes.func,
-  forwardOverlap3: PropTypes.number,
-  setForwardOverlap3: PropTypes.func,
-  forwardOverlap5: PropTypes.number,
-  setForwardOverlap5: PropTypes.func,
-  expressionSystem: PropTypes.string,
-  setExpressionSystem: PropTypes.func,
-  mode: PropTypes.string,
-  primerMode: PropTypes.string,
-  setPrimerMode: PropTypes.func,
-  terminateGc: PropTypes.bool,
-  setTerminateGc: PropTypes.func,
-  centerMutation: PropTypes.bool,
-  setCenterMutation: PropTypes.func,
-  expressionList: PropTypes.array,
-};
 
 export { AdvancedSettings };

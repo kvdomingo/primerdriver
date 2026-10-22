@@ -1,7 +1,16 @@
 import { MDBCol as Col, MDBRow as Row } from "mdbreact";
-import PropTypes from "prop-types";
 
-function MutationSelector(props) {
+interface MutationSelectorProps {
+  handleChangeTarget: (value: string) => void;
+  handleChangeReplacement: (value: string) => void;
+  handleChangePosition: (value: number) => void;
+  mutation_type: string;
+  position: number;
+  replacement: string;
+  target: string;
+}
+
+function MutationSelector(props: MutationSelectorProps) {
   const columns = props.mutation_type === "sub" ? 3 : 2;
 
   if (props.mutation_type === "") return null;
@@ -31,7 +40,7 @@ function MutationSelector(props) {
           name="position"
           id="position"
           value={props.position}
-          onChange={e => props.handleChangePosition(e.target.value)}
+          onChange={e => props.handleChangePosition(Number(e.target.value))}
           required
         />
       </Col>
@@ -53,15 +62,5 @@ function MutationSelector(props) {
     </Row>
   );
 }
-
-MutationSelector.propTypes = {
-  handleChangeTarget: PropTypes.func,
-  handleChangeReplacement: PropTypes.func,
-  handleChangePosition: PropTypes.func,
-  mutation_type: PropTypes.string,
-  position: PropTypes.number,
-  replacement: PropTypes.string,
-  target: PropTypes.number,
-};
 
 export { MutationSelector };

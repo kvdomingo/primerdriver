@@ -1,20 +1,19 @@
-import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "../../api/index.js";
-import { usePrimerDriverContext } from "../../contexts/PrimerDriverContext.jsx";
+import { useNavigate } from "@tanstack/react-router";
+import { type FormEvent, type SyntheticEvent, useEffect, useState } from "react";
+import api from "../../api";
+import { type ResultData, usePrimerDriverStore } from "../../store";
 import {
   AdvancedSettings,
   DnaSequenceInput,
   Form,
   MutationSelector,
   MutationType,
-} from "../form/index.js";
-import LoadingScreen from "../shared/LoadingScreen.jsx";
+} from "../form";
+import LoadingScreen from "../shared/LoadingScreen";
 
 const BASES = ["A", "C", "G", "T"];
 
-function DnaView(props) {
+function DnaView() {
   const [formData, setFormData] = useState({});
   const [cursorPosition, setCursorPosition] = useState(1);
   const [sequenceLength, setSequenceLength] = useState(0);
@@ -36,18 +35,15 @@ function DnaView(props) {
   const [centerMutation, setCenterMutation] = useState(true);
   const [primerMode, setPrimerMode] = useState("complementary");
   const [expressionSystem, setExpressionSystem] = useState("Homo sapiens");
-  const { PDDispatch } = usePrimerDriverContext();
+  const { setMode, setLoadedResultsFromModule, setResults } = usePrimerDriverStore();
   const navigate = useNavigate();
-  const mode = "DNA";
+  const mode = "DNA" as const;
 
   useEffect(() => {
-    PDDispatch({
-      type: "updateMode",
-      payload: mode,
-    });
-  }, [PDDispatch]);
+    setMode(mode);
+  }, [setMode, mode]);
 
-  function validateSequence(sequence) {
+  function validateSequence(sequence: string) {
     return sequence
       .toUpperCase()
       .split("")
@@ -55,24 +51,27 @@ function DnaView(props) {
       .join("");
   }
 
-  function handleChangeSequence(e) {
-    const { value } = e.target;
+  function handleChangeSequence(e: SyntheticEvent<HTMLTextAreaElement>) {
+    const { value } = e.currentTarget;
     const filteredSequence = validateSequence(value);
     setSequence(filteredSequence);
-    setCursorPosition(e.target.selectionStart + 1);
+    setCursorPosition(e.currentTarget.selectionStart + 1);
     setSequenceLength(value.length);
   }
 
-  function handleChangeTargetReplacement(value, type) {
+  function handleChangeTargetReplacement(
+    value: string,
+    type: "target" | "replacement",
+  ) {
     const filteredSequence = validateSequence(value);
     if (type === "target") setTarget(filteredSequence);
     else if (type === "replacement") setReplacement(filteredSequence);
   }
 
-  function handleSubmit(e) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
-    let data;
+    let data: ResultData;
     api.data
       .primerDriver(formData)
       .then(res => {
@@ -83,18 +82,9 @@ function DnaView(props) {
         data = "Request failed. Please try again later.";
       })
       .finally(() => {
-        PDDispatch({
-          type: "updateLoadedResults",
-          payload: true,
-        });
-        PDDispatch({
-          type: "updateResults",
-          payload: {
-            data,
-            loaded: true,
-          },
-        });
-        navigate("/results");
+        setLoadedResultsFromModule(true);
+        setResults({ data, loaded: true });
+        navigate({ to: "/results" });
       });
   }
 
@@ -139,7 +129,6 @@ function DnaView(props) {
     <Form
       handleValidate={validateForm}
       handleSubmit={handleSubmit}
-      handleReset={props.handleReset}
       isValid={isValid}
       title="DNA-based Primer Design"
     >
@@ -188,9 +177,5 @@ function DnaView(props) {
     </Form>
   );
 }
-
-DnaView.propTypes = {
-  handleReset: PropTypes.func,
-};
 
 export default DnaView;
