@@ -201,6 +201,7 @@ function ProteinView() {
         centerMutation={centerMutation}
         setCenterMutation={setCenterMutation}
         expressionList={expressionList}
+        mode={mode}
       />
     </Form>
   );
