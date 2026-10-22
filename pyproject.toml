@@ -8,8 +8,8 @@ authors = [
 ]
 requires-python = ">=3.12,<3.15"
 readme = "README.md"
+license = { file = "LICENSE" }
 classifiers = [
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Development Status :: 5 - Production/Stable",
     "Framework :: Flask",
     "Intended Audience :: Science/Research",
