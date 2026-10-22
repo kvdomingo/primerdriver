@@ -1,8 +1,17 @@
-import { RouterProvider } from "@tanstack/react-router";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { MDBCol as Col, MDBRow as Row } from "mdbreact";
 import "./app.css";
-import { router } from "./components/app-routes";
 import Landing from "./components/landing";
+import LoadingScreen from "./components/shared/loading-screen";
+import { routeTree } from "./route-tree.gen";
+
+const router = createRouter({ routeTree, defaultPendingComponent: LoadingScreen });
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 function App() {
   return (

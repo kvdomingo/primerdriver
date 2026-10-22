@@ -11,7 +11,7 @@ repos:
       - id: biome-check
         additional_dependencies:
           - "@biomejs/biome@1.9.4"
-        args: [ '--config-path', './ui' ]
+        args: [ '--config-path', './ui', '--no-errors-on-unmatched' ]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
