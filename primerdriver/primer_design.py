@@ -171,19 +171,13 @@ class PrimerDesign:
         Returns:
           The melting temperature of the sequence in degrees Celsius.
         """
-        gc_content = int(gc_content * 100)
-        mismatch = int(mismatch * 100)
+        Tm = 81.5 + 0.41 * gc_content * 100
         if mutation_type == MutationType.SUBSTITUTION:
-            sequence_length = len(seq)
-            return 81.5 + 0.41 * gc_content - 675 / sequence_length - mismatch
-        else:
-            if mutation_type == MutationType.INSERTION:
-                sequence_length = len(seq)
-            elif mutation_type == MutationType.DELETION:
-                sequence_length = len(seq)
-            else:
-                sequence_length = len(seq) - len(replacement)
-            return 81.5 + 0.41 * gc_content - 675 / sequence_length
+            return Tm - 675 / len(seq) - mismatch * 100
+        # Indel N excludes inserted bases; deleted bases are already absent from the primer.
+        if mutation_type == MutationType.INSERTION:
+            return Tm - 675 / (len(seq) - len(replacement or ""))
+        return Tm - 675 / len(seq)
 
     def characterize_primer(
         self,
