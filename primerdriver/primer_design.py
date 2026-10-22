@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import Enum
 
 from numpy import array
@@ -152,7 +154,7 @@ class PrimerDesign:
     def calculate_melting_temperature(
         seq: str | list[str],
         mutation_type: MutationType,
-        replacement: str | list[str],
+        replacement: str | list[str] | None,
         gc_content: float,
         mismatch: float,
     ) -> float:
@@ -169,19 +171,13 @@ class PrimerDesign:
         Returns:
           The melting temperature of the sequence in degrees Celsius.
         """
-        gc_content = int(gc_content * 100)
-        mismatch = int(mismatch * 100)
+        Tm = 81.5 + 0.41 * gc_content * 100
         if mutation_type == MutationType.SUBSTITUTION:
-            sequence_length = len(seq)
-            return 81.5 + 0.41 * gc_content - 675 / sequence_length - mismatch
-        else:
-            if mutation_type == MutationType.INSERTION:
-                sequence_length = len(seq)
-            elif mutation_type == MutationType.DELETION:
-                sequence_length = len(seq)
-            else:
-                sequence_length = len(seq) - len(replacement)
-            return 81.5 + 0.41 * gc_content - 675 / sequence_length
+            return Tm - 675 / len(seq) - mismatch * 100
+        # Indel N excludes inserted bases; deleted bases are already absent from the primer.
+        if mutation_type == MutationType.INSERTION:
+            return Tm - 675 / (len(seq) - len(replacement or ""))
+        return Tm - 675 / len(seq)
 
     def characterize_primer(
         self,
@@ -190,7 +186,7 @@ class PrimerDesign:
         replacement: str | list[str] | None,
         mismatched_bases: int,
         index: int | None = None,
-        reverse: list[str] | None = None,
+        reverse: str | None = None,
     ) -> DataFrame:
         """
         Characterize a primer.
@@ -201,20 +197,14 @@ class PrimerDesign:
           replacement: The replacement sequence for the mutation.
           mismatched_bases: The number of mismatched bases in the sequence.
           index: The index of the primer in the list of primers.
-          reverse: The reverse complement of the sequence.
+          reverse: The reverse primer; defaults to the reverse complement of the sequence.
 
         Returns:
           A DataFrame containing the characteristics of the primer.
         """
         mol_weight = self.lut["mol_weight"]
         seq = list(sequence)
-        if (
-            self.primer_mode == PrimerMode.COMPLEMENTARY
-            or self.mode == OperationMode.CHARACTERIZATION
-        ):
-            rev = "".join(self.get_reverse_complement(sequence))
-        else:
-            rev = reverse
+        rev = reverse or "".join(self.get_reverse_complement(sequence))
 
         forwards = {
             "sequence": sequence,
@@ -241,7 +231,7 @@ class PrimerDesign:
             "mol_weight": sum(float(mol_weight[b]) for b in rev),
         }
         reverses["Tm"] = self.calculate_melting_temperature(
-            seq,
+            rev,
             mutation_type,
             replacement,
             reverses["gc_content"],
@@ -267,16 +257,16 @@ class PrimerDesign:
         dat = [
             forwards["sequence"],
             reverses["sequence"],
-            f'{forwards["length"]} bp',
-            f'{reverses["length"]} bp',
-            f'{forwards["gc_content"]*100:.2f}%',
-            f'{reverses["gc_content"]*100:.2f}%',
-            f'{forwards["Tm"]:.2f} C',
-            f'{reverses["Tm"]:.2f} C',
-            f'{forwards["mol_weight"]:.2f} g/mol',
-            f'{reverses["mol_weight"]:.2f} g/mol',
-            f'{forwards["mismatch"]*100:.2f}%',
-            f'{reverses["mismatch"]*100:.2f}%',
+            f"{forwards['length']} bp",
+            f"{reverses['length']} bp",
+            f"{forwards['gc_content'] * 100:.2f}%",
+            f"{reverses['gc_content'] * 100:.2f}%",
+            f"{forwards['Tm']:.2f} C",
+            f"{reverses['Tm']:.2f} C",
+            f"{forwards['mol_weight']:.2f} g/mol",
+            f"{reverses['mol_weight']:.2f} g/mol",
+            f"{forwards['mismatch'] * 100:.2f}%",
+            f"{reverses['mismatch'] * 100:.2f}%",
             forwards["gc_end"],
             reverses["gc_end"],
         ]
@@ -297,606 +287,187 @@ class PrimerDesign:
         self.df = df
         return df
 
-    def substitution(  # noqa: C901
+    def _flank_pairs(self):
+        for f5 in range(self.flank5_range[0], self.flank5_range[1] + 1):
+            for f3 in range(self.flank3_range[0], self.flank3_range[1] + 1):
+                if self.settings.center_mutation and abs(f5 - f3) > 1:
+                    continue
+                yield f5, f3
+
+    def _passing_melting_temp(
         self,
-        sequence: str | list[str],
+        candidate: str,
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
-        start_position: int,
+        replacement: str,
         mismatched_bases: int,
-    ) -> DataFrame | None:
-        """
-        Performs a substitution mutation on a sequence.
-
-        Parameters:
-          sequence: The sequence to mutate.
-          mutation_type: The type of mutation (substitution, insertion, or deletion).
-          target: The target of the mutation.
-          replacement: The replacement sequence for the mutation.
-          start_position: The starting position of the mutation.
-          mismatched_bases: The number of mismatched bases in the sequence.
-
-        Returns:
-          A DataFrame containing the characteristics of the generated primer(s).
-        """
-        if self.primer_mode == PrimerMode.COMPLEMENTARY:
-            valid_primers = []
-            seq = list(sequence)
-            sequence_length = len(replacement)
-            seq[start_position - 1] = replacement
-            for f5 in range(*self.flank5_range):
-                for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
-                        continue
-                    candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                    candidate3 = list(replacement)
-                    candidate2 = seq[
-                        start_position + sequence_length - 1 : start_position
-                        + sequence_length
-                        + f3
-                    ]
-                    candidate = candidate1 + candidate3 + candidate2
-                    candidate = "".join(candidate)
-                    if len(candidate) == 0:
-                        continue
-                    gc_content = self.calculate_gc_content(candidate)
-                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                    melting_temperature = self.calculate_melting_temperature(
-                        candidate, mutation_type, replacement, gc_content, mismatch
-                    )
-                    sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content()
-                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
-                    valid_ends = sc.is_gc_clamped()
-                    valid_length = sc.is_valid_length()
-                    if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_primers.append(candidate)
-        else:
-            valid_primers = {}
-            forward_sequence = list(sequence)
-            sequence_length = len(replacement)
-            forward_sequence[start_position - 1] = replacement
-            for f5 in range(*self.flank5_range):
-                for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
-                        continue
-                    candidate1 = forward_sequence[
-                        start_position - 1 - f5 : start_position - 1
-                    ]
-                    candidate3 = list(replacement)
-                    candidate2 = forward_sequence[
-                        start_position + sequence_length - 1 : start_position
-                        + sequence_length
-                        + f3
-                    ]
-                    candidate = candidate1 + candidate3 + candidate2
-                    candidate = "".join(candidate)
-                    if len(candidate) == 0:
-                        continue
-                    gc_content = self.calculate_gc_content(candidate)
-                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                    melting_temperature = self.calculate_melting_temperature(
-                        candidate, mutation_type, replacement, gc_content, mismatch
-                    )
-                    sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content()
-                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
-                    valid_ends = sc.is_gc_clamped()
-                    valid_length = sc.is_valid_length()
-                    if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_primers[candidate] = []
-            for primers in valid_primers.keys():
-                sequence = (
-                    sequence[: start_position - 1]
-                    + replacement
-                    + sequence[start_position - 1 + sequence_length :]
-                )
-                start = sequence.find(primers)
-                end = start + len(primers) - 1
-                while (
-                    start < self.position - self.settings.forward_overlap5
-                    and end
-                    > self.position + sequence_length + self.settings.forward_overlap3
-                ):
-                    start -= 1
-                    end -= 1
-                for _ in range(self.position - self.settings.forward_overlap5, end):
-                    for j in range(self.flank3_range[1]):
-                        candidate = sequence[start - j : end]
-                        if len(candidate) == 0:
-                            continue
-                        gc_content = self.calculate_gc_content(candidate)
-                        mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                        forward_melting_temp = melting_temperature
-                        melting_temperature = self.calculate_melting_temperature(
-                            candidate, mutation_type, replacement, gc_content, mismatch
-                        )
-                        sc = SequenceChecks(candidate)
-                        valid_gc = sc.is_valid_gc_content()
-                        valid_temp = sc.is_valid_melting_temp(melting_temperature)
-                        valid_trange = sc.are_melting_temps_close(
-                            forward_melting_temp, melting_temperature
-                        )
-                        valid_ends = sc.is_gc_clamped()
-                        valid_length = sc.is_valid_length()
-                        if (
-                            valid_gc
-                            and valid_temp
-                            and valid_ends
-                            and valid_length
-                            and valid_trange
-                        ):
-                            valid_primers[primers].append(candidate)
-                    end += 1
-
-        if len(valid_primers) == 0 or (
-            isinstance(valid_primers, dict)
-            and len([val for values in list(valid_primers.values()) for val in values])
-            == 0
+    ) -> float | None:
+        """Return the candidate's melting temperature if it passes all primer checks, else None."""
+        melting_temp = self.calculate_melting_temperature(
+            candidate,
+            mutation_type,
+            replacement,
+            self.calculate_gc_content(candidate),
+            self.calculate_mismatch(candidate, mismatched_bases),
+        )
+        sc = SequenceChecks(candidate, self.settings)
+        if (
+            sc.is_valid_gc_content()
+            and sc.is_valid_melting_temp(melting_temp)
+            and sc.is_gc_clamped()
+            and sc.is_valid_length()
         ):
-            print("No valid primers found")
-            return
-        else:
-            df = []
-            print(f"\nGenerated forward primers: {len(valid_primers)}")
-            if self.mode == OperationMode.PROTEIN:
-                print(f"Using expression system: {self.settings.expression_system}")
-            if self.primer_mode == PrimerMode.COMPLEMENTARY:
-                for i, p in enumerate(valid_primers):
-                    df.append(
-                        self.characterize_primer(
-                            p, mutation_type, replacement, mismatched_bases, i + 1
-                        )
-                    )
-            else:
-                count = 1
-                for _, (k, v) in enumerate(valid_primers.items()):
-                    for r in v:
-                        df.append(
-                            self.characterize_primer(
-                                k,
-                                mutation_type,
-                                replacement,
-                                mismatched_bases,
-                                count,
-                                r,
-                            )
-                        )
-                        count += 1
-        return df
+            return melting_temp
+        return None
 
-    def deletion(  # noqa: C901
+    def design_primers(  # noqa: C901
         self,
-        sequence: str | list[str],
+        template: str,
         mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
-        start_position: int,
+        position: int,
+        deleted_length: int,
+        inserted: str,
         mismatched_bases: int,
-    ) -> DataFrame | None:
+    ) -> list[DataFrame] | None:
         """
-        Perform a deletion mutation.
+        Generate mutagenic primer pairs.
 
         Parameters:
-          sequence: The sequence of the primer.
-          mutation_type: The type of mutation.
-          target: The target sequence.
-          replacement: The replacement sequence.
-          start_position: The starting position of the mutation.
-          mismatched_bases: The number of mismatched bases.
+          template: The template DNA sequence.
+          mutation_type: The type of mutation (substitution, insertion, or deletion).
+          position: 0-based index in `template` where the mutation starts.
+          deleted_length: The number of template bases removed at `position`.
+          inserted: The bases placed at `position` in the mutant.
+          mismatched_bases: The number of mismatched bases in the primer.
 
         Returns:
-          A DataFrame containing the characteristics of the generated primer(s).
+          A list of DataFrames, one per primer pair, or None if no valid primers were found.
         """
-        if self.primer_mode == PrimerMode.COMPLEMENTARY:
-            valid_primers = []
-            sequence_length = len(self.target)
-            seq = list(sequence)
-            for f5 in range(*self.flank5_range):
-                for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
-                        continue
-                    if self.mode == OperationMode.DNA:
-                        candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                        candidate2 = seq[
-                            start_position + sequence_length - 1 : start_position
-                            + sequence_length
-                            + f3
-                        ]
-                    elif self.mode == OperationMode.PROTEIN:
-                        candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                        candidate2 = seq[
-                            start_position + sequence_length * 3 - 1 : start_position
-                            + sequence_length
-                            + f3
-                        ]
-                    candidate = candidate1 + candidate2
-                    candidate = "".join(candidate)
-                    if len(candidate) == 0:
-                        continue
-                    gc_content = self.calculate_gc_content(candidate)
-                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                    melting_temperature = self.calculate_melting_temperature(
-                        candidate, mutation_type, replacement, gc_content, mismatch
-                    )
-                    sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content()
-                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
-                    valid_ends = sc.is_gc_clamped()
-                    valid_length = sc.is_valid_length()
-                    if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_primers.append(candidate)
-        else:
-            valid_primers = {}
-            sequence_length = len(self.target)
-            seq = list(sequence)
-            for f5 in range(*self.flank5_range):
-                for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
-                        continue
-                    if self.mode == OperationMode.DNA:
-                        candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                        candidate2 = seq[
-                            start_position + sequence_length - 1 : start_position
-                            + sequence_length
-                            + f3
-                        ]
-                    else:
-                        candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                        candidate2 = seq[
-                            start_position + sequence_length * 3 - 1 : start_position
-                            + sequence_length
-                            + f3
-                        ]
-                    candidate = candidate1 + candidate2
-                    candidate = "".join(candidate)
-                    if len(candidate) == 0:
-                        continue
-                    gc_content = self.calculate_gc_content(candidate)
-                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                    melting_temperature = self.calculate_melting_temperature(
-                        candidate, mutation_type, replacement, gc_content, mismatch
-                    )
-                    sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content()
-                    valid_temp = sc.is_valid_melting_temp(melting_temperature)
-                    valid_ends = sc.is_gc_clamped()
-                    valid_length = sc.is_valid_length()
-                    if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_primers[candidate] = []
-            if self.mode == OperationMode.DNA:
-                sequence = (
-                    sequence[: start_position - 1]
-                    + sequence[start_position + sequence_length - 1 :]
-                )
-            elif self.mode == OperationMode.PROTEIN:
-                sequence = (
-                    sequence[: start_position - 1]
-                    + sequence[start_position + sequence_length * 3 - 1 :]
-                )
-            for primers in valid_primers:
-                start = sequence.find(primers)
-                end = start + len(primers) - 1
-                while (
-                    start < self.position - self.settings.forward_overlap5
-                    and end
-                    > self.position + sequence_length + self.settings.forward_overlap3
-                ):
-                    start -= 1
-                    end -= 1
-                for _ in range(self.position - self.settings.forward_overlap5, end):
-                    for j in range(self.flank3_range[1]):
-                        candidate = sequence[start - j : end]
-                        if len(candidate) == 0:
-                            continue
-                        gc_content = self.calculate_gc_content(candidate)
-                        mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                        forward_melting_temp = melting_temperature
-                        melting_temperature = self.calculate_melting_temperature(
-                            candidate, mutation_type, replacement, gc_content, mismatch
-                        )
-                        sc = SequenceChecks(candidate)
-                        valid_gc = sc.is_valid_gc_content()
-                        valid_temp = sc.is_valid_melting_temp(melting_temperature)
-                        valid_trange = sc.are_melting_temps_close(
-                            forward_melting_temp, melting_temperature
-                        )
-                        valid_ends = sc.is_gc_clamped()
-                        valid_length = sc.is_valid_length()
-                        if (
-                            valid_gc
-                            and valid_temp
-                            and valid_ends
-                            and valid_length
-                            and valid_trange
-                        ):
-                            valid_primers[primers].append(candidate)
-                    end += 1
+        mutant = template[:position] + inserted + template[position + deleted_length :]
+        mutation_end = position + len(inserted)
 
-        if not len(valid_primers) > 0:
-            print("No valid primers found")
-            return
-        else:
-            df = []
-            print(valid_primers)
-            print(f"\nGenerated forward primers: {len(valid_primers)}")
-            if self.primer_mode == "complementary":
-                for i, p in enumerate(valid_primers):
-                    df.append(
-                        self.characterize_primer(
-                            p, mutation_type, replacement, mismatched_bases, i + 1
-                        )
-                    )
-            else:
-                count = 1
-                for _, (k, v) in enumerate(valid_primers.items()):
-                    for r in v:
-                        df.append(
-                            self.characterize_primer(
-                                k,
-                                mutation_type,
-                                replacement,
-                                mismatched_bases,
-                                count,
-                                r,
-                            )
-                        )
-                        count += 1
-        return df
+        def region(f5: int, f3: int) -> str | None:
+            start, end = position - f5, mutation_end + f3
+            if start < 0 or end > len(mutant):
+                return None
+            return mutant[start:end]
 
-    def insertion(  # noqa: C901
-        self,
-        sequence: str | list[str],
-        mutation_type: MutationType,
-        target: str | list[str] | None,
-        replacement: str | list[str],
-        start_position: int,
-        mismatched_bases: int,
-    ) -> DataFrame | None:
-        """
-        Perform an insertion mutation.
-
-        Parameters:
-          sequence: The sequence to mutate.
-          mutation_type: The type of mutation to perform.
-          target: The target sequence to insert into the sequence.
-          replacement: The sequence to insert into the sequence.
-          start_position: The position to start the mutation.
-          mismatched_bases: The number of mismatched bases in the sequence.
-
-        Returns:
-          A DataFrame containing the characteristics of the generated primer(s).
-        """
-        if self.primer_mode == PrimerMode.COMPLEMENTARY:
-            valid_primers = []
-            seq = list(sequence)
-            sequence_length = len(replacement)
-            seq[start_position - 1] = replacement + seq[start_position - 1]
-            for f5 in range(*self.flank5_range):
-                for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
-                        continue
-                    candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                    candidate2 = seq[
-                        start_position - 1 : start_position + sequence_length + f3
-                    ]
-                    candidate = candidate1 + candidate2
-                    candidate = "".join(candidate)
-                    if len(candidate) == 0:
-                        continue
-                    gc_content = self.calculate_gc_content(candidate)
-                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                    melting_temp = self.calculate_melting_temperature(
-                        candidate, mutation_type, replacement, gc_content, mismatch
-                    )
-                    sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content()
-                    valid_temp = sc.is_valid_melting_temp(melting_temp)
-                    valid_ends = sc.is_gc_clamped()
-                    valid_length = sc.is_valid_length()
-                    if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_primers.append(candidate)
-        else:
-            valid_primers = {}
-            seq = list(sequence)
-            sequence_length = len(replacement)
-            seq[start_position - 1] = replacement + seq[start_position - 1]
-            for f5 in range(*self.flank5_range):
-                for f3 in range(*self.flank3_range):
-                    if abs(f5 - f3) > 1 and self.settings.center_mutation:
-                        continue
-                    candidate1 = seq[start_position - 1 - f5 : start_position - 1]
-                    candidate2 = seq[
-                        start_position - 1 : start_position + sequence_length + f3
-                    ]
-                    candidate = candidate1 + candidate2
-                    candidate = "".join(candidate)
-                    if len(candidate) == 0:
-                        continue
-                    gc_content = self.calculate_gc_content(candidate)
-                    mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                    melting_temp = self.calculate_melting_temperature(
-                        candidate, mutation_type, replacement, gc_content, mismatch
-                    )
-                    sc = SequenceChecks(candidate)
-                    valid_gc = sc.is_valid_gc_content()
-                    valid_temp = sc.is_valid_melting_temp(melting_temp)
-                    valid_ends = sc.is_gc_clamped()
-                    valid_length = sc.is_valid_length()
-                    if valid_gc and valid_temp and valid_ends and valid_length:
-                        valid_primers[candidate] = []
-            sequence = (
-                sequence[: start_position - 1]
-                + replacement
-                + sequence[start_position - 1 :]
+        pairs = []
+        for f5, f3 in self._flank_pairs():
+            forward = region(f5, f3)
+            if forward is None:
+                continue
+            fwd_Tm = self._passing_melting_temp(
+                forward, mutation_type, inserted, mismatched_bases
             )
-            for primers in valid_primers:
-                start = sequence.find(primers)
-                end = start + len(primers) - 1
-                while (
-                    start < self.position - self.settings.forward_overlap5
-                    and end
-                    > self.position + sequence_length + self.settings.forward_overlap3
-                ):
-                    start -= 1
-                    end -= 1
-                for _ in range(self.position - self.settings.forward_overlap5, end):
-                    for j in range(self.flank3_range[1]):
-                        candidate = sequence[start - j : end]
-                        if len(candidate) == 0:
-                            continue
-                        gc_content = self.calculate_gc_content(candidate)
-                        mismatch = self.calculate_mismatch(candidate, mismatched_bases)
-                        fwd_Tm = melting_temp
-                        melting_temp = self.calculate_melting_temperature(
-                            candidate, mutation_type, replacement, gc_content, mismatch
-                        )
-                        sc = SequenceChecks(candidate)
-                        valid_gc = sc.is_valid_gc_content()
-                        valid_temp = sc.is_valid_melting_temp(melting_temp)
-                        valid_trange = sc.are_melting_temps_close(fwd_Tm, melting_temp)
-                        valid_ends = sc.is_gc_clamped()
-                        valid_length = sc.is_valid_length()
-                        if (
-                            valid_gc
-                            and valid_temp
-                            and valid_ends
-                            and valid_length
-                            and valid_trange
-                        ):
-                            valid_primers[primers].append(candidate)
-                    end += 1
-
-        if not len(valid_primers) > 0:
-            print("No valid primers found")
-            return
-        else:
-            df = []
-            print(f"\nGenerated forward primers: {len(valid_primers)}")
+            if fwd_Tm is None:
+                continue
             if self.primer_mode == PrimerMode.COMPLEMENTARY:
-                for i, p in enumerate(valid_primers):
-                    df.append(
-                        self.characterize_primer(
-                            p, mutation_type, replacement, mismatched_bases, i + 1
-                        )
-                    )
-            else:
-                count = 1
-                for _, (k, v) in enumerate(valid_primers.items()):
-                    for r in v:
-                        df.append(
-                            self.characterize_primer(
-                                k,
-                                mutation_type,
-                                replacement,
-                                mismatched_bases,
-                                count,
-                                r,
-                            )
-                        )
-                        count += 1
-        return df
+                pairs.append((forward, "".join(self.get_reverse_complement(forward))))
+                continue
+            if f5 < self.settings.forward_overlap5:
+                continue
+            # The reverse primer reaches further 5' and less far 3' than the forward, so their 3' ends don't anneal to each other.
+            for r5, r3 in self._flank_pairs():
+                if r5 <= f5 or r3 >= f3 or r3 < self.settings.forward_overlap3:
+                    continue
+                reverse_region = region(r5, r3)
+                if reverse_region is None:
+                    continue
+                reverse = "".join(self.get_reverse_complement(reverse_region))
+                rev_Tm = self._passing_melting_temp(
+                    reverse, mutation_type, inserted, mismatched_bases
+                )
+                if rev_Tm is not None and SequenceChecks.are_melting_temps_close(
+                    fwd_Tm, rev_Tm
+                ):
+                    pairs.append((forward, reverse))
 
-    def dna_based(self):
-        """DNA based primer design."""
-        if self.mutation_type == MutationType.DELETION:
-            if self.mismatched_bases is None:
-                self.mismatched_bases = len(self.target)
-            result = self.deletion(
-                self.sequence,
-                self.mutation_type,
-                self.target,
-                self.replacement,
-                self.position,
-                self.mismatched_bases,
+        if not pairs:
+            print("No valid primers found")
+            return None
+        print(f"\nGenerated primer pairs: {len(pairs)}")
+        if self.mode == OperationMode.PROTEIN:
+            print(f"Using expression system: {self.settings.expression_system}")
+        return [
+            self.characterize_primer(
+                forward, mutation_type, inserted, mismatched_bases, i, reverse
             )
-        elif self.mutation_type == MutationType.INSERTION:
-            if self.mismatched_bases is None:
-                self.mismatched_bases = len(self.replacement)
-            result = self.insertion(
-                self.sequence,
-                self.mutation_type,
-                self.target,
-                self.replacement,
-                self.position,
-                self.mismatched_bases,
-            )
-        else:
-            if self.mismatched_bases is None:
-                self.mismatched_bases = len(self.replacement)
-            result = self.substitution(
-                self.sequence,
-                self.mutation_type,
-                self.target,
-                self.replacement,
-                self.position,
-                self.mismatched_bases,
-            )
-        return result
+            for i, (forward, reverse) in enumerate(pairs, start=1)
+        ]
 
-    def protein_based(self):
-        """Protein based primer design."""
-        if self.mutation_type == MutationType.DELETION:
-            if self.mismatched_bases is None:
-                self.mismatched_bases = len(self.target)
-            rna = "".join([self.expression_system[b] for b in self.sequence])
-            dna = rna.replace("U", "T")
-            result = self.deletion(
-                dna,
-                self.mutation_type,
-                self.target,
-                self.replacement,
-                self.position * 3,
-                self.mismatched_bases,
-            )
-        elif self.mutation_type == MutationType.INSERTION:
-            if self.mismatched_bases is None:
-                self.mismatched_bases = len(self.replacement)
-            rna = "".join([self.expression_system[b] for b in self.sequence])
-            dna = rna.replace("U", "T")
-            replacement = "".join(self.expression_system[self.replacement]).replace(
-                "U", "T"
-            )
-            result = self.insertion(
-                dna,
-                self.mutation_type,
-                self.target,
-                replacement,
-                self.position * 3,
-                self.mismatched_bases,
-            )
+    def _back_translate(self, protein: str) -> str:
+        """
+        Reconstruct a DNA template from a protein using one preferred codon per residue.
+
+        The reconstruction matches a real gene only where that gene uses the expression system's
+        preferred codons, so primers designed from it mismatch a non-optimized template at silent
+        positions. Documented as a known limitation of protein mode; DNA mode avoids it.
+        """
+        return "".join(self.expression_system[aa] for aa in protein).replace("U", "T")
+
+    def _resolve_mutation(self) -> tuple[str, str]:
+        """Return the bases removed from, and inserted into, the template at `self.position`."""
+        if self.mutation_type == MutationType.INSERTION:
+            if not self.replacement:
+                raise PrimerCheckError("Insertion requires a replacement sequence")
+            deleted, inserted = "", self.replacement
+        elif self.mutation_type == MutationType.DELETION:
+            if not self.target:
+                raise PrimerCheckError("Deletion requires a target sequence")
+            deleted, inserted = self.target, ""
         else:
-            if self.mismatched_bases is None:
-                self.mismatched_bases = len(self.replacement)
-            rna = "".join([self.expression_system[b] for b in self.sequence])
-            dna = rna.replace("U", "T")
-            target = "".join(self.expression_system[self.target]).replace("U", "T")
-            replacement = "".join(self.expression_system[self.replacement]).replace(
-                "U", "T"
+            if not self.replacement:
+                raise PrimerCheckError("Substitution requires a replacement sequence")
+            inserted = self.replacement
+            deleted = (
+                self.target
+                or self.sequence[self.position : self.position + len(inserted)]
             )
-            result = self.substitution(
-                dna,
-                self.mutation_type,
-                target,
-                replacement,
-                self.position * 3,
-                self.mismatched_bases,
+        return deleted, inserted
+
+    def mutagenesis(self) -> list[DataFrame] | None:
+        """DNA or protein based primer design."""
+        if self.position is None:
+            raise PrimerCheckError("Mutation position is required")
+        deleted, inserted = self._resolve_mutation()
+
+        if not 0 <= self.position <= len(self.sequence) - len(deleted):
+            raise PrimerCheckError(
+                f"Position {self.position + 1} is outside the sequence"
             )
-        return result
+        found = self.sequence[self.position : self.position + len(deleted)]
+        if found != deleted:
+            raise PrimerCheckError(
+                f"Target '{deleted}' does not match '{found}' at position {self.position + 1}"
+            )
+
+        template, position = self.sequence, self.position
+        if self.mode == OperationMode.PROTEIN:
+            template, deleted, inserted = (
+                self._back_translate(s) for s in (template, deleted, inserted)
+            )
+            position *= 3
+        if self.mismatched_bases is None:
+            self.mismatched_bases = len(
+                deleted if self.mutation_type == MutationType.DELETION else inserted
+            )
+        return self.design_primers(
+            template,
+            self.mutation_type,
+            position,
+            len(deleted),
+            inserted,
+            self.mismatched_bases,
+        )
 
     def main(self):
-        if self.mode == OperationMode.DNA:
-            df = self.dna_based()
-        elif self.mode == OperationMode.PROTEIN:
-            df = self.protein_based()
-        elif self.mode == OperationMode.CHARACTERIZATION:
+        if self.mode == OperationMode.CHARACTERIZATION:
             df = self.characterize_primer(
                 self.sequence,
                 self.mutation_type,
                 self.replacement,
-                self.mismatched_bases,
+                self.mismatched_bases or 0,
             )
         else:
-            raise PrimerCheckError(f"Unknown mode '{self.mode}'")
+            df = self.mutagenesis()
         self.df = df

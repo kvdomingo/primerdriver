@@ -1,26 +1,24 @@
+from __future__ import annotations
+
 from json import load
 
-from primerdriver.config import BASE_DIR, get_settings
+from primerdriver.config import BASE_DIR, Settings, get_settings
 from primerdriver.exceptions import PrimerCheckError
-from primerdriver.log import logger
 
 settings = get_settings()
 
 TABLES_DIR = BASE_DIR / "primerdriver" / "tables"
 
 
-@logger.catch
 class PrimerChecks:
-    def __init__(self, sequence: str, no_interaction=False):
+    def __init__(self, sequence: str):
         """
         A set of validation checks to perform on the DNA/protein input before processing.
 
         Args:
             sequence: The input DNA/protein sequence.
-            no_interaction: Suppress all prompts and use program defaults if not explicitly provided.
         """
         self.sequence = sequence
-        self.no_interaction = no_interaction
 
     def is_valid_dna(self) -> str:
         """
@@ -67,14 +65,9 @@ class PrimerChecks:
              primerdriver.checks.PrimerCheckError: DNA/protein sequence is too short/long.
         """
         if len(self.sequence) < 40:
-            error_message = "DNA sequence is too short"
-        elif len(self.sequence) > 8000:
-            error_message = "DNA sequence is too long"
-        else:
-            return
-
-        if self.no_interaction:
-            raise PrimerCheckError(error_message)
+            raise PrimerCheckError("DNA sequence is too short")
+        if len(self.sequence) > 8000:
+            raise PrimerCheckError("DNA sequence is too long")
 
     def is_valid_gc_content(self) -> None:
         """
@@ -94,32 +87,35 @@ class PrimerChecks:
 
 
 class SequenceChecks:
-    def __init__(self, sequence: str | list[str]):
+    def __init__(self, sequence: str | list[str], settings: Settings = settings):
         """
         Set of checks to perform on a generated primer.
 
         Args:
              sequence: The generated primer's DNA sequence.
+             settings: The design settings to check against.
         """
-        self.sequence = sequence.upper()
+        self.sequence = "".join(sequence).upper()
+        self.settings = settings
 
     def is_valid_length(self) -> bool:
-        return settings.length_min <= len(self.sequence) <= settings.length_max
+        return (
+            self.settings.length_min <= len(self.sequence) <= self.settings.length_max
+        )
 
     def is_valid_gc_content(self) -> bool:
         seq = list(self.sequence)
         gc = (seq.count("C") + seq.count("G")) / len(seq) * 100
-        return settings.gc_range_min < gc < settings.gc_range_max
+        return self.settings.gc_range_min < gc < self.settings.gc_range_max
 
-    @staticmethod
-    def is_valid_melting_temp(melting_temp) -> bool:
-        return settings.Tm_range_min < melting_temp < settings.Tm_range_max
+    def is_valid_melting_temp(self, melting_temp) -> bool:
+        return self.settings.Tm_range_min < melting_temp < self.settings.Tm_range_max
 
     @staticmethod
     def are_melting_temps_close(fwd_Tm, rev_Tm) -> bool:
         return abs(fwd_Tm - rev_Tm) <= 2
 
     def is_gc_clamped(self) -> bool:
-        return not settings.terminate_gc or (
+        return not self.settings.terminate_gc or (
             self.sequence[0] in ["C", "G"] and self.sequence[-1] in ["C", "G"]
         )

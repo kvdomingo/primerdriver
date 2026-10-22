@@ -1,5 +1,7 @@
 [tools]
 bun = "latest"
-poetry = "latest"
-python = "3.10"
+prek = "latest"
+python = "3.14"
+rumdl = "latest"
 task = "latest"
+uv = "latest"

@@ -57,7 +57,7 @@
     },
     "expression_system": {
       "description": "File name of the expression system to use. File must be located inside the `expression system` folder.",
-      "enum": "string"
+      "type": "string"
     }
   }
 }

@@ -91,7 +91,8 @@ The following definitions and considerations should be made for designing mutage
       overlap values will also be applied when generating the primer pairs.
 - `expression_system`: When using protein-based primer design, the user can choose from a number of commonly used model
   organisms used in molecular and cell biology. This enables the tool to generate primers that use the optimum codon for
-  the chosen organism.
+  the chosen organism. Note that this codon table is used for the *entire* reconstructed template, not only the mutated
+  residue; see the warning under [Choosing primer design modes](#choosing-primer-design-modes).
 
 ## Input Format
 
@@ -120,3 +121,17 @@ PrimerDriver asks you to choose from three different modes when using the comman
 - Primer characterization
 - DNA-based primer design
 - Protein-based primer design
+
+!!! warning "Protein-based design assumes a codon-optimized gene"
+
+    Protein-based design does not receive your gene's DNA. It rebuilds a template by translating each residue of the
+    input protein back into the single preferred codon of the chosen `expression_system`, and designs primers against
+    that reconstruction.
+
+    The primers therefore anneal to your actual template only if the gene was synthesized using exactly that organism's
+    preferred codons. For a cloned, cDNA-derived, or differently optimized gene, the reconstruction differs from the
+    real template at silent positions throughout the primer, so the primers will mismatch outside the intended mutation
+    and the reported $T_m$, %GC, and mismatch values will not describe your template.
+
+    Unless your gene was synthesized against the same codon table, use DNA-based design with the real coding sequence
+    and specify the mutation at the nucleotide level, choosing the replacement codon yourself.

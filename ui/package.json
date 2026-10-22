@@ -5,28 +5,47 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "build": "tsc && vite build",
+    "lint": "biome check src",
+    "preview": "vite preview",
+    "gen:api": "bunx openapi-typescript@7 http://backend:5000/api/openapi.json -o src/api/openapi.gen.ts"
   },
   "dependencies": {
     "@fontsource-variable/figtree": "^5.1.1",
     "@fortawesome/fontawesome-free": "^5.15.4",
-    "axios": "^1.7.7",
+    "@tanstack/react-form": "^1.33.5",
+    "@tanstack/react-query": "^5.104.5",
+    "@tanstack/react-router": "^1.170.45",
+    "@tanstack/react-table": "^9.3.1",
     "cloudinary-core": "^2.13.1",
     "cloudinary-react": "^1.8.1",
     "lodash-es": "^4.17.21",
     "mdbreact": "^5.0.1",
-    "prop-types": "^15.8.1",
+    "openapi-fetch": "^0.17.0",
+    "openapi-react-query": "^0.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.27.0"
+    "zod": "^4.6.7",
+    "zustand": "^5.0.16"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@tanstack/router-plugin": "^1.168.47",
+    "@types/react": "18",
+    "@types/react-dom": "18",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "globals": "^15.11.0",
     "jss": "^10.10.0",
+    "typescript": "^7.0.2",
     "vite": "^5.4.10"
+  },
+  "intent": {
+    "skills": [
+      "@tanstack/react-table",
+      "@tanstack/router-core",
+      "@tanstack/router-plugin",
+      "@tanstack/table-core",
+      "@tanstack/virtual-file-routes"
+    ]
   }
 }

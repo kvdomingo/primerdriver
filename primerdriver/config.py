@@ -1,21 +1,24 @@
 import json
-import os
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
 
 from dotenv import load_dotenv
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, JsonConfigSettingsSource
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).parent.parent
 
-PYTHON_ENV = (
-    "development" if bool(os.environ.get("FLASK_DEBUG", False)) else "production"
-)
 
-SHORT_SHA = os.environ.get("SHORT_SHA", "")
+def _settings_file() -> Path:
+    for loc in (
+        BASE_DIR / "primerdriver" / "settings.json",
+        Path.home() / ".primerdriverrc.json",
+    ):
+        if loc.exists():
+            return loc
+    raise FileNotFoundError("Config JSON not found.")
 
 
 class Settings(BaseSettings):
@@ -36,30 +39,21 @@ class Settings(BaseSettings):
     primer_mode: Literal["overlapping", "complementary"]
     expression_system: str
 
-    class Config:
-        @staticmethod
-        def json_config_settings_source(_):
-            dev_loc = BASE_DIR / "primerdriver" / "settings.json"
-            prod_loc = Path.home() / ".primerdriverrc.json"
-
-            if dev_loc.resolve().exists():
-                with open(dev_loc) as f:
-                    return json.load(f)
-
-            if prod_loc.resolve().exists():
-                with open(prod_loc) as f:
-                    return json.load(f)
-
-            raise FileNotFoundError("Config JSON not found.")
-
-        @classmethod
-        def customise_sources(cls, init_settings, env_settings, file_secret_settings):
-            return (
-                init_settings,
-                cls.json_config_settings_source,
-                env_settings,
-                file_secret_settings,
-            )
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls,
+        init_settings,
+        env_settings,
+        dotenv_settings,
+        file_secret_settings,
+    ):
+        return (
+            init_settings,
+            JsonConfigSettingsSource(settings_cls, json_file=_settings_file()),
+            env_settings,
+            file_secret_settings,
+        )
 
 
 @lru_cache

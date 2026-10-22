@@ -40,8 +40,15 @@ def test_calculate_Tm():
         pd.mutation_type,
         pd.replacement,
         0.286,
-        pd.mismatched_bases,
-    ) == approx(-103.449, rel=decimal_tolerance)
+        pd.calculate_mismatch(pd.sequence, pd.mismatched_bases),
+    ) == approx(-17.488, rel=decimal_tolerance)
+
+
+def test_calculate_Tm_insertion_excludes_inserted_bases():
+    """Insertion Tm uses primer length minus inserted bases"""
+    assert pd.calculate_melting_temperature(
+        "GCAT" * 6, MutationType.INSERTION, "GCAT", 0.5, 0
+    ) == approx(68.25, rel=decimal_tolerance)
 
 
 def test_characterization_returns_dataframe():

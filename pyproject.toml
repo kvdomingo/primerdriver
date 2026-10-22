@@ -1,53 +1,67 @@
-[tool.poetry]
+[project]
 name = "primerdriver"
-version = "1.6.0"
+version = "1.7.0"
 description = "Automated design of mutagenic PCR primers"
 authors = [
-    "Kenneth V. Domingo <hello@kvd.studio>",
-    "Numeriano Amer E. Gutierrez <ngutierrez@evc.pshs.edu.ph>"
+    { name = "Kenneth V. Domingo", email = "hello@kvd.studio" },
+    { name = "Numeriano Amer E. Gutierrez", email = "ngutierrez@evc.pshs.edu.ph" },
 ]
+requires-python = ">=3.12,<3.15"
 readme = "README.md"
-homepage = "https://primerdriver.kvd.studio"
-repository = "https://github.com/kvdomingo/primerdriver"
-documentation = "https://primerdriver-docs.kvd.studio"
+license = { file = "LICENSE" }
 classifiers = [
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Development Status :: 5 - Production/Stable",
-    "Framework :: Flask",
+    "Framework :: FastAPI",
     "Intended Audience :: Science/Research",
-    "Typing :: Typed"
+    "Typing :: Typed",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "python-dotenv~=1.0",
+    "loguru~=0.0",
+    "biopython~=1.78",
+    "pandas~=3.0",
+    "numpy~=2.0",
+    "tabulate~=0.8.0",
+    "furo~=2025.0",
+    "pydantic~=2.0",
+    "pydantic-settings~=2.0",
+    "requests~=2.0",
+    "fastapi[standard]~=0.0",
+    "scalar-fastapi~=1.0",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.9,<3.11"
-python-dotenv = "^1.0.0"
-Flask = "^2.1.2"
-gunicorn = { extras = ["gthread"], version = "^20.1.0" }
-loguru = "^0.6.0"
-Flask-Caching = "^1.10.1"
-biopython = "1.76"
-pandas = "1.4.2"
-numpy = "1.24.4"
-tabulate = "^0.8.9"
-furo = "^2023.3.27"
-pydantic = "<2.0.0"
-requests = "^2.27.1"
+[project.urls]
+Homepage = "https://primerdriver.kvd.studio"
+Repository = "https://github.com/kvdomingo/primerdriver"
+Documentation = "https://primerdriver-docs.kvd.studio"
 
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.7.1"
-pyinstaller = "^6.11.0"
-coverage-badge = "^1.1.0"
-pytest = "^7.2.2"
-mkdocs = "^1.6.1"
-mkdocs-material = "^9.5.43"
-mkdocstrings = { extras = ["python"], version = "^0.26.2" }
+[dependency-groups]
+dev = [
+    "ruff~=0.0",
+    "pyinstaller~=6.0",
+    "coverage~=7.0",
+    "pytest~=7.0",
+    "mkdocs~=1.0",
+    "mkdocs-material~=9.0",
+    "mkdocstrings[python]~=1.0",
+]
+
+[tool.uv]
+default-groups = "all"
+
+[tool.uv.build-backend]
+module-root = ""
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.13.4,<0.14.0"]
+build-backend = "uv_build"
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "C", "B", "UP"]
@@ -57,7 +71,13 @@ ignore = ["E203", "E266", "E501", "E402"]
 max-complexity = 10
 
 [tool.ruff.lint.flake8-bugbear]
-extend-immutable-calls = ["fastapi.Depends", "fastapi.Query"]
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.Query",
+    "fastapi.Body",
+    "fastapi.Params",
+    "fastapi.Security",
+]
 
 [tool.ruff.lint.flake8-builtins]
 builtins-ignorelist = ["id"]
@@ -67,4 +87,17 @@ combine-as-imports = true
 force-wrap-aliases = true
 
 [tool.ruff.lint.pep8-naming]
-classmethod-decorators = ["pydantic.validator"]
+classmethod-decorators = [
+    "pydantic.validator",
+    "pydantic.field_validator",
+    "pydantic.model_validator",
+]
+
+[tool.rumdl]
+disable = ["MD033"]
+
+[tool.rumdl.MD013]
+reflow = true
+
+[tool.rumdl.MD077]
+indent = 4

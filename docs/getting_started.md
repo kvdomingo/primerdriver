@@ -4,10 +4,10 @@
 
 To use *PrimerDriver*, you should have:
 
-- Python 3.9 - 3.10
-- [Poetry](https://python-poetry.org/docs/#installation)
+- Python 3.12 - 3.14
+- [uv](https://docs.astral.sh/uv/getting-started/installation/)
 
-Additional packages are defined in the `pyproject.toml` file, which will be covered in the next section. Poetry will
+Additional packages are defined in the `pyproject.toml` file, which will be covered in the next section. uv will
 automatically handle creating an isolated virtual environment for the project.
 
 ## Installation
@@ -16,7 +16,7 @@ First, download the latest release from [GitHub](https://github.com/kvdomingo/pr
 your local machine. Open a terminal and `cd` to where you extracted the files. Install the required packages via
 
 ```shell
-poetry install --no-root
+uv sync --no-dev
 ```
 
 Now you are ready to design mutagenic primers.
@@ -26,8 +26,8 @@ Now you are ready to design mutagenic primers.
 To make sure everything is in working order, run the following commands
 
 ```shell
-poetry run python --version
-poetry run python -m primerdriver -h
+uv run python --version
+uv run python -m primerdriver -h
 ```
 
 If no errors occur, then you are good to go. The PrimerDriver CLI can cater to first-time users by providing an
@@ -35,7 +35,7 @@ interactive mode which allows the user to go through the settings step-by-step. 
 flag when running the program with no additional arguments
 
 ```shell
- poetry run python -m primerdriver -i
+ uv run python -m primerdriver -i
 ```
 
 The user is greeted with a customized header and the first question:
@@ -498,13 +498,13 @@ Notice that the output is silenced if the number of potential primers exceed 20.
 still stored and can be accessed by saving the results. The above example can be run in single command mode via
 
 ```shell
-poetry run python -m primerdriver --mode dna --sequence read.fasta --mutation-type sub --target C --position 25 --replacement G --save primers.fasta
+uv run python -m primerdriver --mode dna --sequence read.fasta --mutation-type sub --target C --position 25 --replacement G --save primers.fasta
 ```
 
 or in shorthand form via
 
 ```shell
-poetry run python -m primerdriver -M dna -s read.fasta -m sub -t C -p 25 -r G --save primers.fasta
+uv run python -m primerdriver -M dna -s read.fasta -m sub -t C -p 25 -r G --save primers.fasta
 ```
 
 The `--save` argument is optional and can be omitted if the first 20 primers suffice for the user. As you can see, this
@@ -512,6 +512,13 @@ can become a powerful tool especially when batch designing primers, by including
 
 Protein-based design works similarly and uses *Homo sapiens* expression system by default
 
+!!! warning
+
+    Protein-based design back-translates the whole input protein into the chosen expression system's preferred codons
+    and designs against that reconstruction, not against your gene. The resulting primers match a real template only
+    if the gene was synthesized with exactly those codons. For a cloned or cDNA-derived gene, use `dna` mode with the
+    actual coding sequence instead. See [Software Features](software.md#choosing-primer-design-modes).
+
 ```shell
-poetry run python -m primerdriver --mode pro --sequence CAISBVAIVBAIVBCAICBASCBAVQVFEWQEPFQEHVSDBVSKZDBNCSD --mutation-type sub -t Q -p 26 -r R
+uv run python -m primerdriver --mode pro --sequence MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQ --mutation-type sub -t Q -p 22 -r R
 ```
