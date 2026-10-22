@@ -157,7 +157,12 @@ local servers in your browser at:
 
 The UI in [`ui/`](ui) is React + TypeScript, built with Vite and Bun, using
 Zustand for shared state, TanStack Router for routing and TanStack Form with zod
-schemas for the design forms.
+schemas for the design forms. API calls go through openapi-react-query, typed by
+`ui/src/api/openapi.gen.ts`; regenerate it after changing the API:
+
+```shell
+docker compose exec frontend bun run gen:api
+```
 
 The `frontend` container installs dependencies into the mounted `ui/`, so add
 packages through it to avoid mixing file ownership in `ui/node_modules`:

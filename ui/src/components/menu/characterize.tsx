@@ -1,7 +1,6 @@
 import { useForm, useSelector } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
 import { MDBCol as Col, MDBRow as Row } from "mdbreact";
-import api from "../../api";
+import { $api } from "../../api";
 import {
   DnaSequenceInput,
   Form,
@@ -13,14 +12,12 @@ import Result from "./result";
 
 function Characterize() {
   const mode = "CHAR" as const;
-  const primerDriver = useMutation({
-    mutationFn: async (body: object) => (await api.data.primerDriver(body)).data,
-  });
+  const primerDriver = $api.useMutation("post", "/api");
 
   const form = useForm({
     defaultValues: { sequence: "", mismatched_bases: 0, mutation_type: "" },
     validators: { onSubmit: characterizeSchema },
-    onSubmit: ({ value }) => primerDriver.mutate({ mode, ...value }),
+    onSubmit: ({ value }) => primerDriver.mutate({ body: { mode, ...value } }),
   });
   const isValid = useSelector(
     form.store,

@@ -1,6 +1,5 @@
 import { useForm, useSelector } from "@tanstack/react-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import api from "../../api";
+import { $api } from "../../api";
 import {
   AdvancedSettings,
   Form,
@@ -18,13 +17,12 @@ function filterAminoAcids(value: string) {
 
 function ProteinView() {
   const mode = "PRO" as const;
-  const { data: expressionList } = useQuery({
-    queryKey: ["expressionSystem"],
-    queryFn: async () => (await api.data.expressionSystem()).data.data,
-  });
-  const primerDriver = useMutation({
-    mutationFn: async (body: object) => (await api.data.primerDriver(body)).data,
-  });
+  const { data: expressionSystems } = $api.useSuspenseQuery(
+    "get",
+    "/api/expressionsys",
+  );
+  const expressionList = expressionSystems.data;
+  const primerDriver = $api.useMutation("post", "/api");
 
   const form = useForm({
     defaultValues: {
@@ -36,7 +34,7 @@ function ProteinView() {
       settings: defaultSettings,
     },
     validators: { onSubmit: designSchema },
-    onSubmit: ({ value }) => primerDriver.mutate({ mode, ...value }),
+    onSubmit: ({ value }) => primerDriver.mutate({ body: { mode, ...value } }),
   });
   const values = useSelector(form.store, state => state.values);
   const isValid = useSelector(

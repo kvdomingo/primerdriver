@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["src/route-tree.gen.ts"]
+    "ignore": ["src/route-tree.gen.ts", "src/api/openapi.gen.ts"]
   },
   "formatter": {
     "enabled": true,

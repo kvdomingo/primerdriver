@@ -1,27 +1,14 @@
-import axios from "axios";
+import { QueryClient } from "@tanstack/react-query";
+import createFetchClient from "openapi-fetch";
+import createClient from "openapi-react-query";
+import type { components, paths } from "./openapi.gen";
 
 export type ResultData =
-  | Record<string, Record<string, string | number>>
-  | { data: string };
+  | components["schemas"]["DesignResult"]
+  | components["schemas"]["MessageResponse"];
 
-const baseURL = "/api";
+export const $api = createClient(createFetchClient<paths>());
 
-const axiosInstance = axios.create({ baseURL });
-
-const api = {
-  data: {
-    primerDriver(body: object) {
-      return axiosInstance.post<ResultData>("", body);
-    },
-    version() {
-      return axiosInstance.get<{ program_version: string; web_version: string }>(
-        "/version",
-      );
-    },
-    expressionSystem() {
-      return axiosInstance.get<{ data: string[] }>("/expressionsys");
-    },
-  },
-};
-
-export default api;
+export const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: Number.POSITIVE_INFINITY } },
+});

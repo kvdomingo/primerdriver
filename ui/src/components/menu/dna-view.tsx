@@ -1,6 +1,5 @@
 import { useForm, useSelector } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
-import api from "../../api";
+import { $api } from "../../api";
 import {
   AdvancedSettings,
   DnaSequenceInput,
@@ -18,9 +17,7 @@ function filterBases(value: string) {
 
 function DnaView() {
   const mode = "DNA" as const;
-  const primerDriver = useMutation({
-    mutationFn: async (body: object) => (await api.data.primerDriver(body)).data,
-  });
+  const primerDriver = $api.useMutation("post", "/api");
 
   const form = useForm({
     defaultValues: {
@@ -32,7 +29,7 @@ function DnaView() {
       settings: defaultSettings,
     },
     validators: { onSubmit: designSchema },
-    onSubmit: ({ value }) => primerDriver.mutate({ mode, ...value }),
+    onSubmit: ({ value }) => primerDriver.mutate({ body: { mode, ...value } }),
   });
   const values = useSelector(form.store, state => state.values);
   const isValid = useSelector(

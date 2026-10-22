@@ -1,13 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
 import { Image } from "cloudinary-react";
 import { MDBContainer as Container } from "mdbreact";
-import api from "../api";
+import { $api } from "../api";
 
 function Landing() {
-  const { data } = useQuery({
-    queryKey: ["version"],
-    queryFn: async () => (await api.data.version()).data,
-  });
+  const { data } = $api.useQuery("get", "/api/version");
   const copyYear = new Date().getFullYear();
 
   return (
