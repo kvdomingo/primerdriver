@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump (auto reads the commit message)
+        type: choice
+        options: [auto, major, minor, patch]
+        default: auto
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Tag release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Tag release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MESSAGE: ${{ github.event.head_commit.message }}
+          BUMP: ${{ inputs.bump }}
+        run: |
+          bump=$BUMP
+          if [[ -z $bump || $bump == auto ]]; then
+            MESSAGE=${MESSAGE:-$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA" --jq .commit.message)}
+            title=${MESSAGE%%$'\n'*}
+            if [[ $title =~ ^[a-z]+(\([^\)]*\))?!: ]]; then
+              bump=major
+            elif [[ $title =~ ^(feat|release)(\([^\)]*\))?: ]]; then
+              bump=minor
+            elif [[ $title =~ ^(hotfix|fix|refactor|perf)(\([^\)]*\))?: ]]; then
+              bump=patch
+            else
+              echo "Not a feat/fix/refactor/breaking commit; skipping release."
+              exit 0
+            fi
+          fi
+
+          latest=$(gh release list -R "$GITHUB_REPOSITORY" --limit 1 --json tagName --jq '.[0].tagName // "v0.0.0"')
+          IFS=. read -r major minor patch <<<"${latest#v}"
+          case $bump in
+            major) next="v$((major + 1)).0.0" ;;
+            minor) next="v$major.$((minor + 1)).0" ;;
+            patch) next="v$major.$minor.$((patch + 1))" ;;
+          esac
+
+          gh release create "$next" -R "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "$next" --generate-notes
