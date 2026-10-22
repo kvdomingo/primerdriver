@@ -154,7 +154,7 @@ class PrimerDesign:
     def calculate_melting_temperature(
         seq: str | list[str],
         mutation_type: MutationType,
-        replacement: str | list[str],
+        replacement: str | list[str] | None,
         gc_content: float,
         mismatch: float,
     ) -> float:
@@ -396,21 +396,39 @@ class PrimerDesign:
         ]
 
     def _back_translate(self, protein: str) -> str:
+        """
+        Reconstruct a DNA template from a protein using one preferred codon per residue.
+
+        The reconstruction matches a real gene only where that gene uses the expression system's
+        preferred codons, so primers designed from it mismatch a non-optimized template at silent
+        positions. Documented as a known limitation of protein mode; DNA mode avoids it.
+        """
         return "".join(self.expression_system[aa] for aa in protein).replace("U", "T")
+
+    def _resolve_mutation(self) -> tuple[str, str]:
+        """Return the bases removed from, and inserted into, the template at `self.position`."""
+        if self.mutation_type == MutationType.INSERTION:
+            if not self.replacement:
+                raise PrimerCheckError("Insertion requires a replacement sequence")
+            deleted, inserted = "", self.replacement
+        elif self.mutation_type == MutationType.DELETION:
+            if not self.target:
+                raise PrimerCheckError("Deletion requires a target sequence")
+            deleted, inserted = self.target, ""
+        else:
+            if not self.replacement:
+                raise PrimerCheckError("Substitution requires a replacement sequence")
+            inserted = self.replacement
+            deleted = self.target or self.sequence[
+                self.position : self.position + len(inserted)
+            ]
+        return deleted, inserted
 
     def mutagenesis(self) -> list[DataFrame] | None:
         """DNA or protein based primer design."""
         if self.position is None:
             raise PrimerCheckError("Mutation position is required")
-        if self.mutation_type == MutationType.INSERTION:
-            deleted, inserted = "", self.replacement
-        elif self.mutation_type == MutationType.DELETION:
-            deleted, inserted = self.target, ""
-        else:
-            deleted = self.target or self.sequence[
-                self.position : self.position + len(self.replacement)
-            ]
-            inserted = self.replacement
+        deleted, inserted = self._resolve_mutation()
 
         if not 0 <= self.position <= len(self.sequence) - len(deleted):
             raise PrimerCheckError(
@@ -447,7 +465,7 @@ class PrimerDesign:
                 self.sequence,
                 self.mutation_type,
                 self.replacement,
-                self.mismatched_bases,
+                self.mismatched_bases or 0,
             )
         else:
             df = self.mutagenesis()

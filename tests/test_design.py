@@ -141,6 +141,29 @@ def test_protein_multi_residue_substitution():
     assert all("TGGTGG" in fwd for fwd, _ in pairs(dfs))
 
 
+def test_missing_mutation_arguments_rejected():
+    for mutation_type, kwargs in (
+        ("I", {}),
+        ("D", {}),
+        ("S", {"target": TEMPLATE[99]}),
+    ):
+        with raises(PrimerCheckError):
+            design(
+                mode="dna",
+                sequence=TEMPLATE,
+                mutation_type=mutation_type,
+                position=100,
+                **kwargs,
+            )
+
+
+def test_characterization_without_mismatch_count():
+    pd = PrimerDesign("char", "GATTACAGATTACA", "S")
+    with open(os.devnull, "w") as f, redirect_stdout(f):
+        pd.main()
+    assert pd.df["Fwd mismatch"].iloc[0] == "0.00%"
+
+
 def test_save_characterization_csv(tmp_path):
     pd = PrimerDesign("char", "GATTACAGATTACA", "S", mismatched_bases=1)
     with open(os.devnull, "w") as f, redirect_stdout(f):
