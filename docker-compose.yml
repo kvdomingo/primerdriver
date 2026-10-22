@@ -21,6 +21,10 @@ services:
       - venv-data:/primerdriver/.venv
     ports:
       - "5000:5000"
+    develop:
+      watch:
+        - path: uv.lock
+          action: restart
 
   docs:
     build:
@@ -38,6 +42,10 @@ services:
       - docs-venv-data:/primerdriver/.venv
     ports:
       - "8000:8000"
+    develop:
+      watch:
+        - path: uv.lock
+          action: restart
 
   frontend:
     image: oven/bun:1.1-alpine
@@ -48,9 +56,16 @@ services:
     entrypoint:
       - /bin/sh
       - "-c"
-      - "bun install && exec bun run dev"
+    command:
+      - |
+        bun install
+        exec bun run dev
     working_dir: /web
     volumes:
       - ./ui:/web
     ports:
       - "3000:3000"
+    develop:
+      watch:
+        - path: bun.lockb
+          action: restart

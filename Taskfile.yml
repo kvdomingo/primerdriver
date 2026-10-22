@@ -11,7 +11,7 @@ tasks:
 
   up:
     desc: Build and start containers
-    cmd: docker compose up --detach --build --watch --remove-orphans {{.CLI_ARGS}}
+    cmd: docker compose up --build --watch --remove-orphans {{.CLI_ARGS}}
 
   stop:
     desc: Stop containers
