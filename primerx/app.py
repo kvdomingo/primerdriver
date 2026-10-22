@@ -51,7 +51,7 @@ def api_expression_systems():
 def api():
     data = request.json
     data["settings"] = AdvancedSettings(
-        **(data.get("settings", None) or Settings().dict())
+        **(data.get("settings", None) or Settings().model_dump())
     )
     checks = PrimerChecks(data["sequence"])
     if data["mode"] == OperationMode.PROTEIN.value:

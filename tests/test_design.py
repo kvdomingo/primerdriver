@@ -11,7 +11,7 @@ from primerdriver.primer_design import PrimerDesign
 
 TEMPLATE = "".join(Random(0).choices("ACGT", k=200))
 
-RELAXED = get_settings().copy(
+RELAXED = get_settings().model_copy(
     update={
         "Tm_range_min": 50,
         "Tm_range_max": 100,
@@ -28,7 +28,7 @@ def revcomp(seq):
 
 def design(primer_mode="complementary", settings=RELAXED, **kwargs):
     pd = PrimerDesign(
-        settings=settings.copy(update={"primer_mode": primer_mode}), **kwargs
+        settings=settings.model_copy(update={"primer_mode": primer_mode}), **kwargs
     )
     with open(os.devnull, "w") as f, redirect_stdout(f):
         pd.main()
@@ -114,7 +114,7 @@ def test_wrong_target_rejected():
 
 
 def test_custom_settings_are_honored():
-    strict = RELAXED.copy(update={"length_min": 30, "length_max": 32})
+    strict = RELAXED.model_copy(update={"length_min": 30, "length_max": 32})
     dfs = design(
         settings=strict,
         mode="dna",
