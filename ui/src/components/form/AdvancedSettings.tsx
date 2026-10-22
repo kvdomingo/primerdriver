@@ -7,27 +7,7 @@ import {
   MDBRow as Row,
 } from "mdbreact";
 import { useState } from "react";
-
-export const defaultSettings = {
-  Tm_range_min: 75,
-  Tm_range_max: 85,
-  gc_range_min: 40,
-  gc_range_max: 60,
-  length_min: 25,
-  length_max: 45,
-  flank5_range_min: 11,
-  flank5_range_max: 21,
-  flank3_range_min: 11,
-  flank3_range_max: 21,
-  forward_overlap5: 9,
-  forward_overlap3: 9,
-  terminate_gc: true,
-  center_mutation: true,
-  primer_mode: "complementary",
-  expression_system: "Homo sapiens",
-};
-
-export type Settings = typeof defaultSettings;
+import type { Settings } from "./schemas";
 
 const RANGES: [
   "Tm_range" | "gc_range" | "length" | "flank5_range" | "flank3_range",
@@ -177,7 +157,9 @@ function AdvancedSettings({
                   id="primer_mode"
                   name="primer_mode"
                   value={value.primer_mode}
-                  onChange={e => set({ primer_mode: e.target.value })}
+                  onChange={e =>
+                    set({ primer_mode: e.target.value as Settings["primer_mode"] })
+                  }
                 >
                   <option value="complementary">Complementary</option>
                   <option value="overlapping">Overlapping</option>

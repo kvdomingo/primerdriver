@@ -10,6 +10,7 @@ import {
   MutationType,
   ProteinSequenceInput,
   defaultSettings,
+  designSchema,
 } from "../form";
 import LoadingScreen from "../shared/LoadingScreen";
 
@@ -32,6 +33,7 @@ function ProteinView() {
       replacement: "",
       settings: defaultSettings,
     },
+    validators: { onSubmit: designSchema },
     onSubmit: async ({ value }) => {
       let data: ResultData;
       try {
@@ -47,12 +49,10 @@ function ProteinView() {
   });
   const isSubmitting = useSelector(form.store, state => state.isSubmitting);
   const values = useSelector(form.store, state => state.values);
-  const isValid =
-    values.sequence.length > 0 &&
-    values.mutation_type !== "" &&
-    (values.mutation_type === "sub"
-      ? values.target.length > 0 && values.replacement.length > 0
-      : values.target.length > 0 || values.replacement.length > 0);
+  const isValid = useSelector(
+    form.store,
+    state => designSchema.safeParse(state.values).success,
+  );
 
   useEffect(() => {
     api.data

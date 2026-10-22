@@ -4,7 +4,13 @@ import { MDBCol as Col, MDBRow as Row } from "mdbreact";
 import { useEffect } from "react";
 import api from "../../api";
 import { type ResultData, usePrimerDriverStore } from "../../store";
-import { DnaSequenceInput, Form, MutationType, NumberMismatch } from "../form";
+import {
+  DnaSequenceInput,
+  Form,
+  MutationType,
+  NumberMismatch,
+  characterizeSchema,
+} from "../form";
 import LoadingScreen from "../shared/LoadingScreen";
 
 function Characterize() {
@@ -14,6 +20,7 @@ function Characterize() {
 
   const form = useForm({
     defaultValues: { sequence: "", mismatched_bases: 0, mutation_type: "" },
+    validators: { onSubmit: characterizeSchema },
     onSubmit: async ({ value }) => {
       let data: ResultData;
       try {
@@ -30,10 +37,7 @@ function Characterize() {
   const isSubmitting = useSelector(form.store, state => state.isSubmitting);
   const isValid = useSelector(
     form.store,
-    ({ values }) =>
-      values.sequence.length > 0 &&
-      values.mismatched_bases > 0 &&
-      values.mutation_type !== "",
+    state => characterizeSchema.safeParse(state.values).success,
   );
 
   useEffect(() => {

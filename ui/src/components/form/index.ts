@@ -5,3 +5,4 @@ export * from "./MutationSelector";
 export * from "./MutationType";
 export * from "./NumberMismatch";
 export * from "./ProteinSequenceInput";
+export * from "./schemas";
