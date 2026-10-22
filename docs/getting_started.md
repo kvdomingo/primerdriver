@@ -512,6 +512,13 @@ can become a powerful tool especially when batch designing primers, by including
 
 Protein-based design works similarly and uses *Homo sapiens* expression system by default
 
+!!! warning
+
+    Protein-based design back-translates the whole input protein into the chosen expression system's preferred codons
+    and designs against that reconstruction, not against your gene. The resulting primers match a real template only
+    if the gene was synthesized with exactly those codons. For a cloned or cDNA-derived gene, use `dna` mode with the
+    actual coding sequence instead. See [Software Features](software.md#choosing-primer-design-modes).
+
 ```shell
-poetry run python -m primerdriver --mode pro --sequence CAISBVAIVBAIVBCAICBASCBAVQVFEWQEPFQEHVSDBVSKZDBNCSD --mutation-type sub -t Q -p 26 -r R
+poetry run python -m primerdriver --mode pro --sequence MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQ --mutation-type sub -t Q -p 22 -r R
 ```

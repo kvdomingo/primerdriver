@@ -7,26 +7,39 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/primerdriver)
 
 > [!IMPORTANT]
-> PrimerDriver is no longer under active development.
-> It may occasionally receive minor updates, but these will not add new functionality.
-> The web app will be kept running on a best-effort basis, but note that we do not guarantee any SLAs.
-> This project remains open-source, so anyone may fork and deploy their own instance.
+> PrimerDriver is no longer under active development. It may occasionally
+> receive minor updates, but these will not add new functionality. The web app
+> will be kept running on a best-effort basis, but note that we do not guarantee
+> any SLAs. This project remains open-source, so anyone may fork and deploy
+> their own instance.
 
 ## Introduction
 
-_PrimerDriver_ is a user-friendly bioinformatics platform specifically designed to generate primers for site-directed
-mutagenesis experiments into workflows with an easy-to-use command-line interface. “Traversing” PrimerDriver lanes,
-users can generate possible mutagenic primers upon input of a DNA sequence (`DNA`), design primers for an array of
-species codon expression systems through direct mutation of the amino acid (`PRO`), characterize and report
-user-designed primers (`CHAR`).
+_PrimerDriver_ is a user-friendly bioinformatics platform specifically designed
+to generate primers for site-directed mutagenesis experiments into workflows
+with an easy-to-use command-line interface. “Traversing” PrimerDriver lanes,
+users can generate possible mutagenic primers upon input of a DNA sequence
+(`DNA`), design primers for an array of species codon expression systems through
+direct mutation of the amino acid (`PRO`), characterize and report user-designed
+primers (`CHAR`).
+
+> [!WARNING]
+> `PRO` mode back-translates the input protein into the selected organism's
+> preferred codons and designs primers against that reconstruction. The primers
+> match a real template only if the gene was synthesized with exactly those
+> codons; for a cloned or cDNA-derived gene, use `DNA` mode with the actual
+> coding sequence. See the
+> [documentation](https://primerdriver-docs.kvd.studio/software/#choosing-primer-design-modes).
 
 ## Usage
 
 ### A. Running standalone
 
 You can access and download the CLI from the
-[releases page](https://github.com/kvdomingo/primerdriver/releases). Currently, we only have prebuilt binaries for
-64-bit Windows and Linux. For other OS/architectures, see the section on Building from Source, under Developing Locally.
+[releases page](https://github.com/kvdomingo/primerdriver/releases). Currently,
+we only have prebuilt binaries for 64-bit Windows and Linux. For other
+OS/architectures, see the section on Building from Source, under Developing
+Locally.
 
 Run the program in a terminal using
 
@@ -55,12 +68,14 @@ Batch design can be performed by including
 #### Setup
 
 1. Clone the repo to your local device and `cd` into it
+
     ```shell
     git clone https://github.com/kvdomingo/primerdriver.git
     cd primerdriver
     ```
 
 2. Install dependencies:
+
     ```shell
     mise install
     ```
@@ -86,7 +101,7 @@ For a more interactive experience, visit the
 
 ## Documentation
 
-The documentation is available at https://primerdriver-docs.kvd.studio.
+The documentation is available at <https://primerdriver-docs.kvd.studio>.
 
 ## Contributing
 
@@ -108,16 +123,21 @@ development environment running
 
 1. Clone the repo.
 2. Install prerequisites:
+
     ```shell
     mise install
     pip install -U pre-commit
     pre-commit install
     ```
+
 3. Install backend dependencies:
+
     ```shell
     poetry install --no-root --with dev
     ```
+
 4. Run the development servers:
+
     ```shell
     task
     ```
@@ -125,8 +145,8 @@ development environment running
 Wait a few minutes for all the containers to start, then access the
 local servers in your browser at:
 
-- Web app: http://localhost:3000
-- Docs: http://localhost:8000
+- Web app: <http://localhost:3000>
+- Docs: <http://localhost:8000>
 
 ### Building from source
 
@@ -146,17 +166,21 @@ git commit -m "DESCRIPTIVE_COMMIT_MESSAGE"
 git push origin your_feature_branch
 ```
 
-where `your_feature_branch` should summarize the changes you are implementing following
-the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format
+where `your_feature_branch` should summarize the changes you are implementing
+following the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format
 (e.g., `feat/xxxx`, `fix/yyyy`).
 
 ## Authors
 
-- **Numeriano Amer "Nomer" E. Gutierrez** - Project Lead, Molecular
-  Biologist - [Email](mailto:ngutierrez@evc.pshs.edu.ph) | [GitHub](https://github.com/nomgutierrez)
-- **Kenneth V. Domingo** - Technical
-  Lead - [Email](mailto:kvdomingo@alum.up.edu.ph) | [Website](https://kvd.studio) | [GitHub](https://github.com/kvdomingo)
-- **Shebna Rose D. Fabilloren** - Technical Consultant - [Email](mailto:sdfabilloren@up.edu.ph)
+- **Numeriano Amer "Nomer" E. Gutierrez** - Project Lead, Molecular Biologist -
+  [Email](mailto:ngutierrez@evc.pshs.edu.ph) |
+  [GitHub](https://github.com/nomgutierrez)
+- **Kenneth V. Domingo** - Technical Lead -
+  [Email](mailto:kvdomingo@alum.up.edu.ph) | [Website](https://kvd.studio) |
+  [GitHub](https://github.com/kvdomingo)
+- **Shebna Rose D. Fabilloren** - Technical Consultant -
+  [Email](mailto:sdfabilloren@up.edu.ph)
 - **Carlo M. Lapid** - Project Adviser - [Email](mailto:cmlapid@up.edu.ph)
 
 ## Versioning
