@@ -2,7 +2,7 @@
 bun = "latest"
 poetry = "latest"
 prek = "latest"
-python = "3.9"
+python = "3.14"
 rumdl = "latest"
 task = "latest"
 uv = "latest"
