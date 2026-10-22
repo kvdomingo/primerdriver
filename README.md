@@ -78,12 +78,13 @@ Batch design can be performed by including
 
     ```shell
     mise install
+    uv sync
     ```
 
 Run the program as follows:
 
 ```shell
-poetry run python -m primerdriver -h
+uv run python -m primerdriver -h
 ```
 
 ### C. Running from Docker
@@ -126,14 +127,13 @@ development environment running
 
     ```shell
     mise install
-    pip install -U pre-commit
-    pre-commit install
+    prek install
     ```
 
 3. Install backend dependencies:
 
     ```shell
-    poetry install --no-root --with dev
+    uv sync
     ```
 
 4. Run the development servers:
