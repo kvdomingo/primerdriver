@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint .",
+    "lint": "biome check src",
     "preview": "vite preview",
     "gen:api": "bunx openapi-typescript@7 http://backend:5000/api/openapi.json -o src/api/openapi.gen.ts"
   },
