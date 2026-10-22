@@ -6,8 +6,6 @@ import {
   MDBCol as Col,
   MDBRow as Row,
 } from "mdbreact";
-import { useEffect } from "react";
-import { usePrimerDriverStore } from "../../store";
 
 const menu_data = [
   {
@@ -34,13 +32,6 @@ const menu_data = [
 ];
 
 function Menu() {
-  const { setResults, setMode } = usePrimerDriverStore();
-
-  useEffect(() => {
-    setResults({ data: {}, loaded: false });
-    setMode("");
-  }, [setResults, setMode]);
-
   return (
     <Row className="row-cols-1 row-cols-md-3 mx-0 h-100 align-items-center">
       {menu_data.map(item => (

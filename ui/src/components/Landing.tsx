@@ -1,22 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { Image } from "cloudinary-react";
 import { MDBContainer as Container } from "mdbreact";
-import { useEffect, useState } from "react";
 import api from "../api";
 
 function Landing() {
-  const [programVersion, setProgramVersion] = useState("");
-  const [webVersion, setWebVersion] = useState("");
+  const { data } = useQuery({
+    queryKey: ["version"],
+    queryFn: async () => (await api.data.version()).data,
+  });
   const copyYear = new Date().getFullYear();
-
-  useEffect(() => {
-    api.data
-      .version()
-      .then(res => {
-        setProgramVersion(res.data.program_version);
-        setWebVersion(res.data.web_version);
-      })
-      .catch(err => console.log(err.message));
-  }, []);
 
   return (
     <Container className="mx-0 px-4 py-4">
@@ -66,7 +58,7 @@ function Landing() {
           </a>
         </div>
         <div className="px-3 py-3 text-center">
-          PrimerDriver v{programVersion} ({webVersion})
+          PrimerDriver v{data?.program_version} ({data?.web_version})
           <br />
           &copy; 2020-{copyYear} <a href="mailto:hello@kvd.studio">Kenneth Domingo</a>{" "}
           &amp; <a href="mailto:ngutierrez@evc.pshs.edu.ph">Nomer Gutierrez</a>

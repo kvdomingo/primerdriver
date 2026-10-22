@@ -10,7 +10,6 @@ import Characterize from "./menu/Characterize";
 import Dna from "./menu/DnaView";
 import Menu from "./menu/Menu";
 import Protein from "./menu/ProteinView";
-import Results from "./menu/Result";
 import Loading from "./shared/LoadingScreen";
 
 const styles = {
@@ -50,16 +49,6 @@ const routeTree = rootRoute.addChildren([
     getParentRoute: () => rootRoute,
     path: "/protein",
     component: Protein,
-  }),
-  createRoute({
-    getParentRoute: () => rootRoute,
-    path: "/results",
-    component: Results,
-    errorComponent: () => (
-      <p className="h5-responsive text-center align-items-center">
-        Something went wrong 😢
-      </p>
-    ),
   }),
 ]);
 
