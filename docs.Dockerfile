@@ -22,6 +22,6 @@ COPY ./primerdriver/ ./primerdriver/
 
 RUN ./.venv/bin/mkdocs build
 
-FROM nginxinc/nginx-unprivileged:1.28-alpine
+FROM nginx/nginx-unprivileged:1.31-alpine
 
 COPY --from=build /build/site/ /usr/share/nginx/html/
