@@ -4,7 +4,6 @@ from datetime import datetime
 from os import PathLike
 
 from Bio import SeqIO
-from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from loguru import logger
@@ -37,7 +36,7 @@ def single_command_saver(df: DataFrame | list[DataFrame], savename: str | PathLi
             for strand, prefix in (("Forward", "Fwd"), ("Reverse", "Rev")):
                 seq_list.append(
                     SeqRecord(
-                        Seq(row[strand], IUPAC.unambiguous_dna),
+                        Seq(row[strand]),
                         id=f"{datetime.now()}",
                         description=f"Primer {i} {strand.lower()} strand, {row[f'{prefix} GC content']} G/C, Tm = {row[f'{prefix} melting temp']}, {row[f'{prefix} length']}",
                     )
