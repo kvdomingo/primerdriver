@@ -4,14 +4,7 @@
 
 ![GitHub](https://img.shields.io/github/license/kvdomingo/primerdriver)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/kvdomingo/primerdriver?include_prereleases)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/primerdriver)
-
-> [!IMPORTANT]
-> PrimerDriver is no longer under active development. It may occasionally
-> receive minor updates, but these will not add new functionality. The web app
-> will be kept running on a best-effort basis, but note that we do not guarantee
-> any SLAs. This project remains open-source, so anyone may fork and deploy
-> their own instance.
+![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fkvdomingo%2Fprimerdriver%2Fmain%2Fpyproject.toml)
 
 ## Introduction
 
