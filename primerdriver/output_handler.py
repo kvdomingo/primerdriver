@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from datetime import datetime
 from os import PathLike
 
@@ -9,77 +11,41 @@ from loguru import logger
 from pandas import DataFrame, concat
 
 
-def interactive_saver(df: DataFrame) -> None:
+def interactive_saver(df: DataFrame | list[DataFrame]) -> None:
     save = input("\nSave? [y/n] ")
-    if save.upper() == "Y":
-        while True:
-            savename = input("Enter filename: ")
-            if savename.endswith(".csv"):
-                df = concat([*df])
-                df.to_csv(savename)
-                break
-            elif savename.endswith(".html"):
-                df = concat([*df])
-                df.to_html(savename)
-                break
-            elif savename.endswith(".fasta"):
-                seq_list = []
-                for i in range(len(df)):
-                    seq_list.append(
-                        SeqRecord(
-                            Seq(df[i]["Forward"].values[0], IUPAC.unambiguous_dna),
-                            id=f"{datetime.now()}",
-                            description=f"Primer {i+1} forward strand, {df[i]['Fwd GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Fwd melting temp'].values[0]:.2s} C, {df[i]['Fwd length'].values[0]}",
-                        )
-                    )
-                    seq_list.append(
-                        SeqRecord(
-                            Seq(df[i]["Reverse"].values[0], IUPAC.unambiguous_dna),
-                            id=f"{datetime.now()}",
-                            description=f"Primer {i+1} reverse strand, {df[i]['Rev GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Rev melting temp'].values[0]:.2s} C, {df[i]['Rev length'].values[0]}",
-                        )
-                    )
-                with open(savename, "w") as f:
-                    SeqIO.write(seq_list, f, "fasta")
-                break
-            elif savename.endswith(".json"):
-                df = concat([*df])
-                df.to_json(savename, indent=4)
-            else:
-                logger.error(
-                    "Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json"
-                )
+    if save.upper() != "Y":
+        return
+    while True:
+        try:
+            single_command_saver(df, input("Enter filename: "))
+            break
+        except ValueError as e:
+            logger.error(str(e))
 
 
-def single_command_saver(df: DataFrame, savename: str | PathLike):
+def single_command_saver(df: DataFrame | list[DataFrame], savename: str | PathLike):
+    dfs = [df] if isinstance(df, DataFrame) else df
+    savename = str(savename)
     if savename.endswith(".csv"):
-        df = concat([*df])
-        df.to_csv(savename)
+        concat(dfs).to_csv(savename)
     elif savename.endswith(".html"):
-        df = concat([*df])
-        df.to_html(savename)
+        concat(dfs).to_html(savename)
     elif savename.endswith(".fasta"):
         seq_list = []
-        for i in range(len(df)):
-            seq_list.append(
-                SeqRecord(
-                    Seq(df[i]["Forward"].values[0], IUPAC.unambiguous_dna),
-                    id=f"{datetime.now()}",
-                    description=f"Primer {i+1} forward strand, {df[i]['Fwd GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Fwd melting temp'].values[0]:.2s} C, {df[i]['Fwd length'].values[0]}",
+        for i, primer in enumerate(dfs, start=1):
+            row = primer.iloc[0]
+            for strand, prefix in (("Forward", "Fwd"), ("Reverse", "Rev")):
+                seq_list.append(
+                    SeqRecord(
+                        Seq(row[strand], IUPAC.unambiguous_dna),
+                        id=f"{datetime.now()}",
+                        description=f"Primer {i} {strand.lower()} strand, {row[f'{prefix} GC content']} G/C, Tm = {row[f'{prefix} melting temp']}, {row[f'{prefix} length']}",
+                    )
                 )
-            )
-            seq_list.append(
-                SeqRecord(
-                    Seq(df[i]["Reverse"].values[0], IUPAC.unambiguous_dna),
-                    id=f"{datetime.now()}",
-                    description=f"Primer {i+1} reverse strand, {df[i]['Rev GC content'].values[0]*100:.2s}% G/C, Tm = {df[i]['Rev melting temp'].values[0]:.2s} C, {df[i]['Rev length'].values[0]}",
-                )
-            )
         with open(savename, "w") as f:
             SeqIO.write(seq_list, f, "fasta")
     elif savename.endswith(".json"):
-        df = concat([*df])
-        df.to_json(savename, indent=4)
+        concat(dfs).to_json(savename, indent=4)
     else:
         raise ValueError(
             "Unsupported filetype. Supported filetypes are: .csv, .html, .fasta, .json"

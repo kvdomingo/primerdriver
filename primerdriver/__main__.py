@@ -69,6 +69,8 @@ PrimerDriver v{__version__}
     else:
         res.main()
 
+    if res.df is None:
+        return
     if args.interactive:
         interactive_saver(res.df)
     else:
