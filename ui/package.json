@@ -38,5 +38,14 @@
     "jss": "^10.10.0",
     "typescript": "^7.0.2",
     "vite": "^5.4.10"
+  },
+  "intent": {
+    "skills": [
+      "@tanstack/react-table",
+      "@tanstack/router-core",
+      "@tanstack/router-plugin",
+      "@tanstack/table-core",
+      "@tanstack/virtual-file-routes"
+    ]
   }
 }
