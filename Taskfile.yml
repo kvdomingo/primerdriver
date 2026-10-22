@@ -1,7 +1,6 @@
 version: '3'
 
 env:
-  NAME: primerdriver
   SHORT_SHA:
     sh: git rev-parse --short HEAD
 
@@ -12,28 +11,28 @@ tasks:
 
   up:
     desc: Build and start containers
-    cmd: docker compose --project-name {{.NAME}} up --detach --build --remove-orphans {{.CLI_ARGS}}
+    cmd: docker compose up --detach --build --watch --remove-orphans {{.CLI_ARGS}}
 
   stop:
     desc: Stop containers
-    cmd: docker compose --project-name {{.NAME}} stop {{.CLI_ARGS}}
+    cmd: docker compose stop {{.CLI_ARGS}}
 
   logs:
     desc: Follow Docker logs
     interactive: true
-    cmd: docker compose --project-name {{.NAME}} logs --follow {{.CLI_ARGS}}
+    cmd: docker compose logs --follow {{.CLI_ARGS}}
 
   restart:
     desc: Restart containers
-    cmd: docker compose --project-name {{.NAME}} restart {{.CLI_ARGS}}
+    cmd: docker compose restart {{.CLI_ARGS}}
 
   down:
     desc: Stop and remove containers
-    cmd: docker compose --project-name {{.NAME}} down --remove-orphans
+    cmd: docker compose down --remove-orphans
 
   clean:
     desc: Nuke everything
-    cmd: docker compose --project-name {{.NAME}} down --volumes --remove-orphans
+    cmd: docker compose down --volumes --remove-orphans
 
   build-web:
     desc: Build web app image
