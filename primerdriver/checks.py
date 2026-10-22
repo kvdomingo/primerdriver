@@ -99,7 +99,9 @@ class SequenceChecks:
         self.settings = settings
 
     def is_valid_length(self) -> bool:
-        return self.settings.length_min <= len(self.sequence) <= self.settings.length_max
+        return (
+            self.settings.length_min <= len(self.sequence) <= self.settings.length_max
+        )
 
     def is_valid_gc_content(self) -> bool:
         seq = list(self.sequence)

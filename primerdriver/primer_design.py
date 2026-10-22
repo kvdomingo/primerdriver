@@ -257,16 +257,16 @@ class PrimerDesign:
         dat = [
             forwards["sequence"],
             reverses["sequence"],
-            f'{forwards["length"]} bp',
-            f'{reverses["length"]} bp',
-            f'{forwards["gc_content"]*100:.2f}%',
-            f'{reverses["gc_content"]*100:.2f}%',
-            f'{forwards["Tm"]:.2f} C',
-            f'{reverses["Tm"]:.2f} C',
-            f'{forwards["mol_weight"]:.2f} g/mol',
-            f'{reverses["mol_weight"]:.2f} g/mol',
-            f'{forwards["mismatch"]*100:.2f}%',
-            f'{reverses["mismatch"]*100:.2f}%',
+            f"{forwards['length']} bp",
+            f"{reverses['length']} bp",
+            f"{forwards['gc_content'] * 100:.2f}%",
+            f"{reverses['gc_content'] * 100:.2f}%",
+            f"{forwards['Tm']:.2f} C",
+            f"{reverses['Tm']:.2f} C",
+            f"{forwards['mol_weight']:.2f} g/mol",
+            f"{reverses['mol_weight']:.2f} g/mol",
+            f"{forwards['mismatch'] * 100:.2f}%",
+            f"{reverses['mismatch'] * 100:.2f}%",
             forwards["gc_end"],
             reverses["gc_end"],
         ]
@@ -419,9 +419,10 @@ class PrimerDesign:
             if not self.replacement:
                 raise PrimerCheckError("Substitution requires a replacement sequence")
             inserted = self.replacement
-            deleted = self.target or self.sequence[
-                self.position : self.position + len(inserted)
-            ]
+            deleted = (
+                self.target
+                or self.sequence[self.position : self.position + len(inserted)]
+            )
         return deleted, inserted
 
     def mutagenesis(self) -> list[DataFrame] | None:
