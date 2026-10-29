@@ -3,9 +3,10 @@ name: Build and push Docker image
 on:
   push:
     branches: [main]
+  pull_request:
 
 concurrency:
-  group: build
+  group: build-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -33,6 +34,9 @@ jobs:
       - name: Extract image metadata
         id: meta
         uses: docker/metadata-action@v5
+        env:
+          # Tag the PR head, not the merge commit, so the preview can find it.
+          DOCKER_METADATA_PR_HEAD_SHA: "true"
         with:
           images: ghcr.io/${{ github.repository }}
           flavor: |
