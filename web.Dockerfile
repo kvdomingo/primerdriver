@@ -19,7 +19,7 @@ ENV SHORT_SHA=$SHORT_SHA
 
 SHELL [ "/bin/bash", "-euxo", "pipefail", "-c" ]
 
-COPY --from=ghcr.io/astral-sh/uv:0.13.4 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /usr/local/bin/uv
 
 WORKDIR /primerdriver
 
