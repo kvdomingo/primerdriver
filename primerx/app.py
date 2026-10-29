@@ -42,7 +42,7 @@ def docs():
 
 @app.get("/api/health")
 def health():
-    raise RuntimeError("deliberately broken to test fast preview failure")
+    raise RuntimeError("deliberately broken to test PreSync preview failure")
 
 
 @app.get("/api/version")
