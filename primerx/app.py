@@ -42,7 +42,7 @@ def docs():
 
 @app.get("/api/health")
 def health():
-    raise RuntimeError("deliberately broken to time preview failure")
+    return {"status": "ok"}
 
 
 @app.get("/api/version")
