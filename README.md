@@ -221,4 +221,4 @@ all available versions, see
 
 This project is licensed under the [GPLv3 License](./LICENSE).
 
-Every pull request gets a preview at `https://primerdriver-pr-<n>.lab.kvd.studio`.
+Each pull request gets a preview at `https://primerdriver-pr-<n>.lab.kvd.studio`.
