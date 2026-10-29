@@ -7,7 +7,7 @@ ENV UV_LINK_MODE=copy
 ENV UV_PYTHON_DOWNLOADS=never
 ENV UV_PROJECT_ENVIRONMENT=/tmp/.venv
 
-COPY --from=ghcr.io/astral-sh/uv:0.13.4 /uv /usr/local/bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.13.6 /uv /usr/local/bin/uv
 
 WORKDIR /tmp
 
