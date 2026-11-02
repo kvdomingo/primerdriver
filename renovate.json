@@ -6,6 +6,11 @@
       "matchPackageNames": ["python"],
       "matchUpdateTypes": ["major", "minor"],
       "enabled": false
+    },
+    {
+      "matchManagers": ["pep621", "npm"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ]
 }
