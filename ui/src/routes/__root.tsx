@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { MDBContainer as Container, MDBJumbotron as Jumbotron } from "mdbreact";
 import { usePrimerDriverStore } from "../store";
 
@@ -16,7 +16,7 @@ function Root() {
   return (
     <Container className="px-0">
       <Jumbotron
-        className="scrollbar scrollbar-primary thin mx-0 my-0 border border-light py-0"
+        className="scrollbar scrollbar-primary thin border-light mx-0 my-0 border py-0"
         style={styles.appContainer}
       >
         <Outlet key={formKey} />

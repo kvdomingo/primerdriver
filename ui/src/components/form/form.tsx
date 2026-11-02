@@ -18,7 +18,7 @@ function Form(props: FormProps) {
       <Link className="btn btn-blue-grey btn-rounded mb-4" to="/" id="back">
         <Icon fas icon="arrow-left" className="mr-2" /> main menu
       </Link>
-      <h2 className="h2-responsive d-md-inline ml-md-4 py-2 text-md-center">
+      <h2 className="h2-responsive d-md-inline ml-md-4 text-md-center py-2">
         {props.title}
       </h2>
       <form

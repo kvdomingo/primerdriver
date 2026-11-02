@@ -1,13 +1,14 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true
+    "useIgnoreFile": true,
+    "root": ".."
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["src/route-tree.gen.ts", "src/api/openapi.gen.ts"]
+    "includes": ["**", "!**/src/route-tree.gen.ts", "!**/src/api/openapi.gen.ts"]
   },
   "formatter": {
     "enabled": true,
@@ -18,13 +19,17 @@
     "lineEnding": "lf",
     "lineWidth": 88
   },
-  "organizeImports": {
-    "enabled": true
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "a11y": {
         "noAutofocus": "off"
       },
@@ -32,19 +37,18 @@
         "noNonNullAssertion": "warn",
         "useFilenamingConvention": {
           "level": "error",
-          "options": { "filenameCases": ["kebab-case"] }
+          "options": {
+            "filenameCases": ["kebab-case"]
+          }
         }
       },
       "suspicious": {
         "noExplicitAny": "warn"
       },
       "nursery": {
-        "useSortedClasses": {
-          "level": "info",
-          "options": {
-            "attributes": ["class", "className"],
-            "functions": ["clsx", "cn", "cva"]
-          }
+        "useTailwindSortedClasses": {
+          "level": "warn",
+          "fix": "safe"
         }
       }
     }
@@ -54,5 +58,10 @@
       "arrowParentheses": "asNeeded",
       "quoteStyle": "double"
     }
+  },
+  "tailwind": {
+    "attributes": ["class", "className"],
+    "mergeFunctions": ["clsx", "cn"],
+    "variantFunctions": ["cva"]
   }
 }

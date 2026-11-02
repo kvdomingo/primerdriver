@@ -14,7 +14,7 @@ function NumberMismatch(props: NumberMismatchProps) {
         id="mismatched_bases"
         name="mismatched_bases"
         value={props.mismatched_bases}
-        onChange={e => props.handleChangeInt(Number.parseInt(e.target.value))}
+        onChange={e => props.handleChangeInt(Number.parseInt(e.target.value, 10))}
         required
       />
     </div>

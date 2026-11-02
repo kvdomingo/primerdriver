@@ -2,12 +2,12 @@ import { useForm, useSelector } from "@tanstack/react-form";
 import { $api } from "../../api";
 import {
   AdvancedSettings,
+  defaultSettings,
+  designSchema,
   Form,
   MutationSelector,
   MutationType,
   ProteinSequenceInput,
-  defaultSettings,
-  designSchema,
 } from "../form";
 import Result from "./result";
 

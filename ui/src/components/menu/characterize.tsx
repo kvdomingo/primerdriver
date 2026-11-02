@@ -2,11 +2,11 @@ import { useForm, useSelector } from "@tanstack/react-form";
 import { MDBCol as Col, MDBRow as Row } from "mdbreact";
 import { $api } from "../../api";
 import {
+  characterizeSchema,
   DnaSequenceInput,
   Form,
   MutationType,
   NumberMismatch,
-  characterizeSchema,
 } from "../form";
 import Result from "./result";
 
