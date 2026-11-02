@@ -29,7 +29,7 @@
     "zustand": "^5.0.16"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "@tanstack/router-plugin": "^1.168.47",
     "@types/react": "18",
     "@types/react-dom": "18",
