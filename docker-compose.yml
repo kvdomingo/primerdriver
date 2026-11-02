@@ -48,7 +48,7 @@ services:
           action: restart
 
   frontend:
-    image: oven/bun:1.1-alpine
+    image: oven/bun:1.4-alpine
     restart: unless-stopped
     init: true
     environment:
