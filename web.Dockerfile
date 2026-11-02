@@ -1,4 +1,4 @@
-FROM oven/bun:1.1-alpine AS build
+FROM oven/bun:1.4-alpine AS build
 
 WORKDIR /web
 
