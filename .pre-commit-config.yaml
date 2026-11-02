@@ -3,28 +3,29 @@ repos:
     rev: v0.15.12
     hooks:
       - id: ruff
-        args: [ --fix ]
+        args: [--fix]
       - id: ruff-format
-  - repo: https://github.com/biomejs/pre-commit
-    rev: v1.9.4
+  - repo: local
     hooks:
       - id: biome-check
-        additional_dependencies:
-          - "@biomejs/biome@1.9.4"
-        args: [ '--config-path', './ui' ]
+        name: biome check
+        entry: bash -c 'cd ui && node_modules/.bin/biome check --write --unsafe --files-ignore-unknown=true --no-errors-on-unmatched "${@#ui/}"' --
+        language: system
+        files: ^ui/
+        types_or: [javascript, jsx, ts, tsx, json, jsonc, css, graphql]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
-        args: [ '--maxkb=500' ]
+        args: ["--maxkb=500"]
         exclude: '^sample\.fasta$'
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: mixed-line-ending
-        args: [ '--fix=lf' ]
+        args: ["--fix=lf"]
       - id: check-merge-conflict
       - id: check-yaml
-        args: [ '--allow-multiple-documents' ]
+        args: ["--allow-multiple-documents"]
         exclude: templates/.+\.ya?ml$
       - id: check-json
       - id: check-toml
@@ -33,7 +34,7 @@ repos:
     rev: v8.30.0
     hooks:
       - id: gitleaks
-        args: [ '--verbose', '--config', '.gitleaks.toml' ]
+        args: ["--verbose", "--config", ".gitleaks.toml"]
   - repo: https://github.com/hadolint/hadolint
     rev: v2.12.0
     hooks:

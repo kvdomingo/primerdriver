@@ -56,7 +56,7 @@ function ProteinSequenceInput(props: ProteinSequenceInputProps) {
         <Col className="text-left">
           <small className="blue-grey-text">Cursor position: {cursorPosition}</small>
         </Col>
-        <Col className="text-left text-md-right">
+        <Col className="text-md-right text-left">
           <small className="blue-grey-text">
             Sequence length: {props.sequence.length}
           </small>

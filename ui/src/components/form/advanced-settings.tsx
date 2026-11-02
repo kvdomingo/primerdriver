@@ -122,7 +122,9 @@ function AdvancedSettings({
                       name={key}
                       className="form-control"
                       value={value[key]}
-                      onChange={e => set({ [key]: Number.parseInt(e.target.value) })}
+                      onChange={e =>
+                        set({ [key]: Number.parseInt(e.target.value, 10) })
+                      }
                     />
                   </div>
                 </Col>

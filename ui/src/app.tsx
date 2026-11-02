@@ -1,4 +1,4 @@
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { MDBCol as Col, MDBRow as Row } from "mdbreact";
 import "./app.css";
 import Landing from "./components/landing";
@@ -15,7 +15,7 @@ declare module "@tanstack/react-router" {
 
 function App() {
   return (
-    <Row className="vh-100 vw-100 mx-0 align-items-center">
+    <Row className="vh-100 vw-100 align-items-center mx-0">
       <Col sm="3">
         <Landing />
       </Col>

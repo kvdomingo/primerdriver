@@ -33,7 +33,7 @@ const menu_data = [
 
 function Menu() {
   return (
-    <Row className="row-cols-1 row-cols-md-3 mx-0 h-100 align-items-center">
+    <Row className="row-cols-1 row-cols-md-3 align-items-center mx-0 h-100">
       {menu_data.map(item => (
         <Col key={item.publicId}>
           <Card>

@@ -3,11 +3,11 @@ import { $api } from "../../api";
 import {
   AdvancedSettings,
   DnaSequenceInput,
+  defaultSettings,
+  designSchema,
   Form,
   MutationSelector,
   MutationType,
-  defaultSettings,
-  designSchema,
 } from "../form";
 import Result from "./result";
 
