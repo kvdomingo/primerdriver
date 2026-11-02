@@ -1,7 +1,7 @@
 [tools]
 bun = "latest"
 prek = "latest"
-python = "3.14"
+python = "3.15.2"
 rumdl = "latest"
 task = "latest"
 uv = "latest"
